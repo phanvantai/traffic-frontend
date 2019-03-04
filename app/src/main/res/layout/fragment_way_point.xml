@@ -1,0 +1,173 @@
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:orientation="vertical"
+  android:background="@color/white">
+
+  <!-- TODO: Update blank fragment layout -->
+
+  <android.support.v7.widget.CardView
+    android:id="@+id/waypoint_direction_search_cv"
+    android:layout_height="wrap_content"
+    style="@style/CardViewMap"
+    android:layout_alignParentTop="true"
+    android:layout_marginTop="@dimen/large_padding"
+    app:cardCornerRadius="5dp"
+    android:background="@color/white"
+    android:visibility="gone">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/cardview_height"
+          android:orientation="horizontal">
+
+          <TextView
+            android:id="@+id/activity_main_origin_tv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/your_location"
+            android:textColor="@color/text_hint"
+            android:textSize="@dimen/ts_12"/>
+
+          <ImageView
+            android:id="@+id/activity_main_origin_cancel_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/default_margin"
+            android:src="@drawable/ic_cancel"/>
+        </LinearLayout>
+
+        <View
+          android:layout_width="match_parent"
+          android:layout_height="1dp"
+          android:layout_marginLeft="@dimen/default_margin"
+          android:layout_marginRight="@dimen/default_margin"
+          android:background="@color/cardview_dark_background"/>
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/cardview_height"
+          android:orientation="horizontal">
+
+          <TextView
+            android:id="@+id/activity_main_destination_tv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="@string/destination"
+            android:textColor="@color/text_hint"
+            android:textSize="@dimen/ts_12"/>
+
+          <ImageView
+            android:id="@+id/activity_main_destination_cancel_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/default_margin"
+            android:src="@drawable/ic_cancel"/>
+        </LinearLayout>
+
+      </LinearLayout>
+
+      <ImageView
+        android:id="@+id/activity_main_send_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginRight="@dimen/default_margin"
+        android:src="@drawable/ic_send"/>
+
+      <ImageView
+        android:id="@+id/activity_main_direction_cancel_img"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:src="@drawable/ic_cancel"
+        />
+    </LinearLayout>
+
+  </android.support.v7.widget.CardView>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_menu"
+    android:orientation="horizontal">
+
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/default_margin"
+      android:layout_weight="1"
+      android:orientation="vertical">
+
+      <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <TextView
+          android:id="@+id/waypoint_location_tv"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="@dimen/default_margin"
+          android:padding="@dimen/small_padding"
+          android:text="Your Location"
+          android:textColor="@color/bg_menu"
+          android:textSize="@dimen/ts_14"/>
+      </android.support.v7.widget.CardView>
+
+      <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@color/white">
+
+        <TextView
+          android:id="@+id/waypoint_destination_tv"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="@dimen/default_margin"
+          android:padding="@dimen/small_padding"
+          android:text="Choose Destination"
+          android:textColor="@color/bg_menu"
+          android:textSize="@dimen/ts_14"/>
+      </android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <ImageView
+      android:id="@+id/waypoint_search_img"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginRight="@dimen/default_margin"
+      android:src="@drawable/ic_enter"/>
+  </LinearLayout>
+
+  <fragment
+    android:id="@+id/waypoint_map"
+    android:name="com.gemvietnam.trafficgem.library.MySupportMapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    tools:context="com.gemvietnam.trafficgem.screen.main.MainActivity"/>
+</LinearLayout>

@@ -1,0 +1,12 @@
+<resources>
+  <string name="app_name">TrafficGEM</string>
+  <string name="title_activity_maps">Map</string>
+  <string name="search">Search location here...</string>
+  <string name="your_location">Your Location</string>
+  <string name="destination">Destination</string>
+  <string name="waypoints">Waypoints</string>
+  <string name="normal_search">Normal Search</string>
+  <string name="advance_search">Advance Search</string>
+  <string name="traffic_state">Traffic State</string>
+  <string name="sign_out">Sign Out</string>
+</resources>

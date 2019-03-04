@@ -1,0 +1,136 @@
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="280dp"
+  android:layout_height="match_parent"
+  android:background="@color/bg_menu"
+  android:clickable="true"
+  android:orientation="vertical">
+
+  <!-- TODO: Update blank fragment layout -->
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+      android:id="@+id/menu_profile_img"
+      android:layout_width="50dp"
+      android:layout_height="50dp"
+      android:layout_gravity="center_horizontal|center_vertical"
+      android:layout_marginBottom="@dimen/small_padding"
+      android:layout_marginTop="@dimen/large_padding"
+      android:src="@drawable/profile"
+      app:civ_border_color="@color/grey"
+      app:civ_border_width="1dp"/>
+
+    <TextView
+      android:id="@+id/profile_name_tv"
+      style="@style/MenuText"
+      android:layout_margin="@dimen/no_margin"
+      android:gravity="center_horizontal"
+      android:text="Quận Nguyễn"/>
+
+    <TextView
+      android:id="@+id/profile_email_tv"
+      style="@style/MenuText"
+      android:layout_margin="@dimen/no_margin"
+      android:gravity="center_horizontal"
+      android:textSize="@dimen/ts_14"
+      android:text="quannv@gemvietnam.com"
+      android:textStyle="normal"/>
+  </LinearLayout>
+
+  <View
+    style="@style/GrayLineDivider"
+    android:layout_marginTop="@dimen/large_padding"/>
+
+  <TextView
+    android:id="@+id/menu_your_location_tv"
+    style="@style/MenuText"
+    android:drawableLeft="@drawable/ic_location_white"
+    android:drawablePadding="@dimen/large_padding"
+    android:text="@string/your_location"/>
+
+
+  <LinearLayout
+    android:id="@+id/menu_quan_ly_so_lieu_ll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+      android:id="@+id/menu_direction_tv"
+      style="@style/MenuText"
+      android:layout_width="wrap_content"
+      android:drawableLeft="@drawable/ic_direction_white"
+      android:drawablePadding="@dimen/large_padding"
+      android:text="@string/waypoints"
+      android:textStyle="bold"/>
+
+    <View
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"/>
+
+    <RelativeLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginRight="@dimen/default_margin">
+
+      <ImageView
+        android:id="@+id/menu_minus_img"
+        style="@style/MenuIcon"
+        android:src="@drawable/ic_minus_white"/>
+
+      <ImageView
+        android:id="@+id/menu_plus_img"
+        style="@style/MenuIcon"
+        android:src="@drawable/ic_plus_white"
+        android:visibility="gone"/>
+    </RelativeLayout>
+  </LinearLayout>
+
+
+  <LinearLayout
+    android:id="@+id/menu_expand_ll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/menu_normal_search_tv"
+      style="@style/MenuTextSmall"
+      android:layout_marginLeft="70dp"
+      android:text="@string/normal_search"/>
+
+
+    <TextView
+      android:id="@+id/menu_advance_search_tv"
+      style="@style/MenuTextSmall"
+      android:layout_marginLeft="70dp"
+      android:text="@string/advance_search"/>
+
+
+  </LinearLayout>
+
+  <TextView
+    android:id="@+id/menu_traffic_state_tv"
+    style="@style/MenuText"
+    android:drawableLeft="@drawable/ic_traffic_white"
+    android:drawablePadding="@dimen/large_padding"
+    android:text="@string/traffic_state"/>
+
+
+  <TextView
+    android:id="@+id/menu_signout_tv"
+    style="@style/MenuText"
+    android:drawableLeft="@drawable/ic_signout_white"
+    android:drawablePadding="@dimen/large_padding"
+    android:text="@string/sign_out"/>
+
+  <!--<View-->
+  <!--style="@style/MenuLine"/>-->
+
+</LinearLayout>
