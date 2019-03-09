@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="colorPrimary">#3F51B5</color>
-  <color name="colorPrimaryDark">#303F9F</color>
-  <color name="colorAccent">#FF4081</color>
-  <color name="white">#FFFFFF</color>
-  <color name="text_black">#2a2929</color>
-  <color name="text_hint">#4c4b4b</color>
-  <color name="menu_item_selected">#FFC827</color>
-  <color name="menu_item_normal">#FFFFFF</color>
-  <color name="boder_divider">#aaaaad</color>
-  <color name="bg_menu">#6A96D0</color>
-  <color name="red">#7cf90101</color>
-  <color name="yellow">#7dffff00</color>
-  <color name="green">#7d00ff00</color>
-  <color name="blue">#7e0000ff</color>
-  <color name="gray">#79808080</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="text_black">#2a2929</color>
+    <color name="text_hint">#4c4b4b</color>
+    <color name="menu_item_selected">#FFC827</color>
+    <color name="menu_item_normal">#FFFFFF</color>
+    <color name="boder_divider">#aaaaad</color>
+    <color name="bg_menu">#6A96D0</color>
+    <color name="red">#7cf90101</color>
+    <color name="yellow">#7dffff00</color>
+    <color name="green">#7d00ff00</color>
+    <color name="blue">#7e0000ff</color>
+    <color name="gray">#79808080</color>
+
+    <color name="primary">#E43F3F</color>
+    <color name="primary_dark">#E12929</color>
+    <color name="primary_darker">#CC1D1D</color>
+    <color name="accent">#FFFFFF</color>
+
+    <color name="black">#000000</color>
+    <color name="jet">#222222</color>
+    <color name="oil">#333333</color>
+    <color name="monsoon">#777777</color>
+    <color name="jumbo">#888888</color>
+    <color name="aluminum">#999999</color>
+    <color name="base">#AAAAAA</color>
+    <color name="iron">#CCCCCC</color>
+
 </resources>

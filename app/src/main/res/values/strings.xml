@@ -1,12 +1,24 @@
 <resources>
-  <string name="app_name">TrafficGEM</string>
-  <string name="title_activity_maps">Map</string>
-  <string name="search">Search location here...</string>
-  <string name="your_location">Your Location</string>
-  <string name="destination">Destination</string>
-  <string name="waypoints">Waypoints</string>
-  <string name="normal_search">Normal Search</string>
-  <string name="advance_search">Advance Search</string>
-  <string name="traffic_state">Traffic State</string>
-  <string name="sign_out">Sign Out</string>
+    <string name="app_name">TrafficGEM</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="search">Search location here...</string>
+    <string name="your_location">Your Location</string>
+    <string name="destination">Destination</string>
+    <string name="waypoints">Waypoints</string>
+    <string name="normal_search">Normal Search</string>
+    <string name="advance_search">Advance Search</string>
+    <string name="traffic_state">Traffic State</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="login">Login</string>
+    <string name="email_user">Email</string>
+    <string name="password_user">Password</string>
+    <string name="no_account">No account yet? Create one</string>
+    <string name="welcome">Welcome to TrafficGEM</string>
+
+    <string name="vehicle_prompt">Choose your vehicle</string>
+    <string-array name="vehicle_arrays">
+        <item>Motorbike</item>
+        <item>Bike</item>
+        <item>Car</item>
+    </string-array>
 </resources>
