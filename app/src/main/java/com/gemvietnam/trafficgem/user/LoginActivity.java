@@ -1,4 +1,4 @@
-package com.gemvietnam.trafficgem.screen.user;
+package com.gemvietnam.trafficgem.user;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -163,14 +163,14 @@ public class LoginActivity extends AppCompatActivity {
         String password = etEditPassword.getText().toString();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etEditMail.setError("Enter a valid email address");
+            etEditMail.setError(this.getString(R.string.rule_email));
             valid = false;
         } else {
             etEditMail.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            etEditPassword.setError("Between 4 and 10 alphanumeric characters");
+            etEditPassword.setError(this.getString(R.string.rule_password));
             valid = false;
         } else {
             etEditPassword.setError(null);

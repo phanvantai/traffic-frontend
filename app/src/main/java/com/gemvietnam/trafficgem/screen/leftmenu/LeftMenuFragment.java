@@ -41,7 +41,7 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
   @Bind(R.id.menu_traffic_state_tv)
   TextView mTrafficStateTv;
   @Bind(R.id.menu_signout_tv)
-  TextView mSignoutTv;
+  TextView mSignOutTv;
   @Bind(R.id.menu_expand_ll)
   LinearLayout mExpandLl;
 
@@ -80,7 +80,7 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     mNavigationItemMap.put(mAdvanceSearchTv, MenuItem.ADVANCE_SEARCH);
     mNavigationItemMap.put(mTrafficStateTv, MenuItem.TRAFFIC_STATE);
 
-    mNavigationItemMap.put(mSignoutTv, MenuItem.SIGN_OUT);
+    mNavigationItemMap.put(mSignOutTv, MenuItem.SIGN_OUT);
     for (final Map.Entry<TextView, MenuItem> entry : mNavigationItemMap.entrySet()) {
       entry.getKey().setOnClickListener(new View.OnClickListener() {
         @Override
@@ -88,7 +88,7 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
           mPresenter.onMenuItemClicked(entry.getValue());
 
           // Change color
-          unselectAll();
+          unSelectAll();
           entry.getKey().setSelected(true);
 
           int iconId = 0;
@@ -121,7 +121,7 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     }
   }
 
-  private void unselectAll() {
+  private void unSelectAll() {
     mYourLocationTv.setSelected(false);
     mYourLocationTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_location_white, 0,0,0);
     mDirectionTv.setSelected(false);
@@ -130,7 +130,7 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     mAdvanceSearchTv.setSelected(false);
     mTrafficStateTv.setSelected(false);
     mTrafficStateTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_traffic_white, 0, 0,0);
-    mSignoutTv.setSelected(false);
-    mSignoutTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_signout_white, 0,0,0);
+    mSignOutTv.setSelected(false);
+    mSignOutTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_signout_white, 0,0,0);
   }
 }

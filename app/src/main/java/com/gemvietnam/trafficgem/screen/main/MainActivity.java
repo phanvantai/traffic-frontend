@@ -3,7 +3,6 @@ package com.gemvietnam.trafficgem.screen.main;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -13,17 +12,11 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuPresenter;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
-import com.gemvietnam.trafficgem.screen.user.LoginActivity;
+import com.gemvietnam.trafficgem.service.GPSTracker;
+import com.gemvietnam.trafficgem.user.LoginActivity;
 import com.gemvietnam.trafficgem.utils.ViewUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import butterknife.Bind;
-
-import static com.gemvietnam.trafficgem.screen.user.LoginActivity.REQUEST_CODE_LOGIN;
 
 /**
  * Created by Quannv on 3/29/2017.
@@ -52,7 +45,11 @@ public class MainActivity extends ContainerActivity implements
     public void initLayout() {
 //    super.initLayout();
 
-        checkLoginStatus();
+        //checkLoginStatus();
+
+        // start location tracking when start app
+        startGPSTracker();
+
         mDrawerLayout.addDrawerListener(this);
 
         // Add menu
@@ -66,6 +63,11 @@ public class MainActivity extends ContainerActivity implements
         // Add first screen in main
         mMainNavigator = new MainNavigator(this);
         mMainNavigator.showFragment(MenuItem.YOUR_LOCATION);
+    }
+
+    private void startGPSTracker() {
+        Intent intent = new Intent(this, GPSTracker.class);
+        startService(intent);
     }
 
     public void checkLoginStatus() {

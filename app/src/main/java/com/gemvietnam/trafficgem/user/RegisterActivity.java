@@ -1,4 +1,4 @@
-package com.gemvietnam.trafficgem.screen.user;
+package com.gemvietnam.trafficgem.user;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -23,6 +23,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Bind(R.id.et_activity_register_input_name) EditText etName;
     @Bind(R.id.et_activity_register_input_email) EditText etEmail;
     @Bind(R.id.et_activity_register_input_password) EditText etPassword;
+    @Bind(R.id.et_activity_register_input_rePassword) EditText etRePassword;
     @Bind(R.id.s_activity_register_vehicle) Spinner sVehicle;
     @Bind(R.id.b_activity_register_register) Button bRegister;
     @Bind(R.id.tv_activity_register_link_login) TextView tvLoginLink;
@@ -88,7 +89,8 @@ public class RegisterActivity extends AppCompatActivity {
         String name = etName.getText().toString();
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
-        //String vehicle = sVehicle.
+        String vehicle = sVehicle.getSelectedItem().toString();
+        Log.d(TAG, vehicle);
 
         // TODO: Implement your own register logic here.
 
@@ -130,26 +132,34 @@ public class RegisterActivity extends AppCompatActivity {
         String name = etName.getText().toString();
         String email = etEmail.getText().toString();
         String password = etPassword.getText().toString();
+        String rePassword = etRePassword.getText().toString();
 
         if (name.isEmpty() || name.length() < 3) {
-            etName.setError("at least 3 characters");
+            etName.setError(this.getString(R.string.rule_name));
             valid = false;
         } else {
             etName.setError(null);
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etEmail.setError("enter a valid email address");
+            etEmail.setError(this.getString(R.string.rule_email));
             valid = false;
         } else {
             etEmail.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            etPassword.setError("between 4 and 10 alphanumeric characters");
+            etPassword.setError(this.getString(R.string.rule_password));
             valid = false;
         } else {
             etPassword.setError(null);
+        }
+
+        if (!password.equals(rePassword)) {
+            etRePassword.setError(this.getString(R.string.rule_repassword));
+            valid = false;
+        } else {
+            etRePassword.setError(null);
         }
 
         return valid;

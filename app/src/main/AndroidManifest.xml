@@ -38,8 +38,10 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".screen.user.LoginActivity" android:theme="@style/AppTheme.Dark" />
-    <activity android:name=".screen.user.RegisterActivity" android:theme="@style/AppTheme.Dark" />
+    <activity android:name=".user.LoginActivity" android:theme="@style/AppTheme.Dark" />
+    <activity android:name=".user.RegisterActivity" android:theme="@style/AppTheme.Dark" />
+
+    <service android:name=".service.GPSTracker" android:enabled="true" />
 
   </application>
 
