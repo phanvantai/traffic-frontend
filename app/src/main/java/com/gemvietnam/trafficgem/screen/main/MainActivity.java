@@ -1,7 +1,10 @@
 package com.gemvietnam.trafficgem.screen.main;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -47,6 +50,7 @@ public class MainActivity extends ContainerActivity implements
 
         //checkLoginStatus();
 
+        checkPermission();
         // start location tracking when start app
         startGPSTracker();
 
@@ -63,6 +67,14 @@ public class MainActivity extends ContainerActivity implements
         // Add first screen in main
         mMainNavigator = new MainNavigator(this);
         mMainNavigator.showFragment(MenuItem.YOUR_LOCATION);
+    }
+
+    private void checkPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
     }
 
     private void startGPSTracker() {

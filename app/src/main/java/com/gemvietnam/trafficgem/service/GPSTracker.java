@@ -1,5 +1,6 @@
 package com.gemvietnam.trafficgem.service;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -15,9 +16,14 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.gemvietnam.trafficgem.library.JsonObject;
-import com.gemvietnam.trafficgem.screen.main.MainActivity;
+import com.gemvietnam.trafficgem.utils.AppUtils;
 
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class GPSTracker extends Service implements LocationListener {
 
@@ -37,7 +43,7 @@ public class GPSTracker extends Service implements LocationListener {
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 5; // 10 meters
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 30* 1; // 30s
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 30 * 1; // 30s
 
     // Declaring a Location Manager
     protected LocationManager locationManager;
@@ -46,6 +52,7 @@ public class GPSTracker extends Service implements LocationListener {
     private String date;
     private String transport;
     private double speed;
+    private String timeStamp;
     double latitude; // latitude
     double longitude; // longitude
 
@@ -63,37 +70,82 @@ public class GPSTracker extends Service implements LocationListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int temp = 0;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    location = getLocation();
-                    try {
-                        Thread.sleep(MIN_TIME_BW_UPDATES);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        idJson = 0;
+        locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
+
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+
+        //List<String> providers = locationManager.getProviders(true);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.e("TaiPV", "GPS provider is enabled");
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                //return TODO;
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            //location = getLocation();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        location = getLocation();
+                        date = dateFormat.format(new Date());
+                        timeStamp = timeFormat.format(new Date());
+                        speed = location.getSpeed();
+                        String tmp = date + " " + timeStamp + " " + "Lat " + Double.toString(location.getLatitude()) +
+                                " Long " + Double.toString(location.getLongitude()) +
+                                " Speed " + Float.toString(location.getSpeed());
+                        AppUtils.writeLog(tmp);
+                        JSONObject jsonObject = new JSONObject();
+                        JsonObject object = new JsonObject(jsonObject, idJson);
+                        object.init();
+                        object.pushData(object.DataTraffic(location, date, transport, speed));
+                        String message = object.exportString();
+                        try {
+                            Thread.sleep(MIN_TIME_BW_UPDATES);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        }).start();
+            }).start();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
     private Location getLocation() {
-        locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
         Location bestLocation = null;
-        for (String provider : providers) {
-            Location l = locationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
-                bestLocation = l;
-            }
+//        for (String provider : providers) {
+//            Log.e("TaiPV", provider);
+//            //locationManager.requestLocationUpdates(provider, 0, 0, this);
+//            Location l = locationManager.getLastKnownLocation(provider);
+//            if (l == null) {
+//                continue;
+//            }
+//            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+//                // Found best last known location: %s", l);
+//                bestLocation = l;
+//            }
+//        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            //return TODO;
         }
+        bestLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (bestLocation == null) {
             Log.e("TaiPV", "chua co gi");
         } else {
@@ -134,8 +186,8 @@ public class GPSTracker extends Service implements LocationListener {
 //
 //                    locationManager.requestLocationUpdates(
 //                            LocationManager.NETWORK_PROVIDER,
-//                            MIN_TIME_BW_UPDATES,
-//                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+//                            0,
+//                            0, this);
 //
 //                    Log.e("Network", "Network");
 //                    if (locationManager != null) {
@@ -154,8 +206,8 @@ public class GPSTracker extends Service implements LocationListener {
 //                    if (location == null) {
 //                        locationManager.requestLocationUpdates(
 //                                LocationManager.GPS_PROVIDER,
-//                                MIN_TIME_BW_UPDATES,
-//                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+//                                0,
+//                                0, this);
 //
 //                        Log.d("GPS Enabled", "GPS Enabled");
 //                        if (locationManager != null) {
@@ -170,15 +222,17 @@ public class GPSTracker extends Service implements LocationListener {
 //                    }
 //                }
 //            }
-//
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
+//        return location;
     }
 
     @Override
     public void onLocationChanged(Location location) {
-
+        Log.e("TaiPV", "Lat " + Double.toString(location.getLatitude()) +
+                " Lang " + Double.toString(location.getLongitude()) +
+                " Speed " + Float.toString(location.getSpeed()));
     }
 
     @Override
