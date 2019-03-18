@@ -50,6 +50,7 @@ public class MainActivity extends ContainerActivity implements
 
         //checkLoginStatus();
 
+
         checkPermission();
         // start location tracking when start app
         startGPSTracker();
@@ -69,7 +70,7 @@ public class MainActivity extends ContainerActivity implements
         mMainNavigator.showFragment(MenuItem.YOUR_LOCATION);
     }
 
-    private void checkPermission() {
+    public void checkPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {

@@ -9,15 +9,9 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="56dp"
+        android:paddingTop="24dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
-
-        <!--<ImageView android:src="@drawable/logo"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_marginBottom="24dp"
-            android:layout_gravity="center_horizontal" />-->
 
         <!--  Name Label -->
         <android.support.design.widget.TextInputLayout
@@ -97,6 +91,23 @@
             android:layout_height="47dp"
             android:entries="@array/vehicle_arrays"
             android:prompt="@string/vehicle_prompt"></Spinner>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:text="@string/avatar_prompt" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civ_activity_register_avatar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginBottom="@dimen/small_padding"
+            android:layout_marginTop="@dimen/large_padding"
+            android:src="@drawable/avatar"
+            app:civ_border_color="@color/grey"
+            app:civ_border_width="1dp"/>
 
         <!-- Signup Button -->
         <android.support.v7.widget.AppCompatButton

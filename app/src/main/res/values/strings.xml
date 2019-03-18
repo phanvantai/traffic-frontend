@@ -21,6 +21,7 @@
     <string name="rule_repassword">Password does not match!</string>
 
     <string name="vehicle_prompt">Choose your vehicle</string>
+    <string name="avatar_prompt">Choose your avatar</string>
     <string-array name="vehicle_arrays">
         <item>Motorbike</item>
         <item>Bike</item>

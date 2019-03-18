@@ -41,9 +41,9 @@ public class GPSTracker extends Service implements LocationListener {
     int idJson;
 
     // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 5; // 10 meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 5; // 5 meters
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 30 * 1; // 30s
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 5; // 5s
 
     // Declaring a Location Manager
     protected LocationManager locationManager;
@@ -53,8 +53,6 @@ public class GPSTracker extends Service implements LocationListener {
     private String transport;
     private double speed;
     private String timeStamp;
-    double latitude; // latitude
-    double longitude; // longitude
 
     @Nullable
     @Override
@@ -95,20 +93,28 @@ public class GPSTracker extends Service implements LocationListener {
                 @Override
                 public void run() {
                     while (true) {
+                        // getting location and other components
                         location = getLocation();
                         date = dateFormat.format(new Date());
                         timeStamp = timeFormat.format(new Date());
                         speed = location.getSpeed();
+                        transport = "car";
+
+                        //
                         String tmp = date + " " + timeStamp + " " + "Lat " + Double.toString(location.getLatitude()) +
                                 " Long " + Double.toString(location.getLongitude()) +
                                 " Speed " + Float.toString(location.getSpeed());
+                        //
+                        Log.e("TaiPV", tmp);
                         AppUtils.writeLog(tmp);
+
                         JSONObject jsonObject = new JSONObject();
                         JsonObject object = new JsonObject(jsonObject, idJson);
                         object.init();
                         object.pushData(object.DataTraffic(location, date, transport, speed));
                         String message = object.exportString();
                         try {
+                            // Sleep 30s
                             Thread.sleep(MIN_TIME_BW_UPDATES);
                         } catch (InterruptedException e) {
                             e.printStackTrace();

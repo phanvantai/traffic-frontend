@@ -1,7 +1,12 @@
 package com.gemvietnam.trafficgem.user;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,17 +21,28 @@ import com.gemvietnam.trafficgem.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
+    public static final int SELECT_GALLERY_IMAGE = 12;
 
-    @Bind(R.id.et_activity_register_input_name) EditText etName;
-    @Bind(R.id.et_activity_register_input_email) EditText etEmail;
-    @Bind(R.id.et_activity_register_input_password) EditText etPassword;
-    @Bind(R.id.et_activity_register_input_rePassword) EditText etRePassword;
-    @Bind(R.id.s_activity_register_vehicle) Spinner sVehicle;
-    @Bind(R.id.b_activity_register_register) Button bRegister;
-    @Bind(R.id.tv_activity_register_link_login) TextView tvLoginLink;
+    @Bind(R.id.et_activity_register_input_name)
+    EditText etName;
+    @Bind(R.id.et_activity_register_input_email)
+    EditText etEmail;
+    @Bind(R.id.et_activity_register_input_password)
+    EditText etPassword;
+    @Bind(R.id.et_activity_register_input_rePassword)
+    EditText etRePassword;
+    @Bind(R.id.s_activity_register_vehicle)
+    Spinner sVehicle;
+    @Bind(R.id.b_activity_register_register)
+    Button bRegister;
+    @Bind(R.id.tv_activity_register_link_login)
+    TextView tvLoginLink;
+    @Bind(R.id.civ_activity_register_avatar)
+    CircleImageView civAvatar;
 
     private String mVehicle;
     @Override
@@ -63,6 +79,44 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        civAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getImageFromGallery();
+            }
+        });
+    }
+
+    /**
+     * open new activity to choose image
+     */
+    private void getImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, SELECT_GALLERY_IMAGE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_GALLERY_IMAGE) {
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                civAvatar.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            }
+        }
+
+            super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
