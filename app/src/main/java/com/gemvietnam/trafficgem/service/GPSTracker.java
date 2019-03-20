@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -95,24 +96,30 @@ public class GPSTracker extends Service implements LocationListener {
                     while (true) {
                         // getting location and other components
                         location = getLocation();
-                        date = dateFormat.format(new Date());
-                        timeStamp = timeFormat.format(new Date());
-                        speed = location.getSpeed();
-                        transport = "car";
+                        if (location != null) {
+                            date = dateFormat.format(new Date());
+                            timeStamp = timeFormat.format(new Date());
+                            if (Build.VERSION.SDK_INT >= 26) {
+                                speed = location.getSpeedAccuracyMetersPerSecond();
+                            } else {
+                                speed = location.getSpeed();
+                            }
+                            transport = "car";
 
-                        //
-                        String tmp = date + " " + timeStamp + " " + "Lat " + Double.toString(location.getLatitude()) +
-                                " Long " + Double.toString(location.getLongitude()) +
-                                " Speed " + Float.toString(location.getSpeed());
-                        //
-                        Log.e("TaiPV", tmp);
-                        AppUtils.writeLog(tmp);
+                            //
+                            String tmp = date + " " + timeStamp + " " + "Lat " + Double.toString(location.getLatitude()) +
+                                    " Long " + Double.toString(location.getLongitude()) +
+                                    " Speed " + Float.toString(location.getSpeed());
+                            //
+                            Log.e("TaiPV", tmp);
+                            AppUtils.writeLog(tmp);
 
-                        JSONObject jsonObject = new JSONObject();
-                        JsonObject object = new JsonObject(jsonObject, idJson);
-                        object.init();
-                        object.pushData(object.DataTraffic(location, date, transport, speed));
-                        String message = object.exportString();
+                            JSONObject jsonObject = new JSONObject();
+                            JsonObject object = new JsonObject(jsonObject, idJson);
+                            object.init();
+                            object.pushData(object.DataTraffic(location, date, transport, speed));
+                        }
+
                         try {
                             // Sleep 30s
                             Thread.sleep(MIN_TIME_BW_UPDATES);
