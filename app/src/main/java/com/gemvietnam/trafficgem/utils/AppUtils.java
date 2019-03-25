@@ -17,15 +17,36 @@ import java.util.Locale;
 
 public class AppUtils {
 
+    public static final String CHANEL_ID = "chanel_traffic";
+    public static final String CHANEL_NAME = "traffic_gem";
+    public static final String START_SERVICE = "start";
+    public static final String STOP_SERVICE = "stop";
+    public static final int ONGOING_NOTIFICATION_ID = 0211;
+
+
+    // Format date and time in JsonObject
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    public static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+
+    // cache file name .json
     private static final String TRAFFIC_LOG_FILE = "traffic_log.txt";
 
+    /**
+     * Create Notification Chanel
+     * @param context
+     */
     public static void createNotificationChanel(Context context) {
         if (Build.VERSION.SDK_INT >= 26) {
             NotificationChannel channel = new NotificationChannel(
-                    "TaiPV", "TrafficGEM", NotificationManager.IMPORTANCE_DEFAULT);
+                    CHANEL_ID, CHANEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
 
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+            try {
+                notificationManager.createNotificationChannel(channel);
+            } catch (Exception e) {
+                //
+            }
+
         }
     }
 

@@ -3,6 +3,7 @@ package com.gemvietnam.trafficgem.screen.main;
 
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -14,12 +15,15 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuPresenter;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
-import com.gemvietnam.trafficgem.service.GPSTracker;
+import com.gemvietnam.trafficgem.service.LocationTracker;
 import com.gemvietnam.trafficgem.user.LoginActivity;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.ViewUtils;
 
 import butterknife.BindView;
+
+import static com.gemvietnam.trafficgem.utils.AppUtils.START_SERVICE;
+import static com.gemvietnam.trafficgem.utils.AppUtils.STOP_SERVICE;
 
 /**
  * Created by Quannv on 3/29/2017.
@@ -48,14 +52,16 @@ public class MainActivity extends ContainerActivity implements
     @Override
     public void initLayout() {
 
+        // creat chanel for notification (android O and above)
         AppUtils.createNotificationChanel(this);
 //    super.initLayout();
 
         //checkLoginStatus();
 
         //checkPermission();
+
         // start location tracking when start app
-        startGPSTracker();
+        startLocationTracker();
 
         mDrawerLayout.addDrawerListener(this);
 
@@ -72,9 +78,15 @@ public class MainActivity extends ContainerActivity implements
         mMainNavigator.showFragment(MenuItem.YOUR_LOCATION);
     }
 
-    private void startGPSTracker() {
-        Intent startIntent = new Intent(this, GPSTracker.class);
-        startIntent.setAction("Start");
+    /**
+     * start service LocationTracker()
+     */
+    private void startLocationTracker() {
+        Intent startIntent = new Intent(this, LocationTracker.class);
+        // set more user's information
+        //Bundle bundle = startIntent.getExtras();
+        //bundle.putString("key", "value");
+        startIntent.setAction(START_SERVICE);
         if (Build.VERSION.SDK_INT >= 26) {
             startForegroundService(startIntent);
         } else {
@@ -165,8 +177,8 @@ public class MainActivity extends ContainerActivity implements
 
     @Override
     protected void onDestroy() {
-        Intent stopIntent = new Intent(MainActivity.this, GPSTracker.class);
-        stopIntent.setAction("Stop");
+        Intent stopIntent = new Intent(MainActivity.this, LocationTracker.class);
+        stopIntent.setAction(STOP_SERVICE);
         startService(stopIntent);
         super.onDestroy();
     }

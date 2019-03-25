@@ -46,7 +46,7 @@
             android:theme="@style/AppTheme.Dark" />
 
         <service
-            android:name=".service.GPSTracker"
+            android:name=".service.LocationTracker"
             android:enabled="true" />
     </application>
 
