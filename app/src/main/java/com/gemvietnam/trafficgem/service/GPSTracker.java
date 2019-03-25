@@ -50,17 +50,16 @@ public class GPSTracker extends Service
     private Context mContext;
 
     private Location location;
+    private String timeStamp;
     private String date;
     private String transport;
     private double speed;
-    private String timeStamp;
+
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
     private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
-
-    // JsonObject to write to cache file
-    JsonObject mObject;
-    int idJson;
+    private static final long MAX_TIME = 5 *60 *1000;
+    private static final int[] totalTime = {0};
 
     final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -85,6 +84,11 @@ public class GPSTracker extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        final JSONObject jsonObject = new JSONObject();         // create json file store coordinates
+        final JsonObject json = new JsonObject();
+        json.setJsonObject(jsonObject);
+        json.init();
+
         if (googleApiClient != null) {
             googleApiClient.connect();
         }
@@ -103,11 +107,6 @@ public class GPSTracker extends Service
 
             startForeground(ONGOING_NOTIFICATION_ID, notification);
         }
-
-        idJson = 0;
-        JSONObject jsonObject = new JSONObject();
-        mObject = new JsonObject(jsonObject, idJson);
-        mObject.init();
 
         new Thread(new Runnable() {
             @Override
@@ -131,20 +130,39 @@ public class GPSTracker extends Service
                             speed = location.getSpeed();
                         }
                         transport = "car";
-
-                        //
-                        String tmp = date + " " + timeStamp + " " + "Lat " + Double.toString(location.getLatitude()) +
-                                " Long " + Double.toString(location.getLongitude()) +
+                        String tmp = "Long " + Double.toString(location.getLongitude()) +
+                                " Lat " + Double.toString(location.getLatitude()) +
+                                " Date "+date+
+                                " TimeStamp "+timeStamp +
+                                " Transport "+transport+
                                 " Speed " + Float.toString(location.getSpeed());
-                        //
-                        //Log.e("TaiPV", tmp);
+                        Log.e("TaiPV", tmp);
                         AppUtils.writeLog(tmp);
 
-                        mObject.pushData(mObject.DataTraffic(location, date, transport, speed));
+                        Traffic traffic = new Traffic();
+                        traffic.setLocation(location);
+                        traffic.setTimeStamp(timeStamp);
+                        traffic.setDate(date);
+                        traffic.setSpeed(speed);
+                        traffic.setTransport(transport);
+                        try {
+                            json.pushDataTraffic(traffic);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
                     }
                     try {
                         // Sleep 5s
-                        Thread.sleep(5000);
+                        Thread.sleep(UPDATE_INTERVAL);
+                        totalTime[0] += UPDATE_INTERVAL;
+                        if(totalTime >= MAX_TIME){
+                            totalTime[0] = 0;
+                            String stringData = json.exportString();
+//                            jsonObject = new JSONObject();    initialize
+                            postData(stringData);
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -163,6 +181,39 @@ public class GPSTracker extends Service
         }
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void postData(String data){
+        String myUrl = "";
+        OutputStream os = null;
+        HttpsURLConnection conn = null;
+        URL url = null;
+        try {
+            url = new URL(myUrl);
+            conn = (HttpsURLConnection) url.openConnection();
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+            conn.connect();
+            os = new BufferedOutputStream(conn.getOutputStream());
+            os.write(data.getBytes());
+            os.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                os.close();
+            }   catch (IOException e){
+                e.printStackTrace();
+            }
+            conn.disconnect();
+        }
+
     }
 
     @Override
