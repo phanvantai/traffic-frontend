@@ -1,10 +1,9 @@
 package com.gemvietnam.trafficgem.screen.main;
 
-import android.Manifest;
+
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -17,27 +16,29 @@ import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
 import com.gemvietnam.trafficgem.service.GPSTracker;
 import com.gemvietnam.trafficgem.user.LoginActivity;
+import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.ViewUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 
 /**
  * Created by Quannv on 3/29/2017.
  */
 
 public class MainActivity extends ContainerActivity implements
-    OnMenuItemClickedListener, DrawerLayout.DrawerListener, DrawerToggleListener {
+        OnMenuItemClickedListener,
+        DrawerLayout.DrawerListener,
+        DrawerToggleListener {
     public static boolean isLoginSuccess = false;
 
-    @Bind(R.id.drawer_layout)
+    @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
-    @Bind(R.id.left_drawer)
+    @BindView(R.id.left_drawer)
     FrameLayout mLeftDrawer;
     MenuItem current;
     private MainNavigator mMainNavigator;
     private Handler handler = new Handler();
-    private Runnable mPendingRunable;
-
+    private Runnable mPendingRunnable;
 
     @Override
     public int getLayoutId() {
@@ -46,12 +47,13 @@ public class MainActivity extends ContainerActivity implements
 
     @Override
     public void initLayout() {
+
+        AppUtils.createNotificationChanel(this);
 //    super.initLayout();
 
         //checkLoginStatus();
 
-
-        checkPermission();
+        //checkPermission();
         // start location tracking when start app
         startGPSTracker();
 
@@ -70,17 +72,14 @@ public class MainActivity extends ContainerActivity implements
         mMainNavigator.showFragment(MenuItem.YOUR_LOCATION);
     }
 
-    public void checkPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
-    }
-
     private void startGPSTracker() {
-        Intent intent = new Intent(this, GPSTracker.class);
-        startService(intent);
+        Intent startIntent = new Intent(this, GPSTracker.class);
+        startIntent.setAction("Start");
+        if (Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(startIntent);
+        } else {
+            startService(startIntent);
+        }
     }
 
     public void checkLoginStatus() {
@@ -95,7 +94,7 @@ public class MainActivity extends ContainerActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        //super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -108,9 +107,8 @@ public class MainActivity extends ContainerActivity implements
         if (mDrawerLayout.isDrawerOpen(mLeftDrawer)) {
             mDrawerLayout.closeDrawer(mLeftDrawer);
         }
-        /**
-         * on sign out
-         */
+
+        // on click sign out
         if (menuItem.equals(MenuItem.SIGN_OUT)) {
             isLoginSuccess = false;
             checkLoginStatus();
@@ -122,7 +120,7 @@ public class MainActivity extends ContainerActivity implements
                 mDrawerLayout.closeDrawer(mLeftDrawer);
                 return;
             } else {
-                mPendingRunable = new Runnable() {
+                mPendingRunnable = new Runnable() {
                     @Override
                     public void run() {
                         current = menuItem;
@@ -145,9 +143,9 @@ public class MainActivity extends ContainerActivity implements
 
     @Override
     public void onDrawerClosed(View drawerView) {
-        if (mPendingRunable != null) {
-            handler.post(mPendingRunable);
-            mPendingRunable = null;
+        if (mPendingRunnable != null) {
+            handler.post(mPendingRunnable);
+            mPendingRunnable = null;
         }
     }
 
@@ -163,5 +161,13 @@ public class MainActivity extends ContainerActivity implements
         } else {
             mDrawerLayout.openDrawer(mLeftDrawer);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Intent stopIntent = new Intent(MainActivity.this, GPSTracker.class);
+        stopIntent.setAction("Stop");
+        startService(stopIntent);
+        super.onDestroy();
     }
 }

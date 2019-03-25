@@ -12,7 +12,7 @@ import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
 import java.util.HashMap;
 import java.util.Map;
-import butterknife.Bind;
+import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -20,29 +20,29 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> implements LeftMenuContract.View {
 
-  @Bind(R.id.menu_profile_img)
+  @BindView(R.id.menu_profile_img)
   CircleImageView mProfileImg;
-  @Bind(R.id.profile_name_tv)
+  @BindView(R.id.profile_name_tv)
   TextView mNameTv;
-  @Bind(R.id.profile_email_tv)
+  @BindView(R.id.profile_email_tv)
   TextView mEmailTv;
-  @Bind(R.id.menu_your_location_tv)
+  @BindView(R.id.menu_your_location_tv)
   TextView mYourLocationTv;
-  @Bind(R.id.menu_direction_tv)
+  @BindView(R.id.menu_direction_tv)
   TextView mDirectionTv;
-  @Bind(R.id.menu_minus_img)
+  @BindView(R.id.menu_minus_img)
   ImageView mMinusImg;
-  @Bind(R.id.menu_plus_img)
+  @BindView(R.id.menu_plus_img)
   ImageView mPlusImg;
-  @Bind(R.id.menu_normal_search_tv)
+  @BindView(R.id.menu_normal_search_tv)
   TextView mNormalSearchTv;
-  @Bind(R.id.menu_advance_search_tv)
+  @BindView(R.id.menu_advance_search_tv)
   TextView mAdvanceSearchTv;
-  @Bind(R.id.menu_traffic_state_tv)
+  @BindView(R.id.menu_traffic_state_tv)
   TextView mTrafficStateTv;
-  @Bind(R.id.menu_signout_tv)
+  @BindView(R.id.menu_signout_tv)
   TextView mSignOutTv;
-  @Bind(R.id.menu_expand_ll)
+  @BindView(R.id.menu_expand_ll)
   LinearLayout mExpandLl;
 
   private final Map<TextView, MenuItem> mNavigationItemMap = new HashMap<>();

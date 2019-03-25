@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity {
@@ -30,13 +30,13 @@ public class LoginActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_LOGIN = 0;
     public static final int REQUEST_CODE_REGISTER = 1;
 
-    @Bind(R.id.et_activity_login_input_email)
+    @BindView(R.id.et_activity_login_input_email)
     EditText etEditMail;
-    @Bind(R.id.et_activity_login_input_password)
+    @BindView(R.id.et_activity_login_input_password)
     EditText etEditPassword;
-    @Bind(R.id.b_activity_login_login)
+    @BindView(R.id.b_activity_login_login)
     AppCompatButton bLogin;
-    @Bind(R.id.tv_activity_login_link_register)
+    @BindView(R.id.tv_activity_login_link_register)
     TextView tvRegisterLink;
 
     @Override

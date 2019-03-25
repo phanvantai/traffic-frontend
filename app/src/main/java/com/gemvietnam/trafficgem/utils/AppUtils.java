@@ -1,5 +1,9 @@
 package com.gemvietnam.trafficgem.utils;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -13,11 +17,21 @@ import java.util.Locale;
 
 public class AppUtils {
 
-    public static final String TRAFFIC_LOG_FILE = "traffic_log.txt";
+    private static final String TRAFFIC_LOG_FILE = "traffic_log.txt";
+
+    public static void createNotificationChanel(Context context) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            NotificationChannel channel = new NotificationChannel(
+                    "TaiPV", "TrafficGEM", NotificationManager.IMPORTANCE_DEFAULT);
+
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 
     public static synchronized void writeLog(String log) {
 //        Log.e("WRITE_LOG", log);
-        String sdCardStatus = "", folderPath = "";
+        String sdCardStatus, folderPath;
         try {
             sdCardStatus = Environment.getExternalStorageState();
             folderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Traffic/";

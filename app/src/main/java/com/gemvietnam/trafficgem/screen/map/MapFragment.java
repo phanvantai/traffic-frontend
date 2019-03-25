@@ -62,7 +62,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -76,13 +76,13 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
     GoogleApiClient.ConnectionCallbacks, OnMenuItemClickedListener {
 
-  @Bind(R.id.activity_main_location_search_tv)
+  @BindView(R.id.activity_main_location_search_tv)
   TextView mLocationSearchTv;
-  @Bind(R.id.activity_main_location_cancel_img)
+  @BindView(R.id.activity_main_location_cancel_img)
   ImageView mSearchCancelImg;
-  @Bind(R.id.activity_main_location_search_cv)
+  @BindView(R.id.activity_main_location_search_cv)
   CardView mLocationSearchCv;
-  @Bind(R.id.activity_main_gridview)
+  @BindView(R.id.activity_main_gridview)
   GridView mGridview;
 
   private GoogleMap mMap;

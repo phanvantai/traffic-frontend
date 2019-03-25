@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -27,21 +27,21 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
     public static final int SELECT_GALLERY_IMAGE = 12;
 
-    @Bind(R.id.et_activity_register_input_name)
+    @BindView(R.id.et_activity_register_input_name)
     EditText etName;
-    @Bind(R.id.et_activity_register_input_email)
+    @BindView(R.id.et_activity_register_input_email)
     EditText etEmail;
-    @Bind(R.id.et_activity_register_input_password)
+    @BindView(R.id.et_activity_register_input_password)
     EditText etPassword;
-    @Bind(R.id.et_activity_register_input_rePassword)
+    @BindView(R.id.et_activity_register_input_rePassword)
     EditText etRePassword;
-    @Bind(R.id.s_activity_register_vehicle)
+    @BindView(R.id.s_activity_register_vehicle)
     Spinner sVehicle;
-    @Bind(R.id.b_activity_register_register)
+    @BindView(R.id.b_activity_register_register)
     Button bRegister;
-    @Bind(R.id.tv_activity_register_link_login)
+    @BindView(R.id.tv_activity_register_link_login)
     TextView tvLoginLink;
-    @Bind(R.id.civ_activity_register_avatar)
+    @BindView(R.id.civ_activity_register_avatar)
     CircleImageView civAvatar;
 
     private String mVehicle;
@@ -102,21 +102,24 @@ public class RegisterActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_GALLERY_IMAGE) {
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                if (selectedImage != null) {
+                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                cursor.moveToFirst();
+                    Cursor cursor = getContentResolver().query(selectedImage,
+                            filePathColumn, null, null, null);
+                    cursor.moveToFirst();
 
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
 
-                civAvatar.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                    civAvatar.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                }
+
             }
         }
 
-            super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -178,7 +181,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     /**
      * Check inform is valid or invalid, not complete yet
-     * @return
+     * @return isValid
      */
     public boolean validate() {
         boolean valid = true;
