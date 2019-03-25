@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class Traffic {
     private Location latLon;
+    private String timeStamp;
     private String date;
     private String transport;
     private double speed;
@@ -17,13 +18,21 @@ public class Traffic {
         return latLon;
     }
 
-    public void setTimeStamp(String date){
-        this.date = date;
+    public double getLat(){ return latLon.getLatitude(); }
+
+    public double getLon(){ return latLon.getLongitude(); }
+
+    public void setTimeStamp(String timeStamp){
+        this.timeStamp = timeStamp;
     }
 
     public String getTimeStamp(){
-        return date;
+        return timeStamp;
     }
+
+    public void setDate(String date) { this.date = date;}
+
+    public String getDate(){ return date; }
 
     public void setTransport(String transport){
         this.transport = transport;
