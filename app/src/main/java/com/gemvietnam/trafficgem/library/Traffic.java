@@ -22,7 +22,7 @@ public class Traffic {
 
     public double getLon(){ return latLon.getLongitude(); }
 
-    public void setTimeStamp(String date){
+    public void setTimeStamp(String timeStamp){
         this.timeStamp = timeStamp;
     }
 
