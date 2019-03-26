@@ -19,8 +19,8 @@ import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.JsonObject;
+import com.gemvietnam.trafficgem.library.Traffic;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
-import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -53,7 +53,7 @@ public class LocationTracker extends Service
 
     // date and time when get location
     private String mDate;
-    private String timeStamp;
+    private String mTimeStamp;
 
     // user's transport
     private String mTransport;
@@ -123,7 +123,8 @@ public class LocationTracker extends Service
     private void doStart() {
         idJson = 0;
         JSONObject jsonObject = new JSONObject();
-        mObject = new JsonObject(jsonObject, idJson);
+        mObject = new JsonObject();
+        mObject.setJsonObject(jsonObject);
         mObject.init();
         mTransport = "car";
         new Thread(new Runnable() {
@@ -149,23 +150,30 @@ public class LocationTracker extends Service
 
                     if (mCurrentLocation != null) {
                         mDate = dateFormat.format(new Date());
-                        timeStamp = timeFormat.format(new Date());
+                        mTimeStamp = timeFormat.format(new Date());
                         mSpeed = (3.6*distanceTo)/5d;
 //                        if (Build.VERSION.SDK_INT >= 26) {
 //                            mSpeed = location.getSpeedAccuracyMetersPerSecond();
 //                        } else {
-//                            mSpeed = location.getSpeed();
+//                            mSpeed = location.getmSpeed();
 //                        }
 
                         //
-                        String tmp = mDate + " " + timeStamp + " " + "Lat " + Double.toString(mCurrentLocation.getLatitude()) +
-                                " Long " + Double.toString(mCurrentLocation.getLongitude()) +
-                                " Speed " + Double.toString(mSpeed);
+                        //String tmp = mDate + " " + mTimeStamp + " " + "Lat " + Double.toString(mCurrentLocation.getLatitude()) +
+                        //        " Long " + Double.toString(mCurrentLocation.getLongitude()) +
+                        //        " Speed " + Double.toString(mSpeed);
                         //
                         //Log.e("TaiPV", tmp);
-                        AppUtils.writeLog(tmp);
+                        //AppUtils.writeLog(tmp);
+                        Traffic traffic = new Traffic(mCurrentLocation, mTimeStamp, mDate, mTransport, mSpeed);
 
-                        mObject.pushData(mObject.DataTraffic(mCurrentLocation, mDate, mTransport, mSpeed));
+                        try {
+                            mObject.pushDataTraffic(traffic);
+                            //Log.i("TaiPV", mObject.exportString());
+                        } catch (Exception e) {
+                            //
+                        }
+
                     }
 
                     temp = mCurrentLocation;
@@ -247,7 +255,7 @@ public class LocationTracker extends Service
     public void onLocationChanged(Location location) {
         if (location != null) {
             mDate = dateFormat.format(new Date());
-            timeStamp = timeFormat.format(new Date());
+            mTimeStamp = timeFormat.format(new Date());
             if (Build.VERSION.SDK_INT >= 26) {
                 mSpeed = location.getSpeedAccuracyMetersPerSecond();
             } else {
@@ -256,7 +264,7 @@ public class LocationTracker extends Service
             mTransport = "car";
 
             //
-            String tmp = mDate + " " + timeStamp + " " + "Lat " + Double.toString(location.getLatitude()) +
+            String tmp = mDate + " " + mTimeStamp + " " + "Lat " + Double.toString(location.getLatitude()) +
                     " Long " + Double.toString(location.getLongitude()) +
                     " Speed " + Float.toString(location.getSpeed());
             //

@@ -5,14 +5,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JsonObject {
-    private JSONObject jsonObject;
-    private JSONArray coordinates = new JSONArray();
-    //    public JsonObject(JSONObject jsonObject){ this.jsonObject = jsonObject;}
-    public void setJsonObject(JSONObject jsonObject){ this.jsonObject = jsonObject;}
+    private JSONObject mObject;
+    private JSONArray mCoordinates = new JSONArray();
+    //    public JsonObject(JSONObject mObject){ this.mObject = mObject;}
+    public void setJsonObject(JSONObject jsonObject){ this.mObject = jsonObject;}
 
     public void init(){
         try {
-            jsonObject.put("coordinates", coordinates);
+            mObject.put("mCoordinates", mCoordinates);
         }   catch (JSONException e){
             e.printStackTrace();
         }
@@ -26,8 +26,8 @@ public class JsonObject {
         entry.put("date", traffic.getDate());
         entry.put("transport", traffic.getTransport());
         entry.put("speed", traffic.getSpeed());
-        coordinates.put(entry);
+        mCoordinates.put(entry);
     }
 
-    public String exportString() {  return jsonObject.toString();}
+    public String exportString() { return mObject.toString();}
 }
