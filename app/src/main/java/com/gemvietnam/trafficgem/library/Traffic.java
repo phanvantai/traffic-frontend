@@ -8,13 +8,15 @@ public class Traffic {
     private String mDate;
     private String mTransport;
     private double mSpeed;
+    private String mDirection;
 
-    public Traffic(Location location, String timeStamp, String date, String transport, double speed) {
+    public Traffic(Location location, String timeStamp, String date, String transport, double speed, String direction) {
         mLocation = location;
         mTimeStamp = timeStamp;
         mDate = date;
         mTransport = transport;
         mSpeed = speed;
+        mDirection = direction;
     }
     public void setLocation(Location location){
         mLocation = location;
@@ -55,4 +57,8 @@ public class Traffic {
     public double getSpeed(){
         return mSpeed;
     }
+
+    public void setDirection(String direction){ mDirection = direction; }
+
+    public String getDirection(){ return mDirection; }
 }

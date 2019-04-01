@@ -61,6 +61,8 @@ public class LocationTracker extends Service
     // user's speed
     private double mSpeed;
 
+    // user's direction
+    private String mDirection;
     // API and LocationRequest with time update request
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
@@ -144,6 +146,7 @@ public class LocationTracker extends Service
 
                     if (temp == null) {
                         distanceTo = 0;
+                        temp = mCurrentLocation;    // avoid errors direction
                     } else {
                         distanceTo = mCurrentLocation.distanceTo(temp);
                     }
@@ -152,6 +155,7 @@ public class LocationTracker extends Service
                         mDate = dateFormat.format(new Date());
                         mTimeStamp = timeFormat.format(new Date());
                         mSpeed = (3.6*distanceTo)/5d;
+                        mDirection = getDirection(temp, mCurrentLocation);
 //                        if (Build.VERSION.SDK_INT >= 26) {
 //                            mSpeed = location.getSpeedAccuracyMetersPerSecond();
 //                        } else {
@@ -165,7 +169,7 @@ public class LocationTracker extends Service
                         //
                         //Log.e("TaiPV", tmp);
                         //AppUtils.writeLog(tmp);
-                        Traffic traffic = new Traffic(mCurrentLocation, mTimeStamp, mDate, mTransport, mSpeed);
+                        Traffic traffic = new Traffic(mCurrentLocation, mTimeStamp, mDate, mTransport, mSpeed, mDirection);
 
                         try {
                             mObject.pushDataTraffic(traffic);
@@ -187,6 +191,43 @@ public class LocationTracker extends Service
                 }
             }
         }).start();
+    }
+
+    // orientation based on 2 position
+    private String getDirection(Location loc1, Location loc2){
+        Directions direction = null;
+        final double Cos45 = 1/Math.sqrt(2d);
+        final double Cos45d2 = Math.sqrt((Cos45 + 1d)/2d);
+        final double Sin45d2 = Math.sqrt(1-Cos45d2*Cos45d2);
+        double X,Y;
+        X = loc2.getLatitude() - loc1.getLatitude();
+        Y = loc2.getLongitude() - loc2.getLongitude();
+        double denta = Math.sqrt(X*X + Y*Y);
+        double CosToOx, CosToOy;
+        CosToOx = X/denta;
+        CosToOy = Y/denta;
+
+        if(CosToOy >= 0){
+            if(CosToOx >= 0){
+                if(CosToOx >= Cos45d2)  return direction.East;
+                else if(CosToOx <= Sin45d2) return direction.North;
+                else return direction.NorthEast;
+            }   else {
+                if(CosToOx <= -Cos45d2)   return direction.West;
+                else if(CosToOx >= -Sin45d2) return direction.North;
+                else return direction.NorthWest;
+            }
+        }   else {
+            if(CosToOx >= 0){
+                if(CosToOx >= Cos45d2)  return direction.East;
+                else if(CosToOx <= Sin45d2) return direction.South;
+                else return direction.SouthEast;
+            }   else {
+                if(CosToOx <= -Cos45d2) return direction.West;
+                else if(CosToOx >= -Sin45d2) return direction.South;
+                else return direction.SouthWest;
+            }
+        }
     }
 
     /**
