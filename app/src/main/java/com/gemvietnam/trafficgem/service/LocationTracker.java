@@ -21,6 +21,7 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.JsonObject;
 import com.gemvietnam.trafficgem.library.Traffic;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
+import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -30,6 +31,7 @@ import com.google.android.gms.location.LocationServices;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static com.gemvietnam.trafficgem.utils.AppUtils.ONGOING_NOTIFICATION_ID;
 import static com.gemvietnam.trafficgem.utils.AppUtils.START_SERVICE;
@@ -162,13 +164,12 @@ public class LocationTracker extends Service
 //                            mSpeed = location.getmSpeed();
 //                        }
 
-                        //
-                        //String tmp = mDate + " " + mTimeStamp + " " + "Lat " + Double.toString(mCurrentLocation.getLatitude()) +
-                        //        " Long " + Double.toString(mCurrentLocation.getLongitude()) +
-                        //        " Speed " + Double.toString(mSpeed);
-                        //
-                        //Log.e("TaiPV", tmp);
-                        //AppUtils.writeLog(tmp);
+                        String tmp = mDate + " " + mTimeStamp + " " + "Lat " + Double.toString(mCurrentLocation.getLatitude()) +
+                                " Long " + Double.toString(mCurrentLocation.getLongitude()) +
+                                " Speed " + Double.toString(mSpeed)+ " Direction "+mDirection;
+
+                        Log.e("TaiPV1", tmp);
+                        AppUtils.writeLog(tmp);
                         Traffic traffic = new Traffic(mCurrentLocation, mTimeStamp, mDate, mTransport, mSpeed, mDirection);
 
                         try {
@@ -180,14 +181,15 @@ public class LocationTracker extends Service
 
                     }
 
-                    temp = mCurrentLocation;
 
+                    temp = mCurrentLocation;
                     try {
                         // Sleep 5s
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
                 }
             }
         }).start();
@@ -196,12 +198,12 @@ public class LocationTracker extends Service
     // orientation based on 2 position
     private String getDirection(Location loc1, Location loc2){
         Directions direction = null;
-        final double Cos45 = 1/Math.sqrt(2d);
-        final double Cos45d2 = Math.sqrt((Cos45 + 1d)/2d);
-        final double Sin45d2 = Math.sqrt(1-Cos45d2*Cos45d2);
+        final double Cos45 = 1.0d/Math.sqrt(2.0d);
+        final double Cos45d2 = Math.sqrt((Cos45 + 1.0d)/2.0d);
+        final double Sin45d2 = Math.sqrt(1.0d-Cos45d2*Cos45d2);
         double X,Y;
         X = loc2.getLatitude() - loc1.getLatitude();
-        Y = loc2.getLongitude() - loc2.getLongitude();
+        Y = loc2.getLongitude() - loc1.getLongitude();
         double denta = Math.sqrt(X*X + Y*Y);
         double CosToOx, CosToOy;
         CosToOx = X/denta;
@@ -309,7 +311,7 @@ public class LocationTracker extends Service
                     " Long " + Double.toString(location.getLongitude()) +
                     " Speed " + Float.toString(location.getSpeed());
             //
-            Log.e("TaiPV", tmp);
+//            Log.e("TaiPV", tmp);
             //AppUtils.writeLog(tmp);
             //mObject.pushData(mObject.DataTraffic(mCurrentLocation, mDate, mTransport, mSpeed));
         }
