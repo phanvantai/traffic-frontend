@@ -173,7 +173,7 @@ public class LocationTracker extends Service
 
                         try {
                             mObject.pushDataTraffic(traffic);
-                            //Log.i("TaiPV", mObject.exportString());
+//                            Log.i("TaiPV", mObject.exportString());
                         } catch (Exception e) {
                             //
                         }

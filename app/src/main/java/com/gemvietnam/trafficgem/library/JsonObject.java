@@ -26,6 +26,7 @@ public class JsonObject {
         entry.put("date", traffic.getDate());
         entry.put("transport", traffic.getTransport());
         entry.put("speed", traffic.getSpeed());
+        entry.put("direction", traffic.getDirection());
         mCoordinates.put(entry);
     }
 
