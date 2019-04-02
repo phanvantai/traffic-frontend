@@ -139,8 +139,9 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void onLoginSuccess() {
         bLogin.setEnabled(true);
-        MainActivity.isLoginSuccess = true;
-        finish();
+        Intent intent = new Intent(this, MainActivity.class);
+        //hfhdsfksahf
+        startActivity(intent);
     }
 
     /**

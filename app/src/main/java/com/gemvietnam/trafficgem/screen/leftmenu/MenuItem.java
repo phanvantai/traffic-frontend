@@ -5,10 +5,10 @@ package com.gemvietnam.trafficgem.screen.leftmenu;
  */
 
 public enum MenuItem {
-  YOUR_LOCATION,
-  DIRECTION,
-  NORMAL_SEARCH,
-  ADVANCE_SEARCH,
-  TRAFFIC_STATE,
-  SIGN_OUT;
+    YOUR_LOCATION,
+    DIRECTION,
+    NORMAL_SEARCH,
+    ADVANCE_SEARCH,
+    TRAFFIC_STATE,
+    SIGN_OUT
 }

@@ -25,11 +25,11 @@ public class AppUtils {
 
 
     // Format date and time in JsonObject
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-    public static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
     // cache file name .json
-    private static final String TRAFFIC_LOG_FILE = "traffic_log.txt";
+    public static final String TRAFFIC_LOG_FILE = "traffic.json";
 
     /**
      * Create Notification Chanel

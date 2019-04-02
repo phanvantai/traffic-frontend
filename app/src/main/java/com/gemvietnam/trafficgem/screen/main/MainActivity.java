@@ -33,7 +33,6 @@ public class MainActivity extends ContainerActivity implements
         OnMenuItemClickedListener,
         DrawerLayout.DrawerListener,
         DrawerToggleListener {
-    public static boolean isLoginSuccess = false;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -55,8 +54,6 @@ public class MainActivity extends ContainerActivity implements
         // creat chanel for notification (android O and above)
         AppUtils.createNotificationChanel(this);
 //    super.initLayout();
-
-        //checkLoginStatus();
 
         //checkPermission();
 
@@ -94,16 +91,6 @@ public class MainActivity extends ContainerActivity implements
         }
     }
 
-    public void checkLoginStatus() {
-        if (isLoginSuccess) {
-            // do nothing
-        } else {
-            // open login activity
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
@@ -122,11 +109,9 @@ public class MainActivity extends ContainerActivity implements
 
         // on click sign out
         if (menuItem.equals(MenuItem.SIGN_OUT)) {
-            isLoginSuccess = false;
-            checkLoginStatus();
 //      PrefWrapper.clearUser(this);
 //      ActivityUtils.startActivity(this, LoginActivity.class);
-            //finish();
+            finish();
         } else {
             if (current == menuItem) {
                 mDrawerLayout.closeDrawer(mLeftDrawer);

@@ -24,29 +24,32 @@ import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import static com.gemvietnam.trafficgem.utils.AppUtils.ONGOING_NOTIFICATION_ID;
 import static com.gemvietnam.trafficgem.utils.AppUtils.START_SERVICE;
 import static com.gemvietnam.trafficgem.utils.AppUtils.STOP_SERVICE;
-import static com.gemvietnam.trafficgem.utils.AppUtils.dateFormat;
-import static com.gemvietnam.trafficgem.utils.AppUtils.timeFormat;
+import static com.gemvietnam.trafficgem.utils.AppUtils.DATE_FORMAT;
+import static com.gemvietnam.trafficgem.utils.AppUtils.TIME_FORMAT;
+import static com.gemvietnam.trafficgem.utils.AppUtils.TRAFFIC_LOG_FILE;
 
 /**
  * Created by TaiPV on 25/03/2019
  * Service collect location data
  */
-public class LocationTracker extends Service
-        implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+public class LocationTracker extends Service {
 
     private Context mContext;
 
@@ -66,8 +69,9 @@ public class LocationTracker extends Service
     // user's direction
     private String mDirection;
     // API and LocationRequest with time update request
-    private GoogleApiClient mGoogleApiClient;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest;
+    private LocationCallback mLocationCallback;
     private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
 
     // JsonObject to write to cache file
@@ -85,12 +89,32 @@ public class LocationTracker extends Service
     public void onCreate() {
         mContext = getApplicationContext();
 
-        // we build google api client
-        mGoogleApiClient = new GoogleApiClient.Builder(this).
-                addApi(LocationServices.API).
-                addConnectionCallbacks(this).
-                addOnConnectionFailedListener(this).build();
+        initFusedProvider();
+
         super.onCreate();
+    }
+
+    private void initFusedProvider() {
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL);
+
+        mLocationCallback = new LocationCallback();
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
     }
 
     /**
@@ -103,9 +127,6 @@ public class LocationTracker extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
         String action = intent.getAction();
         if (action.equals(START_SERVICE)) {
             startInForeground(this);
@@ -125,18 +146,27 @@ public class LocationTracker extends Service
      * @param //add later (id, transport, ...)
      */
     private void doStart() {
-        idJson = 0;
-        JSONObject jsonObject = new JSONObject();
-        mObject = new JsonObject();
-        mObject.setJsonObject(jsonObject);
-        mObject.init();
-        mTransport = "car";
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Location temp = null;
                 float distanceTo;
+                int count = 0;
+                idJson = 0;
+                JSONObject jsonObject = new JSONObject();
+                mObject = new JsonObject();
+                mObject.setJsonObject(jsonObject);
+                mObject.init();
+                mTransport = "car";
                 while (true) {
+                    if (count == 60) {
+                        getTempFileAndSend();
+                        count = 0;
+                        mObject = new JsonObject();
+                        mObject.setJsonObject(jsonObject);
+                        mObject.init();
+                        mTransport = "car";
+                    }
                     if (ActivityCompat.checkSelfPermission(mContext,
                             Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                             &&  ActivityCompat.checkSelfPermission(mContext,
@@ -144,7 +174,18 @@ public class LocationTracker extends Service
                         return;
                     }
                     // Permissions ok, we get last location
-                    mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    mFusedLocationProviderClient.getLastLocation()
+                            .addOnSuccessListener(new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations this can be null.
+                                    if (location != null) {
+                                        // Logic to handle location object
+                                        mCurrentLocation = location;
+                                    }
+                                }
+                            });
+
 
                     if (temp == null) {
                         distanceTo = 0;
@@ -154,22 +195,17 @@ public class LocationTracker extends Service
                     }
 
                     if (mCurrentLocation != null) {
-                        mDate = dateFormat.format(new Date());
-                        mTimeStamp = timeFormat.format(new Date());
+                        mDate = DATE_FORMAT.format(new Date());
+                        mTimeStamp = TIME_FORMAT.format(new Date());
                         mSpeed = (3.6*distanceTo)/5d;
                         mDirection = getDirection(temp, mCurrentLocation);
-//                        if (Build.VERSION.SDK_INT >= 26) {
-//                            mSpeed = location.getSpeedAccuracyMetersPerSecond();
-//                        } else {
-//                            mSpeed = location.getmSpeed();
-//                        }
 
-                        String tmp = mDate + " " + mTimeStamp + " " + "Lat " + Double.toString(mCurrentLocation.getLatitude()) +
-                                " Long " + Double.toString(mCurrentLocation.getLongitude()) +
-                                " Speed " + Double.toString(mSpeed)+ " Direction "+mDirection;
+                        String tmp = mDate + " " + mTimeStamp + " " + "Lat " + mCurrentLocation.getLatitude() +
+                                " Long " + mCurrentLocation.getLongitude() +
+                                " Speed " + mSpeed+ " Direction "+mDirection;
 
-                        Log.e("TaiPV1", tmp);
-                        AppUtils.writeLog(tmp);
+                        Log.e("TaiPV", tmp);
+                        //AppUtils.writeLog(tmp);
                         Traffic traffic = new Traffic(mCurrentLocation, mTimeStamp, mDate, mTransport, mSpeed, mDirection);
 
                         try {
@@ -180,8 +216,7 @@ public class LocationTracker extends Service
                         }
 
                     }
-
-
+                    count++;
                     temp = mCurrentLocation;
                     try {
                         // Sleep 5s
@@ -195,6 +230,26 @@ public class LocationTracker extends Service
         }).start();
     }
 
+    private void getTempFileAndSend() {
+        File file;
+        if (TRAFFIC_LOG_FILE.isEmpty()) {
+            file = new File(getApplicationContext().getCacheDir(), TRAFFIC_LOG_FILE);
+        } else {
+            file = getDir(TRAFFIC_LOG_FILE, MODE_PRIVATE);
+        }
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = openFileOutput(TRAFFIC_LOG_FILE, Context.MODE_PRIVATE);
+            fileOutputStream.write(mObject.exportString().getBytes());
+            fileOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // send file here
+        //
+    }
+
     // orientation based on 2 position
     private String getDirection(Location loc1, Location loc2){
         Directions direction = null;
@@ -204,7 +259,9 @@ public class LocationTracker extends Service
         double X,Y;
         X = loc2.getLatitude() - loc1.getLatitude();
         Y = loc2.getLongitude() - loc1.getLongitude();
+
         double denta = Math.sqrt(X*X + Y*Y);
+        //if(denta == 0)  return
         double CosToOx, CosToOy;
         CosToOx = X/denta;
         CosToOy = Y/denta;
@@ -249,71 +306,6 @@ public class LocationTracker extends Service
                     .setContentIntent(pendingIntent)
                     .build();
             startForeground(ONGOING_NOTIFICATION_ID, notification);
-        }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                &&  ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        // Permissions ok, we get last location
-        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        startLocationUpdates();
-    }
-
-    /**
-     * Create Location update request
-     */
-    private void startLocationUpdates() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                &&  ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "You need to enable permissions to display location !", Toast.LENGTH_SHORT).show();
-        }
-
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if (location != null) {
-            mDate = dateFormat.format(new Date());
-            mTimeStamp = timeFormat.format(new Date());
-            if (Build.VERSION.SDK_INT >= 26) {
-                mSpeed = location.getSpeedAccuracyMetersPerSecond();
-            } else {
-                mSpeed = location.getSpeed();
-            }
-            mTransport = "car";
-
-            //
-            String tmp = mDate + " " + mTimeStamp + " " + "Lat " + Double.toString(location.getLatitude()) +
-                    " Long " + Double.toString(location.getLongitude()) +
-                    " Speed " + Float.toString(location.getSpeed());
-            //
-//            Log.e("TaiPV", tmp);
-            //AppUtils.writeLog(tmp);
-            //mObject.pushData(mObject.DataTraffic(mCurrentLocation, mDate, mTransport, mSpeed));
         }
     }
 }
