@@ -3,6 +3,7 @@ package com.gemvietnam.trafficgem.service;
 import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -33,10 +34,19 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONObject;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import static com.gemvietnam.trafficgem.utils.AppUtils.ONGOING_NOTIFICATION_ID;
 import static com.gemvietnam.trafficgem.utils.AppUtils.START_SERVICE;
@@ -50,7 +60,12 @@ import static com.gemvietnam.trafficgem.utils.AppUtils.TRAFFIC_LOG_FILE;
  * Service collect location data
  */
 public class LocationTracker extends Service {
+//  start
 
+    private ProgressDialog dialog = null;
+//    private Image
+
+    //end
     private Context mContext;
 
     // location, update each 5s
@@ -160,7 +175,7 @@ public class LocationTracker extends Service {
                 mTransport = "car";
                 while (true) {
                     if (count == 60) {
-                        getTempFileAndSend();
+//                        getTempFileAndSend();
                         count = 0;
                         mObject = new JsonObject();
                         mObject.setJsonObject(jsonObject);
@@ -230,25 +245,7 @@ public class LocationTracker extends Service {
         }).start();
     }
 
-    private void getTempFileAndSend() {
-        File file;
-        if (TRAFFIC_LOG_FILE.isEmpty()) {
-            file = new File(getApplicationContext().getCacheDir(), TRAFFIC_LOG_FILE);
-        } else {
-            file = getDir(TRAFFIC_LOG_FILE, MODE_PRIVATE);
-        }
-        FileOutputStream fileOutputStream;
-        try {
-            fileOutputStream = openFileOutput(TRAFFIC_LOG_FILE, Context.MODE_PRIVATE);
-            fileOutputStream.write(mObject.exportString().getBytes());
-            fileOutputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        // send file here
-        //
-    }
 
     // orientation based on 2 position
     private String getDirection(Location loc1, Location loc2){
@@ -288,6 +285,8 @@ public class LocationTracker extends Service {
             }
         }
     }
+
+
 
     /**
      * startForeground with android O and above
