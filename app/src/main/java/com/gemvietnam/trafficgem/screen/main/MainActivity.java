@@ -2,10 +2,11 @@ package com.gemvietnam.trafficgem.screen.main;
 
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -16,9 +17,23 @@ import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuPresenter;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
 import com.gemvietnam.trafficgem.service.LocationTracker;
-import com.gemvietnam.trafficgem.user.LoginActivity;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.ViewUtils;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 
@@ -166,5 +181,31 @@ public class MainActivity extends ContainerActivity implements
         stopIntent.setAction(STOP_SERVICE);
         startService(stopIntent);
         super.onDestroy();
+    }
+
+    public void sendReport(String myurl, int idMsg, Location location, String picturePath, Date date){
+        DefaultHttpClient localDefaultHttpClient = new DefaultHttpClient();
+        FileBody localFileBody = new FileBody(new File(picturePath));
+        HttpPost localHttpPost = new HttpPost(myurl);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        MultipartEntity localMultiPartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+        try {
+            localMultiPartEntity.addPart("ID", new StringBody(Integer.toString(idMsg)));
+            localMultiPartEntity.addPart("Latitude", new StringBody(Double.toString(location.getLatitude())));
+            localMultiPartEntity.addPart("Longitude", new StringBody(Double.toString(location.getLongitude())));
+            File file = new File(picturePath);
+            localMultiPartEntity.addPart("Picture", new FileBody(file));
+            localMultiPartEntity.addPart("Date", new StringBody(dateFormat.format(date)));
+
+        localHttpPost.setEntity(localMultiPartEntity);
+        HttpResponse response = localDefaultHttpClient.execute(localHttpPost);
+        System.out.println("response code "+response.getStatusLine());
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            Log.d("Exception", e.toString());
+        }
     }
 }

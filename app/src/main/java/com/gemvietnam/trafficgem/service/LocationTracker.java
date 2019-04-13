@@ -10,56 +10,45 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.JsonObject;
 import com.gemvietnam.trafficgem.library.Traffic;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
-import com.gemvietnam.trafficgem.utils.AppUtils;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HttpsURLConnection;
-
+import static com.gemvietnam.trafficgem.utils.AppUtils.DATE_FORMAT;
 import static com.gemvietnam.trafficgem.utils.AppUtils.ONGOING_NOTIFICATION_ID;
 import static com.gemvietnam.trafficgem.utils.AppUtils.START_SERVICE;
 import static com.gemvietnam.trafficgem.utils.AppUtils.STOP_SERVICE;
-import static com.gemvietnam.trafficgem.utils.AppUtils.DATE_FORMAT;
 import static com.gemvietnam.trafficgem.utils.AppUtils.TIME_FORMAT;
-import static com.gemvietnam.trafficgem.utils.AppUtils.TRAFFIC_LOG_FILE;
 
 /**
  * Created by TaiPV on 25/03/2019
  * Service collect location data
  */
 public class LocationTracker extends Service {
+    private String myurl = "";      // edit link
 //  start
 
     private ProgressDialog dialog = null;
@@ -165,7 +154,9 @@ public class LocationTracker extends Service {
             @Override
             public void run() {
                 Location temp = null;
+                String token = "token";     // edit token
                 float distanceTo;
+                String picturePath = "";
                 int count = 0;
                 idJson = 0;
                 JSONObject jsonObject = new JSONObject();
@@ -176,6 +167,9 @@ public class LocationTracker extends Service {
                 while (true) {
                     if (count == 60) {
 //                        getTempFileAndSend();
+                        SendMode sendMode = new SendMode(myurl);
+                        sendMode.init();
+                        sendMode.sendDataTraffic(token, mObject.toString());
                         count = 0;
                         mObject = new JsonObject();
                         mObject.setJsonObject(jsonObject);
@@ -244,8 +238,6 @@ public class LocationTracker extends Service {
             }
         }).start();
     }
-
-
 
     // orientation based on 2 position
     private String getDirection(Location loc1, Location loc2){

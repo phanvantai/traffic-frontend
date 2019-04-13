@@ -8,6 +8,7 @@ import java.util.Date;
 public class User {
     private String Email;
     private String Name;
+    private String Password;
     private String Vehicle;
     private String Avatar;
     private Date sessionExpiryDate;
@@ -26,6 +27,10 @@ public class User {
     public void setName(String _name){ Name = _name; }
 
     public String getName(){ return Name; }
+
+    public void setPassword(String _pass){ this.Password = _pass;}
+
+    public String getPassword(){ return Password; }
 
     public void setVehicle(String _vehicle){ Vehicle = _vehicle; }
 
