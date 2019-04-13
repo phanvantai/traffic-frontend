@@ -28,7 +28,7 @@ public class SendMode implements ISendMode {
         this._url = _url;
     }
 
-    public void init(){
+    public void init(){ // init connect
         try {
             URL url = new URL(_url);
             conn = (HttpsURLConnection) url.openConnection();
@@ -60,7 +60,7 @@ public class SendMode implements ISendMode {
     }
 
     @Override
-    public void sendMessage(String token, Message message) {
+    public void sendMessage(String token, Message message) {    // send report from user
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1024*1024;
@@ -129,9 +129,9 @@ public class SendMode implements ISendMode {
     }
 
     @Override
-    public void sendDataTraffic(String token, String data) {
+    public void sendDataTraffic(String token, String data) {    // data: convert from json object to string format json
 
-        try {conn.setFixedLengthStreamingMode(data.getBytes().length);
+        try {
             conn.setRequestProperty("auth", token);
             conn.connect();
             dos = new DataOutputStream(conn.getOutputStream());
@@ -143,7 +143,7 @@ public class SendMode implements ISendMode {
 
 
     public String getResponse(){
-        String serverResponseMessage = null;
+        String serverResponseMessage = "";
         int serverResponseCode;
         try {
             serverResponseCode = conn.getResponseCode();
