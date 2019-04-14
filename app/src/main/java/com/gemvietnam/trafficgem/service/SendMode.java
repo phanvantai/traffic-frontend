@@ -40,7 +40,7 @@ public class SendMode implements ISendMode {
             conn.setConnectTimeout(15000);
             conn.setDoInput(true);
             conn.setDoOutput(true);
-            conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+//            conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
             conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -53,7 +53,7 @@ public class SendMode implements ISendMode {
     public void sendCredential(Credential credential){
         init();
         try {
-            conn.setRequestProperty("credential", "credential");
+            conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestMethod("POST");
             conn.connect();
             dos = new DataOutputStream(conn.getOutputStream());
@@ -71,7 +71,7 @@ public class SendMode implements ISendMode {
         byte[] buffer;
         int maxBufferSize = 1024*1024;
         try {
-            conn.setRequestProperty("message", "message");
+            conn.setRequestProperty("Content-Type", "multipart/form-data");
             conn.setRequestProperty("auth", token);
             conn.setRequestMethod("POST");
             conn.connect();
@@ -112,7 +112,7 @@ public class SendMode implements ISendMode {
         byte[] buffer;
         int maxBufferSize = 1024*1024;
         try {
-            conn.setRequestProperty("registration", "registration");
+            conn.setRequestProperty("Content-Type", "multipart/form-data");
             conn.setRequestMethod("POST");      //
             conn.connect();     // start connect
 
@@ -148,7 +148,7 @@ public class SendMode implements ISendMode {
     public void sendDataTraffic(String token, String data) {    // data: convert from json object to string format json
         init();
         try {
-            conn.setRequestProperty("data-traffic", "data-traffic");
+            conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestProperty("auth", token);
             conn.setRequestMethod("POST");
             conn.connect();
@@ -167,7 +167,7 @@ public class SendMode implements ISendMode {
         byte[] buffer;
         int maxBufferSize = 1024*1024;
         try {
-            conn.setRequestProperty("update-profile", "update-profile");
+            conn.setRequestProperty("Content-Type", "multipart/form-data");
             conn.setRequestProperty("auth", token);
             conn.setRequestMethod("PUT");   // set method
             conn.connect();
@@ -204,7 +204,7 @@ public class SendMode implements ISendMode {
     public void changePassword(String token,String oldPassword, String newpassword){
         init();
         try {
-            conn.setRequestProperty("change-password", "change-password");
+            conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestProperty("auth", token);
             conn.setRequestMethod("PUT");
             conn.connect();
