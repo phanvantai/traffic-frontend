@@ -12,4 +12,8 @@ public interface ISendMode {
     public void sendRegistrationInfo(User user);
 
     public void sendDataTraffic(String token, String data);
+
+    public void updateProfile(String token, User user);
+
+    public void changePassword(String token,String oldPassword, String newpassword);
 }
