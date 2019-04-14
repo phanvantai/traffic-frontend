@@ -168,7 +168,6 @@ public class LocationTracker extends Service {
                     if (count == 60) {
 //                        getTempFileAndSend();
                         SendMode sendMode = new SendMode(myurl);
-                        sendMode.init();            // init connect
                         sendMode.sendDataTraffic(token, mObject.toString());    // send data traffic
                         count = 0;
                         mObject = new JsonObject();

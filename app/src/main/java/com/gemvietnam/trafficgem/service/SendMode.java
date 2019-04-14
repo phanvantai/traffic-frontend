@@ -49,6 +49,7 @@ public class SendMode implements ISendMode {
 
     @Override
     public void sendCredential(Credential credential){
+        init();
         try {
             conn.connect();
             dos = new DataOutputStream(conn.getOutputStream());
@@ -61,6 +62,7 @@ public class SendMode implements ISendMode {
 
     @Override
     public void sendMessage(String token, Message message) {    // send report from user
+        init();
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1024*1024;
@@ -97,6 +99,7 @@ public class SendMode implements ISendMode {
 
     @Override
     public void sendRegistrationInfo(User user) {
+        init();
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1024*1024;
@@ -130,7 +133,7 @@ public class SendMode implements ISendMode {
 
     @Override
     public void sendDataTraffic(String token, String data) {    // data: convert from json object to string format json
-
+        init();
         try {
             conn.setRequestProperty("auth", token);
             conn.connect();
