@@ -53,7 +53,7 @@ public class SendMode implements ISendMode {
     public void sendCredential(Credential credential){
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain");
+            conn.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
             conn.setRequestMethod("POST");
             conn.connect();
             dos = new DataOutputStream(conn.getOutputStream());
@@ -72,7 +72,7 @@ public class SendMode implements ISendMode {
         int maxBufferSize = 1024*1024;
         try {
             conn.setRequestProperty("Content-Type", "multipart/form-data");
-            conn.setRequestProperty("auth", token);
+            conn.setRequestProperty("Authorization", token);
             conn.setRequestMethod("POST");
             conn.connect();
             dos = new DataOutputStream(conn.getOutputStream());
@@ -148,8 +148,8 @@ public class SendMode implements ISendMode {
     public void sendDataTraffic(String token, String data) {    // data: convert from json object to string format json
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("auth", token);
+            conn.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+            conn.setRequestProperty("Authorization", token);
             conn.setRequestMethod("POST");
             conn.connect();
 
@@ -168,7 +168,7 @@ public class SendMode implements ISendMode {
         int maxBufferSize = 1024*1024;
         try {
             conn.setRequestProperty("Content-Type", "multipart/form-data");
-            conn.setRequestProperty("auth", token);
+            conn.setRequestProperty("Authorization", token);
             conn.setRequestMethod("PUT");   // set method
             conn.connect();
             dos = new DataOutputStream(conn.getOutputStream());
@@ -204,8 +204,8 @@ public class SendMode implements ISendMode {
     public void changePassword(String token,String oldPassword, String newpassword){
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("auth", token);
+            conn.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+            conn.setRequestProperty("Authorization", token);
             conn.setRequestMethod("PUT");
             conn.connect();
 
