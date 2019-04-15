@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import com.gemvietnam.base.ContainerActivity;
 import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
+import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuPresenter;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
@@ -66,11 +67,12 @@ public class MainActivity extends ContainerActivity implements
     @Override
     public void initLayout() {
 
-        // creat chanel for notification (android O and above)
+        // get intent from login activity
+        //Intent intent = getIntent();
+        //User user = (User) intent.getSerializableExtra("user");
+        // create chanel for notification (android O and above)
         AppUtils.createNotificationChanel(this);
 //    super.initLayout();
-
-        //checkPermission();
 
         // start location tracking when start app
         startLocationTracker();
@@ -127,6 +129,8 @@ public class MainActivity extends ContainerActivity implements
 //      PrefWrapper.clearUser(this);
 //      ActivityUtils.startActivity(this, LoginActivity.class);
             finish();
+        } else if (menuItem.equals(MenuItem.VIEW_EVENT)) {
+            AppUtils.createDialog(this);
         } else {
             if (current == menuItem) {
                 mDrawerLayout.closeDrawer(mLeftDrawer);
@@ -181,31 +185,5 @@ public class MainActivity extends ContainerActivity implements
         stopIntent.setAction(STOP_SERVICE);
         startService(stopIntent);
         super.onDestroy();
-    }
-
-    public void sendReport(String myurl, int idMsg, Location location, String picturePath, Date date){
-        DefaultHttpClient localDefaultHttpClient = new DefaultHttpClient();
-        FileBody localFileBody = new FileBody(new File(picturePath));
-        HttpPost localHttpPost = new HttpPost(myurl);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        MultipartEntity localMultiPartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-        try {
-            localMultiPartEntity.addPart("ID", new StringBody(Integer.toString(idMsg)));
-            localMultiPartEntity.addPart("Latitude", new StringBody(Double.toString(location.getLatitude())));
-            localMultiPartEntity.addPart("Longitude", new StringBody(Double.toString(location.getLongitude())));
-            File file = new File(picturePath);
-            localMultiPartEntity.addPart("Picture", new FileBody(file));
-            localMultiPartEntity.addPart("Date", new StringBody(dateFormat.format(date)));
-
-        localHttpPost.setEntity(localMultiPartEntity);
-        HttpResponse response = localDefaultHttpClient.execute(localHttpPost);
-        System.out.println("response code "+response.getStatusLine());
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (Exception e){
-            Log.d("Exception", e.toString());
-        }
     }
 }

@@ -3,10 +3,9 @@
     android:background="@color/bg_menu"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="280dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/bg_menu"
         android:clickable="true"
         android:orientation="vertical">
@@ -57,21 +56,22 @@
             android:drawablePadding="@dimen/large_padding"
             android:text="@string/your_location"/>
 
+        <TextView
+            android:id="@+id/menu_direction_tv"
+            style="@style/MenuText"
+            android:layout_width="wrap_content"
+            android:drawableLeft="@drawable/ic_direction_white"
+            android:drawablePadding="@dimen/large_padding"
+            android:text="@string/waypoints"
+            android:textStyle="bold"/>
 
-        <LinearLayout
+        <!--<LinearLayout
             android:id="@+id/menu_quan_ly_so_lieu_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/menu_direction_tv"
-                style="@style/MenuText"
-                android:layout_width="wrap_content"
-                android:drawableLeft="@drawable/ic_direction_white"
-                android:drawablePadding="@dimen/large_padding"
-                android:text="@string/waypoints"
-                android:textStyle="bold"/>
+
 
             <View
                 android:layout_width="0dp"
@@ -95,7 +95,7 @@
                     android:src="@drawable/ic_plus_white"
                     android:visibility="gone"/>
             </RelativeLayout>
-        </LinearLayout>
+        </LinearLayout>-->
 
 
         <LinearLayout
@@ -127,34 +127,32 @@
             android:drawablePadding="@dimen/large_padding"
             android:text="@string/traffic_state"/>
 
+        <LinearLayout
+            android:id="@+id/ll_fragment_left_menu_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_fragment_left_menu_view_traffic"
+                style="@style/MenuTextSmall"
+                android:layout_marginLeft="70dp"
+                android:text="@string/view_traffic"/>
+
+            <TextView
+                android:id="@+id/tv_fragment_left_menu_view_event"
+                style="@style/MenuTextSmall"
+                android:layout_marginStart="70dp"
+                android:text="@string/view_event"/>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tv_fragment_left_menu_report"
             style="@style/MenuText"
             android:drawableLeft="@drawable/ic_traffic_white"
             android:drawablePadding="@dimen/large_padding"
             android:text="@string/report"/>
-
-        <LinearLayout
-            android:id="@+id/ll_fragment_left_menu_report"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_fragment_left_menu_send"
-                style="@style/MenuTextSmall"
-                android:layout_marginLeft="70dp"
-                android:text="@string/report_send"/>
-
-
-            <TextView
-                android:id="@+id/tv_fragment_left_menu_receive"
-                style="@style/MenuTextSmall"
-                android:layout_marginLeft="70dp"
-                android:text="@string/report_receive"/>
-
-
-        </LinearLayout>
 
         <TextView
             android:id="@+id/menu_signout_tv"

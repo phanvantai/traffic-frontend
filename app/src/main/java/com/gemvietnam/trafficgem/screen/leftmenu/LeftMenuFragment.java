@@ -3,6 +3,7 @@ package com.gemvietnam.trafficgem.screen.leftmenu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.user.ProfileActivity;
+import com.gemvietnam.trafficgem.utils.AppUtils;
+import com.gemvietnam.trafficgem.utils.ReportActivity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +38,10 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     TextView mYourLocationTv;
     @BindView(R.id.menu_direction_tv)
     TextView mDirectionTv;
-    @BindView(R.id.menu_minus_img)
-    ImageView mMinusImg;
-    @BindView(R.id.menu_plus_img)
-    ImageView mPlusImg;
+//    @BindView(R.id.menu_minus_img)
+//    ImageView mMinusImg;
+//    @BindView(R.id.menu_plus_img)
+//    ImageView mPlusImg;
     @BindView(R.id.menu_normal_search_tv)
     TextView mNormalSearchTv;
     @BindView(R.id.menu_advance_search_tv)
@@ -47,12 +50,10 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     TextView mTrafficStateTv;
     @BindView(R.id.tv_fragment_left_menu_report)
     TextView mReport;
-    @BindView(R.id.ll_fragment_left_menu_report)
-    LinearLayout mSendAndReceive;
-    @BindView(R.id.tv_fragment_left_menu_send)
-    TextView mSend;
-    @BindView(R.id.tv_fragment_left_menu_receive)
-    TextView mReceive;
+    @BindView(R.id.tv_fragment_left_menu_view_traffic)
+    TextView mViewTraffic;
+    @BindView(R.id.tv_fragment_left_menu_view_event)
+    TextView mViewEvent;
     @BindView(R.id.menu_signout_tv)
     TextView mSignOutTv;
     @BindView(R.id.menu_expand_ll)
@@ -74,27 +75,24 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        mMinusImg.setVisibility(View.VISIBLE);
-        mPlusImg.setVisibility(View.GONE);
+//        mMinusImg.setVisibility(View.VISIBLE);
+//        mPlusImg.setVisibility(View.GONE);
         mExpandLl.setVisibility(View.VISIBLE);
-        //mSendAndReceive.setVisibility(View.GONE);
         mReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mSendAndReceive.isEnabled()) {
-                    mSendAndReceive.setVisibility(View.GONE);
-                } else {
-                    mSendAndReceive.setVisibility(View.VISIBLE);
-                }
+                Intent intent = new Intent(getActivity(), ReportActivity.class);
+                startActivity(intent);
             }
         });
 
         mProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                AppUtils.createDialog(getActivity());
+                //Intent intent = new Intent(getActivity(), ProfileActivity.class);
                 //abcfhf
-                startActivity(intent);
+                //startActivity(intent);
             }
         });
 
@@ -112,8 +110,11 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
         mNavigationItemMap.put(mDirectionTv, MenuItem.DIRECTION);
         mNavigationItemMap.put(mAdvanceSearchTv, MenuItem.ADVANCE_SEARCH);
         mNavigationItemMap.put(mTrafficStateTv, MenuItem.TRAFFIC_STATE);
+        mNavigationItemMap.put(mViewTraffic, MenuItem.VIEW_STATE);
+        mNavigationItemMap.put(mViewEvent, MenuItem.VIEW_EVENT);
 
         mNavigationItemMap.put(mSignOutTv, MenuItem.SIGN_OUT);
+
         for (final Map.Entry<TextView, MenuItem> entry : mNavigationItemMap.entrySet()) {
             entry.getKey().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -149,6 +150,15 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
                         mDirectionTv.setSelected(false);
                         mDirectionTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_direction_white, 0, 0, 0);
                     }
+
+                    if (entry.getValue() == MenuItem.VIEW_STATE || entry.getValue() == MenuItem.VIEW_EVENT ||
+                            entry.getValue() == MenuItem.TRAFFIC_STATE) {
+                        mTrafficStateTv.setSelected(true);
+                        mTrafficStateTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_traffic_selected, 0, 0, 0);
+                    } else {
+                        mTrafficStateTv.setSelected(false);
+                        mTrafficStateTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_traffic_white, 0, 0, 0);
+                    }
                 }
             });
         }
@@ -157,12 +167,17 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     private void unSelectAll() {
         mYourLocationTv.setSelected(false);
         mYourLocationTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_location_white, 0,0,0);
+
         mDirectionTv.setSelected(false);
         mDirectionTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_direction_white, 0,0,0);
         mNormalSearchTv.setSelected(false);
         mAdvanceSearchTv.setSelected(false);
+
         mTrafficStateTv.setSelected(false);
         mTrafficStateTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_traffic_white, 0, 0,0);
+        mViewTraffic.setSelected(false);
+        mViewEvent.setSelected(false);
+
         mSignOutTv.setSelected(false);
         mSignOutTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_signout_white, 0,0,0);
     }

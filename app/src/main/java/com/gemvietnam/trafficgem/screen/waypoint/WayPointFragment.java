@@ -159,7 +159,7 @@ public class WayPointFragment extends ViewFragment<WayPointContract.Presenter> i
     }
 
 
-    private Location getLastKnownLocation() {
+    public Location getLastKnownLocation() {
         LocationManager mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(getActivity(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED

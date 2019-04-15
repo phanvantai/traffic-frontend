@@ -25,18 +25,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
+import static com.gemvietnam.trafficgem.utils.AppUtils.CHANEL_ID;
 import static com.gemvietnam.trafficgem.utils.AppUtils.DATE_FORMAT;
 import static com.gemvietnam.trafficgem.utils.AppUtils.ONGOING_NOTIFICATION_ID;
 import static com.gemvietnam.trafficgem.utils.AppUtils.START_SERVICE;
@@ -48,7 +41,7 @@ import static com.gemvietnam.trafficgem.utils.AppUtils.TIME_FORMAT;
  * Service collect location data
  */
 public class LocationTracker extends Service {
-    private String myurl = "";      // edit link
+    private String mUrl = "";      // edit link
 //  start
 
     private ProgressDialog dialog = null;
@@ -74,8 +67,6 @@ public class LocationTracker extends Service {
     private String mDirection;
     // API and LocationRequest with time update request
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private LocationRequest mLocationRequest;
-    private LocationCallback mLocationCallback;
     private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
 
     // JsonObject to write to cache file
@@ -101,12 +92,12 @@ public class LocationTracker extends Service {
     private void initFusedProvider() {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        mLocationRequest = LocationRequest.create()
+        LocationRequest mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL)
                 .setFastestInterval(FASTEST_INTERVAL);
 
-        mLocationCallback = new LocationCallback();
+        LocationCallback mLocationCallback = new LocationCallback();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -166,9 +157,12 @@ public class LocationTracker extends Service {
                 mTransport = "car";
                 while (true) {
                     if (count == 60) {
-//                        getTempFileAndSend();
-                        SendMode sendMode = new SendMode(myurl);
-                        sendMode.sendDataTraffic(token, mObject.toString());    // send data traffic
+                        try {
+                            SendMode sendMode = new SendMode(mUrl);
+                            sendMode.sendDataTraffic(token, mObject.toString());    // send data traffic
+                        } catch (Exception e) {
+                            //
+                        }
                         count = 0;
                         mObject = new JsonObject();
                         mObject.setJsonObject(jsonObject);
@@ -289,7 +283,7 @@ public class LocationTracker extends Service {
                 PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
         if (Build.VERSION.SDK_INT >= 26) {
-            Notification notification = new Notification.Builder(context, "TaiPV")
+            Notification notification = new Notification.Builder(context, CHANEL_ID)
                     .setContentTitle("TrafficGEM")
                     .setContentText("Collecting location data..")
                     .setSmallIcon(R.mipmap.ic_launcher)

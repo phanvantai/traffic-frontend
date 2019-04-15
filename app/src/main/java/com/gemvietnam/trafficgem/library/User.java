@@ -3,9 +3,10 @@ package com.gemvietnam.trafficgem.library;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class User {
+public class User implements Serializable {
     private String Email;
     private String Name;
     private String Password;

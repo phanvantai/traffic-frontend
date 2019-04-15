@@ -1,7 +1,11 @@
 package com.gemvietnam.trafficgem.user;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
@@ -13,7 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
+import com.gemvietnam.trafficgem.library.Credential;
+import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
+import com.gemvietnam.trafficgem.service.SendMode;
+import com.gemvietnam.trafficgem.utils.MyToken;
+import com.orhanobut.hawk.Hawk;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,14 +48,28 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.tv_activity_login_link_register)
     TextView tvRegisterLink;
 
+    String mUrlLogin = "";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        Hawk.init(getApplicationContext()).build();
         // hide keyboard
         //ViewUtils.hideKeyBoard(this);
+
+        checkPermissions();
+        checkPermissions1();
+
+        MyToken myToken = MyToken.getInstance();
+        if (myToken.isExpired()) {
+            myToken.removeToken();
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
 
         // set on click login button
         bLogin.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +88,64 @@ public class LoginActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE_REGISTER);
             }
         });
+    }
+
+    private void checkPermissions1() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        60);
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
+
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        61);
+            }
+        }
+    }
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        56);
+            }
+        }
     }
 
     /**
@@ -94,12 +175,25 @@ public class LoginActivity extends AppCompatActivity {
 
         // TODO: Implement your own authentication logic here.
         // do something here, below is test
+        //Credential credential = new Credential(email, password);
+        //SendMode sendMode = new SendMode(mUrlLogin);
+        //sendMode.sendCredential(credential);
+        //sendMode.getResponse();
+        // handler response and add user
+        // string --> User
+        User user = new User();
+        // add to hawk
+        Hawk.put(email, user);
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
                         // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
+                        MyToken myToken = MyToken.getInstance();
+                        myToken.setDate(System.currentTimeMillis());
+                        //myToken.setToken();
+                        // send user's information to main activity
+                        onLoginSuccess(user);
                         // onLoginFailed();
                         progressDialog.dismiss();
                     }
@@ -120,7 +214,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 // TODO: Implement successful register logic here
                 // By default we just finish the Activity and log them in automatically
-                this.finish();
+
+                //this.finish();
             }
         }
     }
@@ -136,10 +231,12 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * do something when login successfully
+     * @param user
      */
-    public void onLoginSuccess() {
+    public void onLoginSuccess(User user) {
         bLogin.setEnabled(true);
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("user", user);
         //hfhdsfksahf
         startActivity(intent);
     }

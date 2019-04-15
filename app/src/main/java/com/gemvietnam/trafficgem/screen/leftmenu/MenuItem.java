@@ -10,5 +10,7 @@ public enum MenuItem {
     NORMAL_SEARCH,
     ADVANCE_SEARCH,
     TRAFFIC_STATE,
+    VIEW_STATE,
+    VIEW_EVENT,
     SIGN_OUT
 }

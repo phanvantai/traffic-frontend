@@ -22,14 +22,29 @@
     <string name="rule_email">Enter a valid email address</string>
     <string name="rule_password">Between 4 and 10 alphanumeric characters</string>
     <string name="rule_repassword">Password does not match!</string>
+    <string name="view_traffic">View Traffic State</string>
+    <string name="view_event">View Traffic Events</string>
+    <string name="sorry_about_somthing">This content is not available right now. We are sorry about that!!!</string>
 
     <string name="vehicle_prompt">Choose your vehicle</string>
+    <string name="report_prompt">Choose traffic event</string>
+    <string name="take_picture">Click below to take a picture</string>
     <string name="avatar_prompt">Choose your avatar</string>
     <string-array name="vehicle_arrays">
         <item>Motorbike</item>
         <item>Bike</item>
         <item>Car</item>
     </string-array>
+
+    <string-array name="report_arrays">
+        <item>Traffic accident</item>
+        <item>Rain</item>
+        <item>Traffic Jam</item>
+        <item>No Traffic Jam</item>
+        <item>Police</item>
+        <item>Construct road</item>
+    </string-array>
+
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"

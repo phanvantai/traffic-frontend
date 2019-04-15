@@ -20,66 +20,70 @@ import java.util.Map;
  */
 
 public class MainNavigator {
-  private static final int FRAME_CONTAINER_ID = R.id.container_frame;
+    private static final int FRAME_CONTAINER_ID = R.id.container_frame;
 
-  private Map<MenuItem, Presenter> mMap = new HashMap<>();
+    private Map<MenuItem, Presenter> mMap = new HashMap<>();
 
-  private MainActivity mMainActivity;
-  private FragmentManager mFragmentManager;
+    private MainActivity mMainActivity;
+    private FragmentManager mFragmentManager;
 
-  public MainNavigator(MainActivity mainActivity) {
-    mMainActivity = mainActivity;
-    mFragmentManager = mMainActivity.getSupportFragmentManager();
-  }
-
-  /**
-   * Show fragment by id in list of this navigator ids
-   */
-  public void showFragment(MenuItem menuItem) {
-    FragmentTransaction transaction = mFragmentManager.beginTransaction();
-
-    transaction.replace(FRAME_CONTAINER_ID, createFragment(menuItem));
-    transaction.commit();
-  }
-
-  /**
-   * Create main fragment
-   */
-  private Fragment createFragment(MenuItem menuItem) {
-    Presenter presenter;
-
-    switch (menuItem) {
-      case YOUR_LOCATION:
-        presenter = new MapPresenter(mMainActivity).
-            setDrawerToggleListener(mMainActivity, Constants.LOCATION);
-        break;
-      case NORMAL_SEARCH:
-        presenter = new WayPointPresenter(mMainActivity)
-            .setDrawerToggleListener(mMainActivity, Constants.NORMAL);
-        break;
-      case ADVANCE_SEARCH:
-        presenter = new WayPointPresenter(mMainActivity).
-            setDrawerToggleListener(mMainActivity, Constants.ADVANCE);
-        break;
-      case TRAFFIC_STATE:
-        presenter = new MapPresenter(mMainActivity).
-            setDrawerToggleListener(mMainActivity, Constants.TRAFFIC);
-        break;
-      case SIGN_OUT:
-        presenter = new MapPresenter(mMainActivity).
-            setDrawerToggleListener(mMainActivity, Constants.SIGNOUT);
-        break;
-      default:
-        presenter = new MapPresenter(mMainActivity).
-            setDrawerToggleListener(mMainActivity, Constants.LOCATION);
-        break;
+    public MainNavigator(MainActivity mainActivity) {
+        mMainActivity = mainActivity;
+        mFragmentManager = mMainActivity.getSupportFragmentManager();
     }
 
-    mMap.put(menuItem, presenter);
-    return presenter.getFragment();
-  }
+    /**
+     * Show fragment by id in list of this navigator ids
+     */
+    public void showFragment(MenuItem menuItem) {
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
 
-  public Presenter getPresenter(MenuItem menuItem) {
-    return mMap.get(menuItem);
-  }
+        transaction.replace(FRAME_CONTAINER_ID, createFragment(menuItem));
+        transaction.commit();
+    }
+
+    /**
+     * Create main fragment
+     */
+    private Fragment createFragment(MenuItem menuItem) {
+        Presenter presenter;
+
+        switch (menuItem) {
+            case YOUR_LOCATION:
+                presenter = new MapPresenter(mMainActivity).
+                        setDrawerToggleListener(mMainActivity, Constants.LOCATION);
+                break;
+            case NORMAL_SEARCH:
+                presenter = new WayPointPresenter(mMainActivity)
+                        .setDrawerToggleListener(mMainActivity, Constants.NORMAL);
+                break;
+            case ADVANCE_SEARCH:
+                presenter = new WayPointPresenter(mMainActivity).
+                        setDrawerToggleListener(mMainActivity, Constants.ADVANCE);
+                break;
+            case TRAFFIC_STATE:
+                presenter = new MapPresenter(mMainActivity).
+                        setDrawerToggleListener(mMainActivity, Constants.TRAFFIC);
+                break;
+            case VIEW_STATE:
+                presenter = new MapPresenter(mMainActivity).
+                        setDrawerToggleListener(mMainActivity, Constants.TRAFFIC);
+                break;
+            case SIGN_OUT:
+                presenter = new MapPresenter(mMainActivity).
+                        setDrawerToggleListener(mMainActivity, Constants.SIGNOUT);
+                break;
+            default:
+                presenter = new MapPresenter(mMainActivity).
+                        setDrawerToggleListener(mMainActivity, Constants.LOCATION);
+                break;
+        }
+
+        mMap.put(menuItem, presenter);
+        return presenter.getFragment();
+    }
+
+    public Presenter getPresenter(MenuItem menuItem) {
+        return mMap.get(menuItem);
+    }
 }

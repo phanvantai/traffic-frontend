@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="24dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:text="@string/report_prompt"
+        android:textSize="18sp"/>
+
+    <Spinner
+        android:id="@+id/s_activity_report_list"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:entries="@array/report_arrays"
+        android:prompt="@string/report_prompt"></Spinner>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:textSize="18sp"
+        android:text="@string/take_picture"/>
+
+    <ImageView
+        android:id="@+id/iv_activity_report_take_picture"
+        app:srcCompat="@drawable/ic_action_name"
+        android:layout_gravity="center"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+
+    <ImageView
+        android:id="@+id/iv_activity_report_image_preview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!--style="?android:attr/buttonBarStyle"-->
+        <!--style="?android:attr/buttonBarButtonStyle"-->
+
+        <Button
+            android:id="@+id/b_activity_report_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"/>
+
+        <Button
+            android:id="@+id/b_activity_report_ok"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
