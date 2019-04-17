@@ -393,4 +393,37 @@ public class AppUtils {
 
         return false;
     }
+    
+    /**
+     * View no network alert
+     */
+    public static void showAlertNetwork(final Context activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("TrafficGEM");
+        builder.setMessage("There is no Internet connection. Do you want to set up now?");
+        builder.setPositiveButton("WiFi",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.startActivity(new Intent(
+                                android.provider.Settings.ACTION_WIFI_SETTINGS));
+                    }
+                });
+        builder.setNeutralButton("Mobile Network",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        activity.startActivity(new Intent(
+                                android.provider.Settings.ACTION_WIRELESS_SETTINGS));
+                    }
+                });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                return;
+            }
+        });
+        builder.setNegativeButton("No", null);
+        builder.show();
+    }
 }
