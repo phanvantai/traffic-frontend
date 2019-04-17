@@ -426,4 +426,28 @@ public class AppUtils {
         builder.setNegativeButton("No", null);
         builder.show();
     }
+    
+    public static List<MyCookie> getMyCookieStore(String retStr) {
+        List<MyCookie> ret = new ArrayList<MyCookie>();
+
+        StringTokenizer stok = new StringTokenizer(retStr, "\n");
+        while (stok.hasMoreElements()) {
+            MyCookie t = getMyCookie(stok.nextToken());
+            if (t != null)
+                ret.add(t);
+        }
+        return ret;
+    }
+
+    public static MyCookie getMyCookie(String nextElement) {
+        MyCookie t = null;
+        
+        StringTokenizer stok = new StringTokenizer(nextElement, ":");
+        if (stok.countTokens() != 2)
+            return t;
+        else {
+            t = new MyCookie(stok.nextToken(), stok.nextToken());
+            return t;
+        }
+    }
 }
