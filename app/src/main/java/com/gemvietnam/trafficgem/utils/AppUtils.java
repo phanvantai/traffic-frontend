@@ -239,7 +239,7 @@ public class AppUtils {
     }
     
     /**
-     * Execute https connection
+     * Execute https connection (HttpsURLConnection)
      *
      * @param targetURL     the target url
      * @param urlParameters the url parameters
@@ -317,6 +317,59 @@ public class AppUtils {
             if (connection != null) {
                 connection.disconnect();
             }
+        }
+        return response.toString();
+    }
+    
+    /**
+     * Execute http connection (HttpURLConnection)
+     *
+     * @param targetURL     the target url
+     * @param urlParameters the url parameters
+     * @return the string
+     */
+    public static String executePostHttp(String targetURL, String urlParameters) {
+        URL url;
+        HttpURLConnection connection = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            url = new URL(targetURL);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setFixedLengthStreamingMode(urlParameters.getBytes().length);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Length",
+                    "" + Integer.toString(urlParameters.getBytes().length));
+            connection.setRequestProperty("Content-Language", "en-US");
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setConnectTimeout(60000);
+
+            // Send request
+            OutputStream wr = new BufferedOutputStream(connection.getOutputStream());
+            wr.write(urlParameters.getBytes());
+            wr.flush();
+            wr.close();
+            // Get Response
+            InputStream is = new BufferedInputStream(connection.getInputStream());
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = rd.readLine()) != null) {
+                response.append(line);
+                response.append("\n");
+            }
+            rd.close();
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (connection != null)
+                connection.disconnect();
         }
         return response.toString();
     }
