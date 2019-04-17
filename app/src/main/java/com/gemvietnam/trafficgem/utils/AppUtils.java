@@ -136,4 +136,105 @@ public class AppUtils {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+    
+    /**
+     * Decode sampled bitmap from resource.
+     *
+     * @param res       the res
+     * @param resId     the res id
+     * @param reqWidth  the req width
+     * @param reqHeight the req height
+     * @return the bitmap
+     */
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
+                                                         int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    /**
+     * Calculate in sample size.
+     *
+     * @param options   the options
+     * @param reqWidth  the req width
+     * @param reqHeight the req height
+     * @return the int
+     */
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and
+            // keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+    
+    /**
+     * Md5.
+     *
+     * @param bytes the bytes
+     * @return the string
+     */
+    public static String md5(byte[] bytes) {
+        try {
+            MessageDigest digester = MessageDigest.getInstance("MD5");
+            digester.update(bytes);
+            byte[] digest = digester.digest();
+
+            // Create Hex String
+            StringBuffer hexString = new StringBuffer();
+            for (int i = 0; i < digest.length; i++) {
+                String hex = Integer.toHexString(0xFF & digest[i]);
+                if (hex.length() == 1)
+                    hexString.append('0');
+
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+    
+    /**
+     * Thuc hien viec ma hoa MD5 cua String voi chuoi cho truoc
+     * @param pass
+     * @return
+     */
+    public static String md5Password(String pass) {
+        String tokenCodeMd5 = "";
+        // Check
+        if (!TextUtils.isEmpty(pass)) {
+            // Ca 2 deu rong
+            tokenCodeMd5 = AppUtils.md5(pass.getBytes());
+        }
+
+        return tokenCodeMd5;
+    }
 }
