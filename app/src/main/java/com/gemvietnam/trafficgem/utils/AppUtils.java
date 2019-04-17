@@ -237,4 +237,87 @@ public class AppUtils {
 
         return tokenCodeMd5;
     }
+    
+    /**
+     * Execute https connection
+     *
+     * @param targetURL     the target url
+     * @param urlParameters the url parameters
+     * @return the string returned by server
+     */
+    @SuppressLint("TrulyRandom")
+    public static String executePost(String targetURL, String urlParameters) {
+        URL url;
+        HttpsURLConnection connection = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            url = new URL(targetURL);
+            connection = (HttpsURLConnection) url.openConnection();
+            // Create the SSL connection
+            SSLContext sc;
+            sc = SSLContext.getInstance("TLS");
+            sc.init(null, null, new SecureRandom());
+            connection.setSSLSocketFactory(sc.getSocketFactory());
+            connection.setDoOutput(true);
+            connection.setFixedLengthStreamingMode(urlParameters.getBytes().length);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Language", "en-US");
+            connection.setRequestMethod("POST");
+            connection.setUseCaches(false);
+            connection.setDoInput(true);
+            connection.setConnectTimeout(60000);
+            connection.setReadTimeout(60000);
+
+            // Send request
+            OutputStream wr = new BufferedOutputStream(connection.getOutputStream());
+            wr.write(urlParameters.getBytes());
+            wr.flush();
+            wr.close();
+            // Get Response
+            InputStream is = new BufferedInputStream(connection.getInputStream());
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = rd.readLine()) != null) {
+                response.append(line);
+                response.append("\n");
+            }
+            rd.close();
+        } catch (MalformedURLException e) {
+            if (BuildConfig.DEBUG) {
+                Log.e("executePost", "MalformedURLException: " + e.getLocalizedMessage());
+            }
+            return null;
+        } catch (SocketTimeoutException e) {
+            if (BuildConfig.DEBUG) {
+                Log.e("executePost", "SocketTimeoutException: " + e.getLocalizedMessage());
+            }
+            return null;
+        }catch (IOException e) {
+            if (BuildConfig.DEBUG) {
+                Log.e("executePost", "IOException: " + e.getLocalizedMessage());
+            }
+            return null;
+        } catch (NoSuchAlgorithmException e) {
+            if (BuildConfig.DEBUG) {
+                Log.e("executePost", "NoSuchAlgorithmException: " + e.getLocalizedMessage());
+            }
+            return null;
+        } catch (KeyManagementException e) {
+            if (BuildConfig.DEBUG) {
+                Log.e("executePost", "KeyManagementException: " + e.getLocalizedMessage());
+            }
+            return null;
+        } catch (Exception e) {
+            if (BuildConfig.DEBUG) {
+                Log.e("executePost", "Exception: " + e.getLocalizedMessage());
+            }
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+        return response.toString();
+    }
 }
