@@ -373,4 +373,24 @@ public class AppUtils {
         }
         return response.toString();
     }
+    
+    /**
+     * Check network
+     *
+     * @param context the ctx
+     * @return true, if successful
+     */
+    public static boolean networkOk(Context context) {
+        if (context == null) {
+            return false;
+        }
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nwInfo = cm.getActiveNetworkInfo();
+        if (nwInfo != null && nwInfo.isConnected()) {
+            return true;
+        }
+
+        return false;
+    }
 }
