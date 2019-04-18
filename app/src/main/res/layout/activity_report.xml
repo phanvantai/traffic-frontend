@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -9,6 +9,7 @@
     android:paddingRight="24dp">
 
     <TextView
+        android:id="@+id/tv_activity_report_choose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
@@ -16,13 +17,18 @@
         android:textSize="18sp"/>
 
     <Spinner
+        android:layout_below="@id/tv_activity_report_choose"
         android:id="@+id/s_activity_report_list"
         android:layout_width="match_parent"
         android:layout_height="49dp"
+        android:layout_marginTop="8dp"
         android:entries="@array/report_arrays"
         android:prompt="@string/report_prompt"></Spinner>
 
     <TextView
+        android:layout_below="@id/s_activity_report_list"
+        android:id="@+id/tv_activity_report_take"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="5dp"
@@ -31,17 +37,24 @@
 
     <ImageView
         android:id="@+id/iv_activity_report_take_picture"
+        android:layout_below="@id/tv_activity_report_take"
         app:srcCompat="@drawable/ic_action_name"
-        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
         android:layout_width="50dp"
         android:layout_height="50dp" />
 
     <ImageView
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         android:id="@+id/iv_activity_report_image_preview"
+        android:layout_below="@id/iv_activity_report_take_picture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <RelativeLayout
+        android:layout_alignParentBottom="true"
+        android:layout_margin="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -63,4 +76,4 @@
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

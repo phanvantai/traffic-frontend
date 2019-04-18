@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
+import com.gemvietnam.trafficgem.utils.AppUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,7 +69,12 @@ public class RegisterActivity extends AppCompatActivity {
         bRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                register();
+                if (!AppUtils.networkOk(getApplicationContext())) {
+                    AppUtils.showAlertNetwork(RegisterActivity.this);
+                } else {
+                    register();
+                }
+
             }
         });
 

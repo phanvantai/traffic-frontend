@@ -1,29 +1,65 @@
 package com.gemvietnam.trafficgem.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.gemvietnam.trafficgem.BuildConfig;
 import com.gemvietnam.trafficgem.R;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 
 public class AppUtils {
+
+    // Url server
+    public static final String URL_SERVER = "";
 
     public static final String CHANEL_ID = "chanel_traffic";
     public static final String CHANEL_NAME = "traffic_gem";
@@ -136,6 +172,30 @@ public class AppUtils {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
+    /**
+     * View content with custom Toast.
+     *
+     * @param context the context
+     * @param message
+     * @param length
+     */
+    public static void showCustomAlert(Context context, String message, int length) {
+        // Create layout inflator object to inflate toast.xml file
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        // Call toast.xml file for toast layout
+        View toastRoot = inflater.inflate(R.layout.toast, null);
+        TextView contentTextView = (TextView) toastRoot.findViewById(R.id.content_textview);
+        contentTextView.setText(message);
+        Toast toast = new Toast(context);
+
+        // Set layout to toast
+        toast.setView(toastRoot);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(length);
+        toast.show();
+    }
     
     /**
      * Decode sampled bitmap from resource.
@@ -223,7 +283,7 @@ public class AppUtils {
     }
     
     /**
-     * Thuc hien viec ma hoa MD5 cua String voi chuoi cho truoc
+     * Return MD5 hash string
      * @param pass
      * @return
      */
@@ -397,7 +457,7 @@ public class AppUtils {
     /**
      * View no network alert
      */
-    public static void showAlertNetwork(final Context activity) {
+    public static void showAlertNetwork(Context activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("TrafficGEM");
         builder.setMessage("There is no Internet connection. Do you want to set up now?");
@@ -426,28 +486,5 @@ public class AppUtils {
         builder.setNegativeButton("No", null);
         builder.show();
     }
-    
-    public static List<MyCookie> getMyCookieStore(String retStr) {
-        List<MyCookie> ret = new ArrayList<MyCookie>();
 
-        StringTokenizer stok = new StringTokenizer(retStr, "\n");
-        while (stok.hasMoreElements()) {
-            MyCookie t = getMyCookie(stok.nextToken());
-            if (t != null)
-                ret.add(t);
-        }
-        return ret;
-    }
-
-    public static MyCookie getMyCookie(String nextElement) {
-        MyCookie t = null;
-        
-        StringTokenizer stok = new StringTokenizer(nextElement, ":");
-        if (stok.countTokens() != 2)
-            return t;
-        else {
-            t = new MyCookie(stok.nextToken(), stok.nextToken());
-            return t;
-        }
-    }
 }
