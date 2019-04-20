@@ -69,19 +69,13 @@ public class DataExchange implements IDataExchange {
 
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(user.exportStringFormatJson());
-//            dos.writeBytes(user.getName());
-//            dos.writeBytes(user.getEmail());
-//            dos.writeBytes(user.getPassword());
-//            dos.writeBytes(user.getVehicle());
-//            DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss dd-mm-yyyy");
-//            dos.writeBytes(dateFormat.format(user.getSessionExpiryDate()));
         } catch (IOException e){
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateProfile(String token, UpdateProfile profile) {
+    public void updateProfile(String token, UpdateProfile profile) {        // send user's profile changed
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
@@ -97,7 +91,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void changePassword(String token, String oldPassword, String newPassword) {
+    public void changePassword(String token, String oldPassword, String newPassword) {      //
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
@@ -120,7 +114,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void getFuture(String token, int layer) {
+    public void getFuture(String token, int layer) {        //  send request to server to receive future traffic data
         init();
         try {
             conn.setRequestProperty("Authorization", token);
@@ -134,7 +128,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void getCurrent(String token, int layer) {
+    public void getCurrent(String token, int layer) {       // send request to server to receive current traffic data
         init();
         try {
             conn.setRequestProperty("Authorization", token);
@@ -149,7 +143,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void sendDataTraffic(String token, String dataTraffic) {
+    public void sendDataTraffic(String token, String dataTraffic) {     // send data traffic of user get from sensor .
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
@@ -165,7 +159,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void sendPicture(String token, String pathPicture) {
+    public void sendPicture(String token, String pathPicture) {         // send picture to server.
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1024*1024;
@@ -197,7 +191,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void getUserProfile(String token) {
+    public void getUserProfile(String token) {      // send request to server to receive profile
         init();
         try {
             conn.setRequestProperty("Authorization", token);
@@ -209,7 +203,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void report(String token, Message reportMessage){
+    public void report(String token, Message reportMessage){        // send report of user to server
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
@@ -224,7 +218,7 @@ public class DataExchange implements IDataExchange {
         }
     }
     @Override
-    public String getResponse(){
+    public String getResponse(){        // receive response from server format string.
         String serverResponseMessage = "";
         int serverResponseCode;
         try {

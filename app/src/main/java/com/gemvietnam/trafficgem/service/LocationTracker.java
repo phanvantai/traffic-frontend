@@ -19,6 +19,8 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.JsonObject;
 import com.gemvietnam.trafficgem.library.Traffic;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.library.responseMessage.Response;
+import com.gemvietnam.trafficgem.library.responseMessage.SendMarkerResponse;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -167,8 +169,18 @@ public class LocationTracker extends Service {
 //                            SendMode sendMode = new SendMode(mSendMarkerUrl);
 //                            sendMode.sendDataTraffic(mCustomToken.getToken(), mObject.toString());    // send data traffic
 
-                            DataExchange sendData = new DataExchange(mSendMarkerUrl);
-                            sendData.sendDataTraffic(mCustomToken.getToken(), mObject.toString());
+
+                            // demo send traffic data
+                            DataExchange trafficData = new DataExchange(mSendMarkerUrl);
+                            trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.toString());
+                            // send done
+
+                            // receive response
+                            String response = trafficData.getResponse();
+                            Response responseMsg = new SendMarkerResponse(response);
+                            responseMsg.getSuccess();
+                            responseMsg.getMessage();
+                            //
                         } catch (Exception e) {
                             //
                         }

@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class UpdateProfile {
+public class UpdateProfile {        // user can only change name, phone, address
     private String name;
     private String phone;
     private String address;
