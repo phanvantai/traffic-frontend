@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Date;
 
-public class User implements Serializable {
+public class User {
     private String Email;
     private String Name;
     private String Password;
@@ -47,11 +47,10 @@ public class User implements Serializable {
 
     public JSONObject exportJson() throws JSONException {
         JSONObject entry = new JSONObject();
-        entry.put("Email", Email);
-        entry.put("Name", Name);
-        entry.put("Vehicle",Vehicle);
-        entry.put("Avatar",Avatar);
+        entry.put("email", Email);
+        entry.put("name", Name);
+        entry.put("vehicle",Vehicle);
+        entry.put("avatar",Avatar);
         return entry;
     }
-
 }

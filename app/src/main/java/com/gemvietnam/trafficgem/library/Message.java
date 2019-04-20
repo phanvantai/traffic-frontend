@@ -2,6 +2,11 @@ package com.gemvietnam.trafficgem.library;
 
 import android.location.Location;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Message {
@@ -32,5 +37,19 @@ public class Message {
     public void setDate(Date _date){ date = _date;}
 
     public Date getDate(){ return date;}
+
+    public JSONObject exportJson(){
+        JSONObject entry = new JSONObject();
+        try {
+            entry.put("IDMsg", IDMsg);
+            entry.put("latitude", location.getLatitude());
+            entry.put("longitude", location.getLongitude());
+            DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss dd-mm-yyyy");
+            entry.put("date", dateFormat.format(date));
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return entry;
+    }
 
 }
