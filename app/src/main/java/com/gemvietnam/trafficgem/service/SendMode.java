@@ -81,7 +81,7 @@ public class SendMode implements ISendMode {
             dos.writeBytes(Integer.toString(message.getIDMsg()));
             DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
             dos.writeBytes(dateFormat.format(message.getDate()));
-            dos.writeBytes(Double.toString(message.getLocation().getAltitude()));
+            dos.writeBytes(Double.toString(message.getLocation().getLatitude()));
             dos.writeBytes(Double.toString(message.getLocation().getLongitude()));
 
             // send picutre
