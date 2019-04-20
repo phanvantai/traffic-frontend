@@ -2,11 +2,14 @@ package com.gemvietnam.trafficgem.library;
 
 import android.location.Location;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Traffic {
     private Location mLocation;
     private String mTimeStamp;
     private String mDate;
-    private String mTransport;
+    private String mVehicle;
     private double mSpeed;
     private String mDirection;
 
@@ -14,7 +17,7 @@ public class Traffic {
         mLocation = location;
         mTimeStamp = timeStamp;
         mDate = date;
-        mTransport = transport;
+        mVehicle = transport;
         mSpeed = speed;
         mDirection = direction;
     }
@@ -43,11 +46,11 @@ public class Traffic {
     public String getDate(){ return mDate; }
 
     public void setTransport(String mTransport){
-        this.mTransport = mTransport;
+        this.mVehicle = mTransport;
     }
 
     public String getTransport(){
-        return mTransport;
+        return mVehicle;
     }
 
     public void setSpeed(double mSpeed){
@@ -61,4 +64,20 @@ public class Traffic {
     public void setDirection(String direction){ mDirection = direction; }
 
     public String getDirection(){ return mDirection; }
+
+    public String exportStringFormatJson(){
+        JSONObject entry = new JSONObject();
+        try {
+            entry.put("latitude", mLocation.getLatitude());
+            entry.put("longitude", mLocation.getLongitude());
+            entry.put("avg_speed", mSpeed);
+            entry.put("vehicle", mVehicle);
+            entry.put("record_time", mTimeStamp);
+            entry.put("direction", mDirection);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return entry.toString();
+    }
 }

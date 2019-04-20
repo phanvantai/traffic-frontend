@@ -6,19 +6,23 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Date;
 
-public class User implements Serializable {
+public class User {
     private String Email;
     private String Name;
     private String Password;
     private String Vehicle;
-    private String Avatar;
-    private Date sessionExpiryDate;
+    private String Phone;
+    private String Address;
+    //    private String Avatar;
     public User(){}
-    public User(String _email, String _name, String _vehicle, String _avatar){
+    public User(String _email, String _name,String _password, String _vehicle, String _phone, String _address){
         Email = _email;
         Name = _name;
+        Password = _password;
         Vehicle = _vehicle;
-        Avatar = _avatar;
+        Phone = _phone;
+        Address = _address;
+//        Avatar = _avatar;
     }
 
     public void setEmail(String _email){ Email = _email; }
@@ -37,21 +41,29 @@ public class User implements Serializable {
 
     public String getVehicle(){ return Vehicle; }
 
-    public void setAvatar(String _path){ Avatar = _path; }
+    public void setPhone(String _phone){ Phone = _phone; }
 
-    public String getPathAvatar(){ return Avatar; }
+    public String getPhone(){ return Phone; }
 
-    public void setSessionExpiryData(Date _sessionExpiryDate){ sessionExpiryDate = _sessionExpiryDate;}
+    public void setAddress(String _address){ Address = _address; }
 
-    public Date getSessionExpiryDate(){ return sessionExpiryDate;}
+    public String getAddress(){ return Address; }
+//    public void setAvatar(String _path){ Avatar = _path; }
+//
+//    public String getPathAvatar(){ return Avatar; }
 
-    public JSONObject exportJson() throws JSONException {
+    public String exportStringFormatJson(){
         JSONObject entry = new JSONObject();
-        entry.put("Email", Email);
-        entry.put("Name", Name);
-        entry.put("Vehicle",Vehicle);
-        entry.put("Avatar",Avatar);
-        return entry;
+        try {
+            entry.put("email", Email);
+            entry.put("name", Name);
+            entry.put("vehicle",Vehicle);
+            entry.put("phone", Phone);
+            entry.put("address", Address);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+//        entry.put("avatar",Avatar);
+        return entry.toString();
     }
-
 }
