@@ -177,8 +177,10 @@ public class LocationTracker extends Service {
 
                             // receive response
                             String response = trafficData.getResponse();
-                            Response responseMsg = new SendMarkerResponse(response);
-                            ((SendMarkerResponse) responseMsg).analysis();
+
+                            //
+                            SendMarkerResponse responseMsg = new SendMarkerResponse(response);
+                            responseMsg.analysis();
                             responseMsg.getSuccess();
                             responseMsg.getMessage();
                             //
