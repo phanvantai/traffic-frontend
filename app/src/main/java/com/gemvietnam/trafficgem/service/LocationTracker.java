@@ -158,7 +158,6 @@ public class LocationTracker extends Service {
                 while (true) {
                     if (count == 60) {
                         try {
-
                                 // demo
                             DataExchange dataTraffic = new DataExchange(mUrl);
                             dataTraffic.sendDataTraffic(token, mObject.toString());
