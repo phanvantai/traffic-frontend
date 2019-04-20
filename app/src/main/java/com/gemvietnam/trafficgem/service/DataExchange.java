@@ -4,6 +4,10 @@ import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.Message;
 import com.gemvietnam.trafficgem.library.Traffic;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfile;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -63,19 +67,20 @@ public class DataExchange implements IDataExchange {
             conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(user.getName());
-            dos.writeBytes(user.getEmail());
-            dos.writeBytes(user.getPassword());
-            dos.writeBytes(user.getVehicle());
-            DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss dd-mm-yyyy");
-            dos.writeBytes(dateFormat.format(user.getSessionExpiryDate()));
+            dos.writeBytes(user.exportStringFormatJson());
+//            dos.writeBytes(user.getName());
+//            dos.writeBytes(user.getEmail());
+//            dos.writeBytes(user.getPassword());
+//            dos.writeBytes(user.getVehicle());
+//            DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss dd-mm-yyyy");
+//            dos.writeBytes(dateFormat.format(user.getSessionExpiryDate()));
         } catch (IOException e){
             e.printStackTrace();
         }
     }
 
     @Override
-    public void updateProfile(String token, User user) {
+    public void updateProfile(String token, UpdateProfile profile) {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
@@ -84,11 +89,7 @@ public class DataExchange implements IDataExchange {
             conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(user.getName());
-            dos.writeBytes(user.getEmail());
-            DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss dd-mm-yyyy");
-            dos.writeBytes(dateFormat.format(user.getSessionExpiryDate()));
-            dos.writeBytes(user.getVehicle());
+            dos.writeBytes(profile.exportStringFormatJson());
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -104,8 +105,14 @@ public class DataExchange implements IDataExchange {
             conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(oldPassword);
-            dos.writeBytes(newPassword);
+            JSONObject entry = new JSONObject();
+            try {
+                entry.put("oldPassword", oldPassword);
+                entry.put("newPassword", newPassword);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+            dos.writeBytes(entry.toString());
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -210,11 +217,7 @@ public class DataExchange implements IDataExchange {
             conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(String.valueOf(reportMessage.getIDMsg()));
-            DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss dd-mm-yyyy");
-            dos.writeBytes(dateFormat.format(reportMessage.getDate()));
-            dos.writeBytes(String.valueOf(reportMessage.getLocation().getLatitude()));
-            dos.writeBytes(String.valueOf(reportMessage.getLocation().getLongitude()));
+            dos.writeBytes(reportMessage.exportStringFormatJson());
         } catch (IOException e){
             e.printStackTrace();
         }

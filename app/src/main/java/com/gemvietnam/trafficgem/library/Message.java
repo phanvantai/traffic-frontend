@@ -38,7 +38,7 @@ public class Message {
 
     public Date getDate(){ return date;}
 
-    public JSONObject exportJson(){
+    public String exportStringFormatJson(){
         JSONObject entry = new JSONObject();
         try {
             entry.put("IDMsg", IDMsg);
@@ -49,7 +49,7 @@ public class Message {
         } catch (JSONException e){
             e.printStackTrace();
         }
-        return entry;
+        return entry.toString();
     }
 
 }

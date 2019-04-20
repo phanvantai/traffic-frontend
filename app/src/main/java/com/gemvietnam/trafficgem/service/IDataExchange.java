@@ -4,6 +4,7 @@ import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.Message;
 import com.gemvietnam.trafficgem.library.Traffic;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfile;
 
 public interface IDataExchange {
     // send
@@ -11,7 +12,7 @@ public interface IDataExchange {
 
     public void sendRegistrationInfo(User user);
 
-    public void updateProfile(String token, User user);
+    public void updateProfile(String token, UpdateProfile profile);
 
     public void changePassword(String token, String oldPassword, String newPassword);
 
