@@ -65,7 +65,7 @@ public class Traffic {
 
     public String getDirection(){ return mDirection; }
 
-    public JSONObject exportJson(){
+    public String exportStringFormatJson(){
         JSONObject entry = new JSONObject();
         try {
             entry.put("latitude", mLocation.getLatitude());
@@ -78,6 +78,6 @@ public class Traffic {
             e.printStackTrace();
         }
 
-        return entry;
+        return entry.toString();
     }
 }

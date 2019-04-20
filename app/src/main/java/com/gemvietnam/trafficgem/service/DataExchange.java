@@ -48,8 +48,7 @@ public class DataExchange implements IDataExchange {
             conn.setRequestMethod("POST");
             conn.connect();
             dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(credential.getUserName());
-            dos.writeBytes(credential.getPassword());
+            dos.writeBytes(credential.exportStringFormatJson());
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -142,7 +141,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void sendDataTraffic(String token, String dataTraffic) {
+    public void sendDataTraffic(String token, Traffic traffic) {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
@@ -151,7 +150,7 @@ public class DataExchange implements IDataExchange {
             conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(dataTraffic);
+            dos.writeBytes(traffic.exportStringFormatJson());
         } catch (IOException e){
             e.printStackTrace();
         }

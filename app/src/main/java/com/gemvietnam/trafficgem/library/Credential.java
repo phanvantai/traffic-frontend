@@ -21,7 +21,7 @@ public class Credential {
 
     public String getPassword(){ return Password;}
 
-    public JSONObject exportJson(){
+    public String exportStringFormatJson(){
         JSONObject entry = new JSONObject();
         try {
             entry.put("email", Email);
@@ -29,6 +29,6 @@ public class Credential {
         } catch (JSONException e){
             e.printStackTrace();
         }
-        return entry;
+        return entry.toString();
     }
 }
