@@ -3,8 +3,9 @@ package com.gemvietnam.trafficgem.service;
 import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.Message;
 import com.gemvietnam.trafficgem.library.Traffic;
+import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
-import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfile;
+
 
 public interface IDataExchange {
     // send

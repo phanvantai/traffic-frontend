@@ -8,11 +8,12 @@ import org.json.JSONObject;
 public class LoginResponse extends Response{
     private String responseMessage;
     private String message;
+    private boolean success;
     private String token;
     private String name;
     private String pathImage;
     private JSONObject jsonObject;
-    public LoginResponse(int responseCode, String responseMessage){
+    public LoginResponse(String responseMessage){
         this.responseMessage = responseMessage;
     }
 
@@ -26,45 +27,36 @@ public class LoginResponse extends Response{
 //        JsonParser parser = new JsonParser();
 //        JSONObject json = (JSONObject) parser.parse(responseCode);
         try {
-            this.jsonObject = new JSONObject(responseMessage.toString());
+            this.jsonObject = new JSONObject(responseMessage);
+            this.message = (String) jsonObject.get("message");
+            this.success = (boolean) jsonObject.get("success");
+            this.token = (String) jsonObject.get("token");
+            this.name = (String) jsonObject.get("name");
+            this.pathImage = (String) jsonObject.get("image");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public String getToken(){
-        try {
-            token = (String) jsonObject.get("token");
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
         return token;
     }
 
     public String getName(){
-        try {
-            name = (String) jsonObject.get("name");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return this.name;
+        return name;
     }
 
     public String getPathImage(){
-        try {
-            pathImage = (String) jsonObject.get("pathImage");
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        return this.pathImage;
+        return pathImage;
+    }
+    @Override
+    public String getMessage(){
+        return message;
     }
 
-    public String getMessage(){
-        try {
-            message = (String) jsonObject.get("message");
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        return this.message;
+    @Override
+    public boolean getSuccess(){
+        return success;
     }
+
 }

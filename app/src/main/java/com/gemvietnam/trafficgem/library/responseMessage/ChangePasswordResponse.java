@@ -3,27 +3,26 @@ package com.gemvietnam.trafficgem.library.responseMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RegisterResponse extends Response {
+public class ChangePasswordResponse extends Response{
     private String responseMessage;
     private String message;
     private boolean success;
-    private JSONObject jsonObject;
+    private JSONObject jsonObject ;
 
-    public RegisterResponse(String responseMessage){
-        this.responseMessage = responseMessage;
-    }
+    public ChangePasswordResponse(String responseMessage){ this.responseMessage = responseMessage;}
+
 
     @Override
-    public String getResponseMessage(){
+    public String getResponseMessage() {
         return responseMessage;
     }
 
-    public void analysist(){
+    public void analysis(){
         try {
             this.jsonObject = new JSONObject(responseMessage);
             this.message = (String) jsonObject.get("message");
             this.success = (boolean) jsonObject.get("success");
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -31,7 +30,6 @@ public class RegisterResponse extends Response {
     public String getMessage(){
         return message;
     }
-
     @Override
     public boolean getSuccess(){
         return success;

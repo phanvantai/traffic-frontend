@@ -1,4 +1,7 @@
-package com.gemvietnam.trafficgem.library.responseMessage;
+package com.gemvietnam.trafficgem.library;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;

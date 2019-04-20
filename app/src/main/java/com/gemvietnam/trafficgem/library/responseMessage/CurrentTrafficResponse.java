@@ -11,6 +11,7 @@ public class CurrentTrafficResponse extends Response{
     private int width = 0, height = 0;
     private String responseMessage;
     private String message;
+    private boolean success;
     private JSONObject jsonObject, jsonData, jsonGrid;
     private JSONArray jsonCells;
     public CurrentTrafficResponse(String responseMessage){ this.responseMessage = responseMessage;}
@@ -25,18 +26,22 @@ public class CurrentTrafficResponse extends Response{
         try {
             this.jsonObject = new JSONObject(responseMessage);
             this.jsonData = (JSONObject) jsonObject.get("data");
+            this.message = (String) jsonObject.get("message");
+            this.success = (boolean) jsonObject.get("success");
             getGridInfo();
             getCellInfo();
         } catch (JSONException e){
             e.printStackTrace();
         }
     }
-    public void getMessage(){
-        try {
-            message = (String) jsonObject.get("message");
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
+    @Override
+    public String getMessage(){
+        return message;
+    }
+
+    @Override
+    public boolean getSuccess(){
+        return success;
     }
 
     public void getGridInfo(){
@@ -117,7 +122,7 @@ public class CurrentTrafficResponse extends Response{
 //    }
 
     public String[][] getColorArray(){
-        String[][] temp = new String[height][width];
+        String[][] temp = new String[height+1][width+1];
         try {
             for(int i=0; i<jsonCells.length(); i++){
                 JSONObject jb = jsonCells.getJSONObject(i);
