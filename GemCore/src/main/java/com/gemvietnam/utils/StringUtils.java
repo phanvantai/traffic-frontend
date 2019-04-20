@@ -73,7 +73,7 @@ public class StringUtils {
       return null;
     }
 //        String encodedString = org.apache.commons.lang3.StringUtils.toEncodedString(s.getBytes(), Charset.defaultCharset());
-    String stripAccent = org.apache.commons.lang3.StringUtils.stripAccents(s);
+    String stripAccent = "";// org.apache.commons.lang3.StringUtils.stripAccents(s);
     Logger.e("stripAccent " + stripAccent);
 
     stripAccent = replaceSpecialAccent(stripAccent);

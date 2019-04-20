@@ -21,11 +21,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.BuildConfig;
 import com.gemvietnam.trafficgem.R;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -56,24 +58,10 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
+import static com.gemvietnam.trafficgem.utils.Constants.CHANEL_ID;
+import static com.gemvietnam.trafficgem.utils.Constants.CHANEL_NAME;
+
 public class AppUtils {
-
-    // Url server
-    public static final String URL_SERVER = "";
-
-    public static final String CHANEL_ID = "chanel_traffic";
-    public static final String CHANEL_NAME = "traffic_gem";
-    public static final String START_SERVICE = "start";
-    public static final String STOP_SERVICE = "stop";
-    public static final int ONGOING_NOTIFICATION_ID = 0211;
-
-
-    // Format date and time in JsonObject
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-
-    // cache file name .json
-    public static final String TRAFFIC_LOG_FILE = "traffic.json";
 
     /**
      * Create Notification Chanel
@@ -93,53 +81,6 @@ public class AppUtils {
 
         }
     }
-
-    public static synchronized void writeLog(String log) {
-//        Log.e("WRITE_LOG", log);
-        String sdCardStatus, folderPath;
-        try {
-            sdCardStatus = Environment.getExternalStorageState();
-            folderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Traffic/";
-            if (Environment.MEDIA_MOUNTED.equals(sdCardStatus)) {
-                // Check Traffic folder
-                File trafficDir = new File(folderPath);
-                if (!trafficDir.exists()) {
-                    if (!trafficDir.mkdirs()) {
-                        Log.e("ERROR", "Create file error: " + trafficDir.getAbsolutePath());
-                    }
-                }
-            } else {
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-        RandomAccessFile file = null;
-        try {
-            file = new RandomAccessFile(folderPath + TRAFFIC_LOG_FILE, "rw");
-            File f = new File(folderPath + TRAFFIC_LOG_FILE);
-            file.seek(f.length());
-            //SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault());
-            //String dateWithoutTime = sdf.format(new Date());
-            String tmp = log + "\n";
-            file.write(tmp.getBytes());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (file != null) {
-                try {
-                    file.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
 
     private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
         SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
@@ -450,14 +391,13 @@ public class AppUtils {
         if (nwInfo != null && nwInfo.isConnected()) {
             return true;
         }
-
         return false;
     }
     
     /**
      * View no network alert
      */
-    public static void showAlertNetwork(Context activity) {
+    public static void showAlertNetwork(final Context activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("TrafficGEM");
         builder.setMessage("There is no Internet connection. Do you want to set up now?");
@@ -487,4 +427,11 @@ public class AppUtils {
         builder.show();
     }
 
+    public static void loadImage(Context context, String url, ImageView imageView) {
+        Picasso.get()
+                .load(url)
+                .centerCrop()
+                .resize(100, 100)
+                .into(imageView);
+    }
 }

@@ -18,40 +18,46 @@ import android.util.Log;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.JsonObject;
 import com.gemvietnam.trafficgem.library.Traffic;
+import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
+import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONObject;
 
 import java.util.Date;
 
-import static com.gemvietnam.trafficgem.utils.AppUtils.CHANEL_ID;
-import static com.gemvietnam.trafficgem.utils.AppUtils.DATE_FORMAT;
-import static com.gemvietnam.trafficgem.utils.AppUtils.ONGOING_NOTIFICATION_ID;
-import static com.gemvietnam.trafficgem.utils.AppUtils.START_SERVICE;
-import static com.gemvietnam.trafficgem.utils.AppUtils.STOP_SERVICE;
-import static com.gemvietnam.trafficgem.utils.AppUtils.TIME_FORMAT;
+import static com.gemvietnam.trafficgem.utils.Constants.CHANEL_ID;
+import static com.gemvietnam.trafficgem.utils.Constants.DATE_FORMAT;
+import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
+import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.ONGOING_NOTIFICATION_ID;
+import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
+import static com.gemvietnam.trafficgem.utils.Constants.STOP_SERVICE;
+import static com.gemvietnam.trafficgem.utils.Constants.TIME_FORMAT;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_SERVER;
 
 /**
  * Created by TaiPV on 25/03/2019
  * Service collect location data
  */
 public class LocationTracker extends Service {
-    private String mUrl = "";      // edit link
-//  start
+    private String mSendMarkerUrl = URL_SERVER + "/api/maker";
 
-    private ProgressDialog dialog = null;
-//    private Image
-
-    //end
     private Context mContext;
 
     // location, update each 5s
     private Location mCurrentLocation;
+
+    // CustomToken
+    CustomToken mCustomToken;
+    // User
+    User mLastUser;
 
     // date and time when get location
     private String mDate;
@@ -71,8 +77,6 @@ public class LocationTracker extends Service {
 
     // JsonObject to write to cache file
     JsonObject mObject;
-    // user's id
-    int idJson;
 
     @Nullable
     @Override
@@ -99,7 +103,10 @@ public class LocationTracker extends Service {
 
         LocationCallback mLocationCallback = new LocationCallback();
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -107,6 +114,7 @@ public class LocationTracker extends Service {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
         mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
@@ -145,21 +153,19 @@ public class LocationTracker extends Service {
             @Override
             public void run() {
                 Location temp = null;
-                String token = "token";     // edit token
+                mCustomToken = Hawk.get(MY_TOKEN);
+                mLastUser = Hawk.get(LAST_USER);
                 float distanceTo;
-                String picturePath = "";
                 int count = 0;
-                idJson = 0;
                 JSONObject jsonObject = new JSONObject();
                 mObject = new JsonObject();
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
-                mTransport = "car";
                 while (true) {
                     if (count == 60) {
                         try {
-                            SendMode sendMode = new SendMode(mUrl);
-                            sendMode.sendDataTraffic(token, mObject.toString());    // send data traffic
+                            SendMode sendMode = new SendMode(mSendMarkerUrl);
+                            sendMode.sendDataTraffic(mCustomToken.getToken(), mObject.toString());    // send data traffic
                         } catch (Exception e) {
                             //
                         }
@@ -167,7 +173,6 @@ public class LocationTracker extends Service {
                         mObject = new JsonObject();
                         mObject.setJsonObject(jsonObject);
                         mObject.init();
-                        mTransport = "car";
                     }
                     if (ActivityCompat.checkSelfPermission(mContext,
                             Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -202,19 +207,12 @@ public class LocationTracker extends Service {
                         mSpeed = (3.6*distanceTo)/5d;
                         mDirection = getDirection(temp, mCurrentLocation);
 
-                        String tmp = mDate + " " + mTimeStamp + " " + "Lat " + mCurrentLocation.getLatitude() +
-                                " Long " + mCurrentLocation.getLongitude() +
-                                " Speed " + mSpeed+ " Direction "+mDirection;
-
-                        Log.e("TaiPV", tmp);
-                        //AppUtils.writeLog(tmp);
                         Traffic traffic = new Traffic(mCurrentLocation, mTimeStamp, mDate, mTransport, mSpeed, mDirection);
 
                         try {
                             mObject.pushDataTraffic(traffic);
-//                            Log.i("TaiPV", mObject.exportString());
                         } catch (Exception e) {
-                            //
+                            e.printStackTrace();
                         }
 
                     }
@@ -270,8 +268,6 @@ public class LocationTracker extends Service {
             }
         }
     }
-
-
 
     /**
      * startForeground with android O and above

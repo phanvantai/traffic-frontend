@@ -17,12 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
-import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
-import com.gemvietnam.trafficgem.service.SendMode;
 import com.gemvietnam.trafficgem.utils.AppUtils;
-import com.gemvietnam.trafficgem.utils.MyToken;
+import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONException;
@@ -31,7 +29,9 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.gemvietnam.trafficgem.utils.AppUtils.URL_SERVER;
+import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
+import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_SERVER;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -47,7 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.tv_activity_login_link_register)
     TextView tvRegisterLink;
 
-    String mUrlLogin = "";
+    User mLastUser;
+    CustomToken mCustomToken;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,24 +60,30 @@ public class LoginActivity extends AppCompatActivity {
         // hide keyboard
         //ViewUtils.hideKeyBoard(this);
 
-        checkPermissions();
-
-        MyToken myToken = MyToken.getInstance();
-        if (myToken.isExpired()) {
-            myToken.removeToken();
+        // get myToken object
+        if (Hawk.contains(MY_TOKEN)) {
+            mCustomToken = Hawk.get(MY_TOKEN);
         } else {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            mCustomToken = CustomToken.getInstance();
         }
 
-        // set on click login button
+        checkPermissions();
+
+        if (!mCustomToken.isExpired()) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        } else {
+            mCustomToken.removeToken();
+        }
+
+        // set on click doLogin button
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!AppUtils.networkOk(getApplicationContext())) {
                     AppUtils.showAlertNetwork(LoginActivity.this);
                 } else {
-                    login();
+                    doLogin();
                 }
             }
         });
@@ -93,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * check and request all permission if needs
      */
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this,
@@ -124,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * doing login, It's not completely yet
      */
-    public void login() {
+    public void doLogin() {
         Log.d(TAG, "Login");
 
         if (!validate()) {
@@ -132,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // when login, can't press button login
+        // when doLogin, can't press button doLogin
         //bLogin.setEnabled(false);
 
         // create progress dialog to make color =))
@@ -142,16 +149,17 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        // use email, password to check on server, do it later
-        String email = etEditMail.getText().toString();
-        String password = etEditPassword.getText().toString();
-        String md5Password = AppUtils.md5Password(password);
+
 
         // TODO: Implement your own authentication logic here.
         // do something here, below is test
         new Thread(new Runnable() {
             @Override
             public void run() {
+                // use email, password to check on server
+                String email = etEditMail.getText().toString();
+                String password = etEditPassword.getText().toString();
+                String md5Password = AppUtils.md5Password(password);
                 JSONObject object = new JSONObject();
                 try {
                     object.put("password", md5Password);
@@ -160,46 +168,60 @@ public class LoginActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                String loginUrl = URL_SERVER + "/login";
+                String loginUrl = URL_SERVER + "/api/login";
                 String params = object.toString();
-                Log.e("TaiPV", params);
+
                 String response = AppUtils.executePost(loginUrl, params);
-                //Credential credential = new Credential(email, password);
-                //SendMode sendMode = new SendMode(mUrlLogin);
-                //sendMode.sendCredential(credential);
-                //sendMode.getResponse();
 
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    JSONObject userObject = jsonObject.getJSONObject(response);
-                    boolean success = userObject.getBoolean("success");
-                    String message = userObject.getString("message");
-                    if (success) {
-                        String token = userObject.getString("remember_token");
-                        String name = userObject.getString("name");
-                        String picturePath = userObject.getString("image");
-                        String email = userObject.getString("email");
-                        String vehicle = userObject.getString("vehicle");
+                if (response != null) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        JSONObject userObject = jsonObject.getJSONObject(response);
+                        boolean success = userObject.getBoolean("success");
+                        String message = userObject.getString("message");
+                        if (success) {
+                            String token = userObject.getString("remember_token");
+                            String name = userObject.getString("name");
+                            String picturePath = userObject.getString("image");
+                            String user_email = userObject.getString("email");
+                            String vehicle = userObject.getString("vehicle");
 
-                        User user = new User(email, name, vehicle, picturePath);
-                        // add to hawk
-                        Hawk.put(email, user);
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        MyToken myToken = MyToken.getInstance();
-                        myToken.setDate(System.currentTimeMillis());
-                        myToken.setToken(token);
+                            User user = new User(user_email, name, vehicle, picturePath);
 
-                        // send user's information to main activity
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.putExtra("user", user);
-                        startActivity(intent);
-                    } else {
-                        // neu khong thanh cong thong bao loi voi noi dung message tu server
-                        AppUtils.showCustomAlert(getApplicationContext(), message, Toast.LENGTH_LONG);
+                            // On complete call either onLoginSuccess or onLoginFailed
+                            mCustomToken.setDate(System.currentTimeMillis());
+                            mCustomToken.setToken(token);
+
+                            // add to hawk
+                            Hawk.put(LAST_USER, user);
+                            Hawk.put(MY_TOKEN, mCustomToken);
+
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            //intent.putExtra("user", user);
+                            startActivity(intent);
+                        }// else {
+                            // neu khong thanh cong thong bao loi voi noi dung message tu server
+                            //AppUtils.showCustomAlert(getApplicationContext(), message, Toast.LENGTH_LONG);
+                        //}
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
+                // temp
+                User user = new User();
+                user.setEmail(email);
+                // On complete call either onLoginSuccess or onLoginFailed
+                mCustomToken.setDate(System.currentTimeMillis());
+                mCustomToken.setToken(md5Password);
+
+                // add to hawk
+                Hawk.put(LAST_USER, user);
+                Hawk.put(MY_TOKEN, mCustomToken);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                //intent.putExtra("user", user);
+                startActivity(intent);
+
                 // onLoginFailed();
                 progressDialog.dismiss();
             }
@@ -220,24 +242,14 @@ public class LoginActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
 
                 // TODO: Implement successful register logic here
-                // By default we just finish the Activity and log them in automatically
-                // If register is successfully, automatically login and go to MainActivity
-                //this.finish();
+                // If register is successfully, automatically doLogin and go to MainActivity
+                this.finish();
             }
         }
     }
 
     /**
-     * override method when click back on navigation bar
-     */
-    @Override
-    public void onBackPressed() {
-        // disable going back to the MainActivity
-        moveTaskToBack(true);
-    }
-
-    /**
-     * do something when login failed
+     * do something when doLogin failed
      */
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();

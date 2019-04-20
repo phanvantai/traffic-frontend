@@ -568,9 +568,9 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
         ret = stringBuilder.toString();
       }
     } catch (FileNotFoundException e) {
-      Log.e("login activity", "File not found: " + e.toString());
+      Log.e("doLogin activity", "File not found: " + e.toString());
     } catch (IOException e) {
-      Log.e("login activity", "Can not read file: " + e.toString());
+      Log.e("doLogin activity", "Can not read file: " + e.toString());
     }
 
     return ret;

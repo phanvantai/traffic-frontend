@@ -19,16 +19,9 @@ import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
 import com.gemvietnam.trafficgem.service.LocationTracker;
 import com.gemvietnam.trafficgem.utils.AppUtils;
+import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.gemvietnam.trafficgem.utils.ViewUtils;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -38,8 +31,9 @@ import java.util.Date;
 
 import butterknife.BindView;
 
-import static com.gemvietnam.trafficgem.utils.AppUtils.START_SERVICE;
-import static com.gemvietnam.trafficgem.utils.AppUtils.STOP_SERVICE;
+import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
+import static com.gemvietnam.trafficgem.utils.Constants.STOP_SERVICE;
 
 /**
  * Created by Quannv on 3/29/2017.
@@ -67,7 +61,7 @@ public class MainActivity extends ContainerActivity implements
     @Override
     public void initLayout() {
 
-        // get intent from login activity
+        // get intent from doLogin activity
         //Intent intent = getIntent();
         //User user = (User) intent.getSerializableExtra("user");
         // create chanel for notification (android O and above)
@@ -108,6 +102,15 @@ public class MainActivity extends ContainerActivity implements
         }
     }
 
+    /**
+     * override method when click back on navigation bar
+     */
+    @Override
+    public void onBackPressed() {
+        // disable going back to the LoginActivity
+        moveTaskToBack(true);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
@@ -128,6 +131,9 @@ public class MainActivity extends ContainerActivity implements
         if (menuItem.equals(MenuItem.SIGN_OUT)) {
 //      PrefWrapper.clearUser(this);
 //      ActivityUtils.startActivity(this, LoginActivity.class);
+            CustomToken customToken = Hawk.get(MY_TOKEN);
+            customToken.removeToken();
+            Hawk.put(MY_TOKEN, customToken);
             finish();
         } else if (menuItem.equals(MenuItem.VIEW_EVENT)) {
             AppUtils.createDialog(this);

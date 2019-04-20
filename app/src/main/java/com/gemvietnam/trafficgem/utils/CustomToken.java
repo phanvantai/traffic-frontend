@@ -1,15 +1,15 @@
 package com.gemvietnam.trafficgem.utils;
 
-public class MyToken {
-    private static MyToken instance;
+public class CustomToken {
+    private static CustomToken instance;
     private String mToken;
     private long mDate;
 
-    private MyToken() { }
+    private CustomToken() { }
 
-    public static MyToken getInstance() {
+    public static CustomToken getInstance() {
         if (instance == null) {
-            instance = new MyToken();
+            instance = new CustomToken();
         }
         return instance;
     }
@@ -35,9 +35,12 @@ public class MyToken {
     }
 
     public boolean isExpired() {
+        if (mToken == null) {
+            return true;
+        }
         long size;
         size = System.currentTimeMillis() - this.mDate;
-        if (size >= 60*5 /*432000000*/) {// 5 days
+        if (size >= 60*5*1000 /*432000000*/) {// 5 days
             return true;
         }
         else return false;

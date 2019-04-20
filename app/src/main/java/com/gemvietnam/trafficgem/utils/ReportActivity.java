@@ -23,14 +23,6 @@ import android.widget.Spinner;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.Message;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -40,9 +32,11 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.gemvietnam.trafficgem.utils.Constants.REQUEST_IMAGE_CAPTURE;
+
 public class ReportActivity extends AppCompatActivity {
 
-    private static final int REQUEST_TAKE_PICTURE_CODE = 234;
+
     String mUrl = "";
 
     String mPathPicture = "";
@@ -57,17 +51,24 @@ public class ReportActivity extends AppCompatActivity {
     ImageView ivTakePicture;
     @BindView(R.id.iv_activity_report_image_preview)
     ImageView ivImagePreview;
+
+    String mCurrentPhotoPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
         ButterKnife.bind(this);
+
         //ivImagePreview.setVisibility(View.GONE);
         ivTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, REQUEST_TAKE_PICTURE_CODE);
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+
             }
         });
         bOk.setOnClickListener(new View.OnClickListener() {
@@ -114,45 +115,18 @@ public class ReportActivity extends AppCompatActivity {
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Date date = new Date();
         Message message = new Message(id, location, mPathPicture, date);
-        sendReport(mUrl, id, location, mPathPicture, date);
+        //sendReport(mUrl, id, location, mPathPicture, date);
         finish();
     }
 
-    public static void sendReport(String myurl, int idMsg, Location location, String picturePath, Date date){
-        DefaultHttpClient localDefaultHttpClient = new DefaultHttpClient();
-        FileBody localFileBody = new FileBody(new File(picturePath));
-        HttpPost localHttpPost = new HttpPost(myurl);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        MultipartEntity localMultiPartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-        try {
-            localMultiPartEntity.addPart("ID", new StringBody(Integer.toString(idMsg)));
-            localMultiPartEntity.addPart("Latitude", new StringBody(Double.toString(location.getLatitude())));
-            localMultiPartEntity.addPart("Longitude", new StringBody(Double.toString(location.getLongitude())));
-            File file = new File(picturePath);
-            localMultiPartEntity.addPart("Picture", new FileBody(file));
-            localMultiPartEntity.addPart("Date", new StringBody(dateFormat.format(date)));
-
-            localHttpPost.setEntity(localMultiPartEntity);
-            HttpResponse response = localDefaultHttpClient.execute(localHttpPost);
-            System.out.println("response code "+response.getStatusLine());
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (Exception e){
-            Log.d("Exception", e.toString());
-        }
-    }
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_TAKE_PICTURE_CODE) {
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                ivImagePreview.setImageBitmap(bitmap);
-                ivTakePicture.setVisibility(View.GONE);
-            }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            ivImagePreview.setImageBitmap(imageBitmap);
+            ivTakePicture.setVisibility(View.GONE);
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
+
 }
