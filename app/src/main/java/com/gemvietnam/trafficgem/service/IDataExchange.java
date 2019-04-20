@@ -21,7 +21,7 @@ public interface IDataExchange {
 
     public void getCurrent(String token, int layer);
 
-    public void sendDataTraffic(String token, Traffic dataTraffic);
+    public void sendDataTraffic(String token, String dataTraffic);
 
     public void sendPicture(String token, String pathPicture);
 

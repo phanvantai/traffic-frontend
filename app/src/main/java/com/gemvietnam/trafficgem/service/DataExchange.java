@@ -149,7 +149,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void sendDataTraffic(String token, Traffic traffic) {
+    public void sendDataTraffic(String token, String dataTraffic) {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
@@ -158,7 +158,7 @@ public class DataExchange implements IDataExchange {
             conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
-            dos.writeBytes(traffic.exportStringFormatJson());
+            dos.writeBytes(dataTraffic);
         } catch (IOException e){
             e.printStackTrace();
         }
