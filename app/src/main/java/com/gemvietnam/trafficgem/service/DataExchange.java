@@ -67,10 +67,13 @@ public class DataExchange implements IDataExchange {
             conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestMethod("POST");
             conn.connect();
-
+            Log.d("json1", "json1");
             dos = new DataOutputStream(conn.getOutputStream());
+            Log.d("json2", "json2");
             dos.writeBytes(credential.exportStringFormatJson());
             Log.d("test-json-login", credential.exportStringFormatJson());
+
+            Log.d("json3", "json3");
         } catch (IOException e){
             e.printStackTrace();
         } catch (NullPointerException e){

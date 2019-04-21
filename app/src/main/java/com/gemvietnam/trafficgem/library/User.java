@@ -11,20 +11,19 @@ import java.util.Date;
 public class User {
     private String Email;
     private String Name;
-    private String Password;
+    private String Password = null;
     private String Vehicle;
     private String Phone;
     private String Address;
-//    private String Avatar;
+    private String Avatar = null;
+
     public User(){}
-    public User(String _email, String _name,String _password, String _vehicle, String _phone, String _address){
+    public User(String _email, String _name, String _vehicle, String _phone, String _address){
         Email = _email;
         Name = _name;
-        Password = _password;
         Vehicle = _vehicle;
         Phone = _phone;
         Address = _address;
-//        Avatar = _avatar;
     }
 
     public void setEmail(String _email){ Email = _email; }
@@ -50,22 +49,27 @@ public class User {
     public void setAddress(String _address){ Address = _address; }
 
     public String getAddress(){ return Address; }
-//    public void setAvatar(String _path){ Avatar = _path; }
-//
-//    public String getPathAvatar(){ return Avatar; }
+
+    public void setAvatar(String _path){ Avatar = _path; }
+
+    public String getPathAvatar(){ return Avatar; }
 
     public String exportStringFormatJson(){
         JSONObject entry = new JSONObject();
         try {
             entry.put(Constants.Email, Email);
             entry.put(Constants.Name, Name);
+            if(Password == null)   Password = "NULL";
             entry.put(Constants.Password, Password);
             entry.put(Constants.Vehicle,Vehicle);
             entry.put(Constants.Phone, Phone);
             entry.put(Constants.Address, Address);
+            if(Avatar == null)  Avatar = "NULL";
+            entry.put(Constants.pathImage, Avatar);
         } catch (JSONException e){
             e.printStackTrace();
         }
         return entry.toString();
     }
 }
+

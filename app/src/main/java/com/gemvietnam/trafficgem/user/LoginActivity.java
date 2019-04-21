@@ -166,6 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                 Credential credential = new Credential(email, md5Password);
 
                 DataExchange dataExchange = new DataExchange(URL_LOGIN);
+                Log.d("test-login", credential.exportStringFormatJson());
                 dataExchange.sendCredential(credential);
                 String response = dataExchange.getResponse();
 

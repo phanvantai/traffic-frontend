@@ -176,11 +176,12 @@ public class RegisterActivity extends AppCompatActivity {
                 RegisterResponse registerResponse = null;
 
                 String md5Password = AppUtils.md5Password(password);
-                User user = new User(email, name, md5Password, vehicle, phone, address);
+                User user = new User(email, name, vehicle, phone, address);
+                user.setPassword(md5Password);
 
                 DataExchange dataExchange = new DataExchange(URL_REGISTER);
 
-                // demo response
+                // create response
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put(Constants.Success, true);
@@ -189,7 +190,9 @@ public class RegisterActivity extends AppCompatActivity {
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
+                // end demo
                 try {
+                    Log.d("test-register", user.exportStringFormatJson());
                     dataExchange.sendRegistrationInfo(user);
 //                    response = dataExchange.getResponse();
                     response = jsonObject.toString();
@@ -197,6 +200,7 @@ public class RegisterActivity extends AppCompatActivity {
                     registerResponse = new RegisterResponse(response);
                     registerResponse.analysist();
                     token = registerResponse.getToken();
+                    Log.d("test-token", token);
                 } catch (NullPointerException e){
                     e.printStackTrace();
                 }

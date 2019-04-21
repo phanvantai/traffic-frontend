@@ -45,7 +45,9 @@ public class LoginResponse extends Response{
                 this.phone = (String) jsonObject.get(Constants.Phone);
                 this.address = (String) jsonObject.get(Constants.Address);
                 this.vehicle = (String) jsonObject.get(Constants.Vehicle);
-                user = new User(email, name, "null", vehicle, phone, address);
+                user = new User(email, name, vehicle, phone, address);
+                user.setAvatar(pathImage);
+//                user = new User.UserBuilder()
             }
 
         } catch (JSONException e) {
