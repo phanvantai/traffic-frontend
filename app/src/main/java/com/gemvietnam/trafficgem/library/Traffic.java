@@ -77,7 +77,6 @@ public class Traffic {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         return entry.toString();
     }
 }

@@ -20,8 +20,8 @@ public class SendMarkerResponse extends Response{
     public void analysis(){
         try {
             this.jsonObject = new JSONObject(responseMessage);
-            this.message = (String) jsonObject.get("message");
-            this.success = (boolean) jsonObject.get("success");
+            this.message = (String) jsonObject.get(Constants.Message);
+            this.success = (boolean) jsonObject.get(Constants.Success);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -3,9 +3,6 @@ package com.gemvietnam.trafficgem.library.responseMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.gemvietnam.trafficgem.utils.Constants.MESSAGE;
-import static com.gemvietnam.trafficgem.utils.Constants.SUCCESS;
-
 public class UpdateProfileResponse extends Response{
     private String responseMessage;
     private String message;
@@ -23,8 +20,8 @@ public class UpdateProfileResponse extends Response{
     public void analysis(){
         try {
             this.jsonObject = new JSONObject(responseMessage);
-            this.message = (String) jsonObject.get(MESSAGE);
-            this.success = (Boolean) jsonObject.get(SUCCESS);
+            this.message = (String) jsonObject.get(Constants.Message);
+            this.success = (boolean) jsonObject.get(Constants.Success);
         } catch (JSONException e) {
             e.printStackTrace();
         }

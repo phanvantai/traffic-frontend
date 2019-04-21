@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
         mLastUser = Hawk.get(LAST_USER);
         mCustomToken = Hawk.get(MY_TOKEN);
 
-        AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
+//        AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
         etName.setText(mLastUser.getName());
         etPhone.setText(mLastUser.getPhone());
         etAddress.setText(mLastUser.getAddress());

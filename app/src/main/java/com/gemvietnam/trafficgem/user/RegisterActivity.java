@@ -19,11 +19,15 @@ import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.RegisterResponse;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.orhanobut.hawk.Hawk;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -162,23 +166,42 @@ public class RegisterActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                String name = etName.getText().toString();
                 String phone = etPhone.getText().toString();
                 String address = etAddress.getText().toString();
-                String name = etName.getText().toString();
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
-
-                User user = new User(email, name, vehicle, phone, address, currentPhotoPath);
+                String response, token;
+                RegisterResponse registerResponse = null;
 
                 String md5Password = AppUtils.md5Password(password);
-                user.setPassword(md5Password);
+                User user = new User(email, name, md5Password, vehicle, phone, address);
 
                 DataExchange dataExchange = new DataExchange(URL_REGISTER);
-                dataExchange.sendRegistrationInfo(user);
-                String response = dataExchange.getResponse();
 
-                RegisterResponse registerResponse = new RegisterResponse(response);
+                // demo response
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(Constants.Success, true);
+                    jsonObject.put(Constants.Message, "success");
+                    jsonObject.put(Constants.Token,"fdaiojfad");
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+                try {
+                    dataExchange.sendRegistrationInfo(user);
+//                    response = dataExchange.getResponse();
+                    response = jsonObject.toString();
+                    Log.d("test-response-register", response);
+                    registerResponse = new RegisterResponse(response);
+                    registerResponse.analysist();
+                    token = registerResponse.getToken();
+                } catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+
+
                 // gui anh kieu gi day, path currentPhotoPath, token chua co
                 //
 
@@ -195,6 +218,7 @@ public class RegisterActivity extends AppCompatActivity {
                 Hawk.put(MY_TOKEN, customToken);
 
                 //bRegister.setEnabled(true);
+                Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
                 if (registerResponse.getSuccess()) {
                     setResult(RESULT_OK, null);
                     finish();

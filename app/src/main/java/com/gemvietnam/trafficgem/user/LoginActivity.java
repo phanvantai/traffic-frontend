@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.LoginResponse;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.service.DataExchange;
@@ -164,26 +165,31 @@ public class LoginActivity extends AppCompatActivity {
                 String md5Password = AppUtils.md5Password(password);
                 Credential credential = new Credential(email, md5Password);
 
-                //DataExchange dataExchange = new DataExchange(URL_LOGIN);
-                //dataExchange.sendCredential(credential);
-                //String response = dataExchange.getResponse();
+                DataExchange dataExchange = new DataExchange(URL_LOGIN);
+                dataExchange.sendCredential(credential);
+                String response = dataExchange.getResponse();
 
-                //Log.e("TaiPV", "response" + response);
-                String abc = "{\n" +
-                        "    \"success\": true,\n" +
-                        "    \"message\": \"success\",\n" +
-                        "    \"remember_token\": \"asdfdsfsdfsdfas\",\n" +
-                        "    \"email\": \"admin@gmail.com\",\n" +
-                        "    \"name\": \"admin\",\n" +
-                        "    \"phone\": \"0123456789\",\n" +
-                        "    \"address\": \"null\",\n" +
-                        "    \"vehicle\":\"car\",\n" +
-                        "    \"image\": \"adfsadfdfaf\"\n" +
-                        "}\n";
-                LoginResponse loginResponse = new LoginResponse(abc);
+                //  demo response.
+                JSONObject login = new JSONObject();
+                try {
+                    login.put(Constants.Success, true);
+                    login.put(Constants.Message, "success");
+                    login.put(Constants.Token,"dfadfadfad");
+                    login.put(Constants.Email, "t@gmail.com");
+                    login.put(Constants.Name, "thanh");
+                    login.put(Constants.Phone, "132564");
+                    login.put(Constants.Address, "hanooi");
+                    login.put(Constants.Vehicle, "car");
+                    login.put(Constants.pathImage, "image");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String converString = login.toString();
+                Log.d("test-reponse-login", converString);
+                LoginResponse loginResponse = new LoginResponse(converString);
                 loginResponse.analysis();
-
-                mLastUser = loginResponse.getUser();
+                Log.d("test-reponse-login2", loginResponse.getUser().exportStringFormatJson());
+                mLastUser = loginResponse.getUser();        // EDIT
                 mCustomToken.setDate(System.currentTimeMillis());
                 mCustomToken.setToken(loginResponse.getToken());
 

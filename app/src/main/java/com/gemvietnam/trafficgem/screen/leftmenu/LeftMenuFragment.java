@@ -84,9 +84,13 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
 //        mMinusImg.setVisibility(View.VISIBLE);
 //        mPlusImg.setVisibility(View.GONE);
         User user = Hawk.get(LAST_USER);
-        mNameTv.setText(user.getName());
-        mEmailTv.setText(user.getEmail());
-        AppUtils.loadImage(user.getPathAvatar(), mProfileImg);
+        try {
+            mNameTv.setText(user.getName());
+            mEmailTv.setText(user.getEmail());
+        } catch (NullPointerException e){
+            e.printStackTrace();
+        }
+//        AppUtils.loadImage(user.getPathAvatar(), mProfileImg);
         mExpandLl.setVisibility(View.VISIBLE);
         mReport.setOnClickListener(new View.OnClickListener() {
             @Override

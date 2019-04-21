@@ -1,5 +1,7 @@
 package com.gemvietnam.trafficgem.service;
 
+import android.util.Log;
+
 import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.Message;
 import com.gemvietnam.trafficgem.library.Traffic;
@@ -10,20 +12,20 @@ import com.gemvietnam.trafficgem.library.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 
 public class DataExchange implements IDataExchange {
     private String _url;
@@ -37,14 +39,23 @@ public class DataExchange implements IDataExchange {
             URL url = new URL(_url);
             // open a Https connect to the url
             conn = (HttpsURLConnection) url.openConnection();
+            SSLContext sc;
+            sc = SSLContext.getInstance("TLS");
+            sc.init(null, null, new SecureRandom());
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
             conn.setDoInput(true);
             conn.setDoOutput(true);
             conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+            conn.setFixedLengthStreamingMode(_url.getBytes().length);
+            conn.setUseCaches(false);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
             e.printStackTrace();
         }
     }
@@ -53,12 +64,16 @@ public class DataExchange implements IDataExchange {
     public void sendCredential(Credential credential) {
         init();
         try {
-            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestMethod("POST");
             conn.connect();
+
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(credential.exportStringFormatJson());
+            Log.d("test-json-login", credential.exportStringFormatJson());
         } catch (IOException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
     }
@@ -73,7 +88,11 @@ public class DataExchange implements IDataExchange {
 
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(user.exportStringFormatJson());
+            Log.d("test-json-register", user.exportStringFormatJson());
+
         } catch (IOException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
     }
@@ -169,7 +188,7 @@ public class DataExchange implements IDataExchange {
         int maxBufferSize = 1024*1024;
         init();
         try {
-            conn.setRequestProperty("Content-Type", "image/jpg");
+            conn.setRequestProperty("Content-Type", "image/png");
             conn.setRequestProperty("Authorization", token);
             conn.setRequestMethod("POST");
             conn.connect();
@@ -230,21 +249,12 @@ public class DataExchange implements IDataExchange {
             if(serverResponseCode == 200){
                 serverResponseMessage = conn.getResponseMessage();
             }
-            // Get Response
-//            InputStream is = new BufferedInputStream(conn.getInputStream());
-//            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-//            StringBuffer response = new StringBuffer();
-//            String line;
-//            while ((line = rd.readLine()) != null) {
-//                response.append(line);
-//                response.append("\n");
-//            }
-//            rd.close();
-//            serverResponseMessage = response.toString();
-//            fileInputStream.close();
-//            dos.flush();
-//            dos.close();
+            fileInputStream.close();
+            dos.flush();
+            dos.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
         return serverResponseMessage;

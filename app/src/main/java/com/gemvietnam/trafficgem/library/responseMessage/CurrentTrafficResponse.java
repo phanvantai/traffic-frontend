@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 
 public class CurrentTrafficResponse extends Response{
     private int width = 0, height = 0;
@@ -25,11 +26,13 @@ public class CurrentTrafficResponse extends Response{
     public void analysis(){
         try {
             this.jsonObject = new JSONObject(responseMessage);
-            this.jsonData = (JSONObject) jsonObject.get("data");
-            this.message = (String) jsonObject.get("message");
-            this.success = (boolean) jsonObject.get("success");
-            getGridInfo();
-            getCellInfo();
+            this.success = (boolean) jsonObject.get(Constants.Success);
+            this.message = (String) jsonObject.get(Constants.Message);
+            if(success){
+                this.jsonData = (JSONObject) jsonObject.get(Constants.Data);
+                getGridInfo();
+                getCellInfo();
+            }
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -46,7 +49,7 @@ public class CurrentTrafficResponse extends Response{
 
     public void getGridInfo(){
         try {
-            this.jsonGrid = (JSONObject) jsonData.get("grid");
+            this.jsonGrid = (JSONObject) jsonData.get(Constants.Grid);
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -54,14 +57,14 @@ public class CurrentTrafficResponse extends Response{
 
     public void getCellInfo(){
         try {
-            this.jsonCells = (JSONArray) jsonData.get("cells");
+            this.jsonCells = (JSONArray) jsonData.get(Constants.Cells);
         } catch (JSONException e){
             e.printStackTrace();
         }
     }
     public int getHeight(){
         try {
-            this.height = (int) this.jsonGrid.get("height");
+            this.height = (int) this.jsonGrid.get(Constants.Height);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -70,7 +73,7 @@ public class CurrentTrafficResponse extends Response{
 
     public int getWidth(){
         try {
-            this.width = (int) this.jsonGrid.get("width");
+            this.width = (int) this.jsonGrid.get(Constants.Width);
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -80,7 +83,7 @@ public class CurrentTrafficResponse extends Response{
     public double getEast(){
         double east = 0;
         try {
-            east = (double) this.jsonGrid.get("east");
+            east = (double) this.jsonGrid.get(Constants.East);
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -90,7 +93,7 @@ public class CurrentTrafficResponse extends Response{
     public double getWest(){
         double west = 0;
         try {
-            west = (double) this.jsonGrid.get("west");
+            west = (double) this.jsonGrid.get(Constants.West);
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -100,7 +103,7 @@ public class CurrentTrafficResponse extends Response{
     public double getSouth(){
         double South = 0;
         try {
-            South = (double) this.jsonGrid.get("south");
+            South = (double) this.jsonGrid.get(Constants.South);
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -110,23 +113,19 @@ public class CurrentTrafficResponse extends Response{
     public double getNorth(){
         double North = 0;
         try {
-            North = (double) this.jsonGrid.get("north");
+            North = (double) this.jsonGrid.get(Constants.North);
         } catch (JSONException e){
             e.printStackTrace();
         }
         return North;
     }
 
-//    public JSONArray getColorArray(){
-//        return jsonCells;
-//    }
-
     public String[][] getColorArray(){
-        String[][] temp = new String[height+1][width+1];
+        String[][] temp = new String[height][width];
         try {
             for(int i=0; i<jsonCells.length(); i++){
                 JSONObject jb = jsonCells.getJSONObject(i);
-                temp[(int)jb.get("height")][(int)jb.get("width")] = (String)jb.get("color");
+                temp[(int)jb.get(Constants.Height)][(int)jb.get(Constants.Width)] = (String)jb.get(Constants.Color);
             }
         } catch (JSONException e){
             e.printStackTrace();

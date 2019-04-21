@@ -162,26 +162,22 @@ public class LocationTracker extends Service {
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
                 while (true) {
-                    if (count == 60) {
+                    if (count == 3) {
                         try {
-//                            SendMode sendMode = new SendMode(mSendMarkerUrl);
-//                            sendMode.sendDataTraffic(mCustomToken.getToken(), mObject.toString());    // send data traffic
-
-
-                            // demo send traffic data
-                            Log.e("TaiPV", mObject.toString());
                             DataExchange trafficData = new DataExchange(URL_MARKER);
-                            trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.toString());
+                            Log.d("json-test-traffic-data", mObject.exportString());
+                            trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.exportString());
                             // send done
 
                             // receive response
                             String response = trafficData.getResponse();
 
                             //
-                            SendMarkerResponse responseMsg = new SendMarkerResponse(response);
-                            responseMsg.analysis();
-                            responseMsg.getSuccess();
-                            responseMsg.getMessage();
+//                            SendMarkerResponse responseMsg = new SendMarkerResponse(response);
+//                            responseMsg.analysis();
+//                            responseMsg.getSu
+// ccess();
+//                            responseMsg.getMessage();
                             //
                         } catch (Exception e) {
                             //
