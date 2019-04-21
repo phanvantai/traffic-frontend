@@ -18,8 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
+import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
+import com.gemvietnam.trafficgem.library.responseMessage.LoginResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.RegisterResponse;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
@@ -35,6 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_REGISTER;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -187,7 +190,7 @@ public class RegisterActivity extends AppCompatActivity {
                 try {
                     jsonObject.put(Constants.Success, true);
                     jsonObject.put(Constants.Message, "success");
-                    jsonObject.put(Constants.Token,"fdaiojfad");
+                    //jsonObject.put(Constants.Token,"fdaiojfad");
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
@@ -198,30 +201,36 @@ public class RegisterActivity extends AppCompatActivity {
                     Log.d("test-response-register", response);
                     registerResponse = new RegisterResponse(response);
                     registerResponse.analysist();
-                    token = registerResponse.getToken();
+                    //token = registerResponse.getToken();
                 } catch (NullPointerException e){
                     e.printStackTrace();
                 }
 
-
                 // gui anh kieu gi day, path currentPhotoPath, token chua co
                 //
-
-                Hawk.put(LAST_USER, user);
-                CustomToken customToken;
-                if (Hawk.contains(MY_TOKEN)) {
-                    customToken = Hawk.get(MY_TOKEN);
-                } else {
-                    customToken = CustomToken.getInstance();
-                }
-                // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
-                customToken.setDate(System.currentTimeMillis());
-                customToken.setToken(token);
-                Hawk.put(MY_TOKEN, customToken);
 
                 //bRegister.setEnabled(true);
                 Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
                 if (registerResponse.getSuccess()) {
+                    Credential credential = new Credential(email, "");
+                    DataExchange dataExchange1 = new DataExchange(URL_LOGIN);
+                    dataExchange1.sendCredential(credential);
+                    String response1 = dataExchange1.getResponse();
+
+                    LoginResponse loginResponse = new LoginResponse(response1);
+                    loginResponse.analysis();
+
+                    Hawk.put(LAST_USER, user);
+                    CustomToken customToken;
+                    if (Hawk.contains(MY_TOKEN)) {
+                        customToken = Hawk.get(MY_TOKEN);
+                    } else {
+                        customToken = CustomToken.getInstance();
+                    }
+                    // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
+                    customToken.setDate(System.currentTimeMillis());
+                    customToken.setToken(loginResponse.getToken());
+                    Hawk.put(MY_TOKEN, customToken);
                     setResult(RESULT_OK, null);
                     progressDialog.dismiss();
                     finish();
