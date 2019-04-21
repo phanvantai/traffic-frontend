@@ -29,6 +29,8 @@ import com.gemvietnam.trafficgem.BuildConfig;
 import com.gemvietnam.trafficgem.R;
 import com.squareup.picasso.Picasso;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -60,6 +62,7 @@ import javax.net.ssl.SSLContext;
 
 import static com.gemvietnam.trafficgem.utils.Constants.CHANEL_ID;
 import static com.gemvietnam.trafficgem.utils.Constants.CHANEL_NAME;
+import static com.gemvietnam.trafficgem.utils.Constants.SALT_BCRYPT;
 
 public class AppUtils {
 
@@ -238,7 +241,16 @@ public class AppUtils {
 
         return tokenCodeMd5;
     }
-    
+
+    /**
+     * Return bcrypt hash
+     * @param pass
+     * @return hash
+     */
+    public static String bcryptPassword(String pass) {
+        return BCrypt.hashpw(pass, SALT_BCRYPT);
+    }
+
     /**
      * Execute https connection (HttpsURLConnection)
      *
@@ -427,7 +439,7 @@ public class AppUtils {
         builder.show();
     }
 
-    public static void loadImage(Context context, String url, ImageView imageView) {
+    public static void loadImage(String url, ImageView imageView) {
         Picasso.get()
                 .load(url)
                 .centerCrop()

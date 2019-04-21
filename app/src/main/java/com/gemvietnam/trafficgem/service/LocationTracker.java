@@ -42,15 +42,13 @@ import static com.gemvietnam.trafficgem.utils.Constants.ONGOING_NOTIFICATION_ID;
 import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
 import static com.gemvietnam.trafficgem.utils.Constants.STOP_SERVICE;
 import static com.gemvietnam.trafficgem.utils.Constants.TIME_FORMAT;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_SERVER;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_MARKER;
 
 /**
  * Created by TaiPV on 25/03/2019
  * Service collect location data
  */
 public class LocationTracker extends Service {
-    private String mSendMarkerUrl = URL_SERVER + "/api/maker";
-
     private Context mContext;
 
     // location, update each 5s
@@ -171,7 +169,8 @@ public class LocationTracker extends Service {
 
 
                             // demo send traffic data
-                            DataExchange trafficData = new DataExchange(mSendMarkerUrl);
+                            Log.e("TaiPV", mObject.toString());
+                            DataExchange trafficData = new DataExchange(URL_MARKER);
                             trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.toString());
                             // send done
 

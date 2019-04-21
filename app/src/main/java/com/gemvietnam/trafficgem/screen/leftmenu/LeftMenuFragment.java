@@ -12,14 +12,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
+import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.user.ProfileActivity;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.ReportActivity;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.HashMap;
 import java.util.Map;
 import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 
 /**
  * The LeftMenu Fragment
@@ -75,8 +79,14 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
+        Hawk.init(getContext()).build();
+
 //        mMinusImg.setVisibility(View.VISIBLE);
 //        mPlusImg.setVisibility(View.GONE);
+        User user = Hawk.get(LAST_USER);
+        mNameTv.setText(user.getName());
+        mEmailTv.setText(user.getEmail());
+        AppUtils.loadImage(user.getPathAvatar(), mProfileImg);
         mExpandLl.setVisibility(View.VISIBLE);
         mReport.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,10 +99,9 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
         mProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppUtils.createDialog(getActivity());
-                //Intent intent = new Intent(getActivity(), ProfileActivity.class);
-                //abcfhf
-                //startActivity(intent);
+                //AppUtils.createDialog(getActivity());
+                Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                startActivity(intent);
             }
         });
 

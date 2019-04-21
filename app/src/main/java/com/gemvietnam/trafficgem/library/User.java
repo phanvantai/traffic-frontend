@@ -6,6 +6,13 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.Date;
 
+import static com.gemvietnam.trafficgem.utils.Constants.ADDRESS;
+import static com.gemvietnam.trafficgem.utils.Constants.EMAIL;
+import static com.gemvietnam.trafficgem.utils.Constants.NAME;
+import static com.gemvietnam.trafficgem.utils.Constants.PASSWORD;
+import static com.gemvietnam.trafficgem.utils.Constants.PHONE;
+import static com.gemvietnam.trafficgem.utils.Constants.VEHICLE;
+
 public class User {
     private String Email;
     private String Name;
@@ -13,16 +20,16 @@ public class User {
     private String Vehicle;
     private String Phone;
     private String Address;
-    //    private String Avatar;
+        private String Avatar;
     public User(){}
-    public User(String _email, String _name,String _password, String _vehicle, String _phone, String _address){
+    public User(String _email, String _name, String _vehicle, String _phone, String _address, String _avatar) {
         Email = _email;
         Name = _name;
-        Password = _password;
+        //Password = _password;
         Vehicle = _vehicle;
         Phone = _phone;
         Address = _address;
-//        Avatar = _avatar;
+        Avatar = _avatar;
     }
 
     public void setEmail(String _email){ Email = _email; }
@@ -48,18 +55,19 @@ public class User {
     public void setAddress(String _address){ Address = _address; }
 
     public String getAddress(){ return Address; }
-//    public void setAvatar(String _path){ Avatar = _path; }
-//
-//    public String getPathAvatar(){ return Avatar; }
+    public void setAvatar(String _path){ Avatar = _path; }
+
+    public String getPathAvatar(){ return Avatar; }
 
     public String exportStringFormatJson(){
         JSONObject entry = new JSONObject();
         try {
-            entry.put("email", Email);
-            entry.put("name", Name);
-            entry.put("vehicle",Vehicle);
-            entry.put("phone", Phone);
-            entry.put("address", Address);
+            entry.put(EMAIL, Email);
+            entry.put(NAME, Name);
+            entry.put(PASSWORD, Password);
+            entry.put(VEHICLE,Vehicle);
+            entry.put(PHONE, Phone);
+            entry.put(ADDRESS, Address);
         } catch (JSONException e){
             e.printStackTrace();
         }

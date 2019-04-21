@@ -17,8 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
+import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.library.responseMessage.LoginResponse;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
+import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.orhanobut.hawk.Hawk;
@@ -31,6 +34,7 @@ import butterknife.ButterKnife;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_SERVER;
 
 public class LoginActivity extends AppCompatActivity {
@@ -149,8 +153,6 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-
-
         // TODO: Implement your own authentication logic here.
         // do something here, below is test
         new Thread(new Runnable() {
@@ -160,67 +162,47 @@ public class LoginActivity extends AppCompatActivity {
                 String email = etEditMail.getText().toString();
                 String password = etEditPassword.getText().toString();
                 String md5Password = AppUtils.md5Password(password);
-                JSONObject object = new JSONObject();
-                try {
-                    object.put("password", md5Password);
-                    object.put("email", email);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Credential credential = new Credential(email, md5Password);
 
-                String loginUrl = URL_SERVER + "/api/login";
-                String params = object.toString();
+                //DataExchange dataExchange = new DataExchange(URL_LOGIN);
+                //dataExchange.sendCredential(credential);
+                //String response = dataExchange.getResponse();
 
-                String response = AppUtils.executePost(loginUrl, params);
+                //Log.e("TaiPV", "response" + response);
+                String abc = "{\n" +
+                        "    \"success\": true,\n" +
+                        "    \"message\": \"success\",\n" +
+                        "    \"remember_token\": \"asdfdsfsdfsdfas\",\n" +
+                        "    \"email\": \"admin@gmail.com\",\n" +
+                        "    \"name\": \"admin\",\n" +
+                        "    \"phone\": \"0123456789\",\n" +
+                        "    \"address\": \"null\",\n" +
+                        "    \"vehicle\":\"car\",\n" +
+                        "    \"image\": \"adfsadfdfaf\"\n" +
+                        "}\n";
+                LoginResponse loginResponse = new LoginResponse(abc);
+                loginResponse.analysis();
 
-                if (response != null) {
-                    JSONObject jsonObject = new JSONObject();
-                    try {
-                        JSONObject userObject = jsonObject.getJSONObject(response);
-                        boolean success = userObject.getBoolean("success");
-                        String message = userObject.getString("message");
-                        if (success) {
-                            String token = userObject.getString("remember_token");
-                            String name = userObject.getString("name");
-                            String picturePath = userObject.getString("image");
-                            String user_email = userObject.getString("email");
-                            String vehicle = userObject.getString("vehicle");
-
-                            User user = new User(user_email, name, vehicle, picturePath);
-
-                            // On complete call either onLoginSuccess or onLoginFailed
-                            mCustomToken.setDate(System.currentTimeMillis());
-                            mCustomToken.setToken(token);
-
-                            // add to hawk
-                            Hawk.put(LAST_USER, user);
-                            Hawk.put(MY_TOKEN, mCustomToken);
-
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            //intent.putExtra("user", user);
-                            startActivity(intent);
-                        }// else {
-                            // neu khong thanh cong thong bao loi voi noi dung message tu server
-                            //AppUtils.showCustomAlert(getApplicationContext(), message, Toast.LENGTH_LONG);
-                        //}
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                // temp
-                User user = new User();
-                user.setEmail(email);
-                // On complete call either onLoginSuccess or onLoginFailed
+                mLastUser = loginResponse.getUser();
                 mCustomToken.setDate(System.currentTimeMillis());
-                mCustomToken.setToken(md5Password);
+                mCustomToken.setToken(loginResponse.getToken());
 
                 // add to hawk
-                Hawk.put(LAST_USER, user);
+                Hawk.put(LAST_USER, mLastUser);
                 Hawk.put(MY_TOKEN, mCustomToken);
+
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                //intent.putExtra("user", user);
                 startActivity(intent);
+
+                // temp
+//                User user = new User();
+//                user.setEmail(email);
+//                mCustomToken.setDate(System.currentTimeMillis());
+//                mCustomToken.setToken(md5Password);
+//                Hawk.put(LAST_USER, user);
+//                Hawk.put(MY_TOKEN, mCustomToken);
+//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                startActivity(intent);
 
                 // onLoginFailed();
                 progressDialog.dismiss();

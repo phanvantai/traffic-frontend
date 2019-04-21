@@ -3,6 +3,9 @@ package com.gemvietnam.trafficgem.library;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.gemvietnam.trafficgem.utils.Constants.EMAIL;
+import static com.gemvietnam.trafficgem.utils.Constants.PASSWORD;
+
 public class Credential {
     private String Email;
     private String Password;
@@ -24,8 +27,8 @@ public class Credential {
     public String exportStringFormatJson(){
         JSONObject entry = new JSONObject();
         try {
-            entry.put("email", Email);
-            entry.put("password", Password);
+            entry.put(EMAIL, Email);
+            entry.put(PASSWORD, Password);
         } catch (JSONException e){
             e.printStackTrace();
         }

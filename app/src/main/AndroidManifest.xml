@@ -44,17 +44,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".user.ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".user.ProfileActivity"
+            android:theme="@style/AppTheme.Dark" />
         <activity android:name=".screen.main.MainActivity"
             android:theme="@style/AppTheme"/>
-        <activity
-            android:name=".user.RegisterActivity"
+        <activity android:name=".user.RegisterActivity"
             android:theme="@style/AppTheme.Dark" /> <!-- Services -->
-        <service
-            android:name=".service.LocationTracker"
+        <service android:name=".service.LocationTracker"
             android:enabled="true" />
     </application>
 

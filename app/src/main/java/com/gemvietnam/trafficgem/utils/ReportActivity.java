@@ -68,7 +68,6 @@ public class ReportActivity extends AppCompatActivity {
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
-
             }
         });
         bOk.setOnClickListener(new View.OnClickListener() {
@@ -128,5 +127,4 @@ public class ReportActivity extends AppCompatActivity {
             ivTakePicture.setVisibility(View.GONE);
         }
     }
-
 }

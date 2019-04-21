@@ -23,19 +23,20 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:design:26.1.0'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.google.android.gms:play-services:12.0.1'
-    implementation "com.android.support:cardview-v7:26.1.0"
+    implementation 'com.android.support:cardview-v7:26.1.0'
     testImplementation 'junit:junit:4.12'
     implementation project(':GemCore')
-    implementation "com.orhanobut:hawk:2.0.1"
+    implementation 'com.orhanobut:hawk:2.0.1'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
-    implementation "com.jakewharton:butterknife:8.8.0"
+    implementation 'com.jakewharton:butterknife:8.8.0'
     annotationProcessor "com.jakewharton:butterknife-compiler:8.8.0"
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation files('libs/jbcrypt-0.4.jar')
 }

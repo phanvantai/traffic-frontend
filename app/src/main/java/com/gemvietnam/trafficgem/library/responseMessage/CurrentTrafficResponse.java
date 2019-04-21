@@ -90,7 +90,7 @@ public class CurrentTrafficResponse extends Response{
     public double getWest(){
         double west = 0;
         try {
-            west = (double) this.jsonGrid.get("width");
+            west = (double) this.jsonGrid.get("west");
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -100,7 +100,7 @@ public class CurrentTrafficResponse extends Response{
     public double getSouth(){
         double South = 0;
         try {
-            South = (double) this.jsonGrid.get("width");
+            South = (double) this.jsonGrid.get("south");
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -110,7 +110,7 @@ public class CurrentTrafficResponse extends Response{
     public double getNorth(){
         double North = 0;
         try {
-            North = (double) this.jsonGrid.get("width");
+            North = (double) this.jsonGrid.get("north");
         } catch (JSONException e){
             e.printStackTrace();
         }

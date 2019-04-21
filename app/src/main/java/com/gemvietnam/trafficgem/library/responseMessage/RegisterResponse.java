@@ -7,7 +7,6 @@ public class RegisterResponse extends Response {
     private String responseMessage;
     private String message;
     private boolean success;
-    private JSONObject jsonObject;
 
     public RegisterResponse(String responseMessage){
         this.responseMessage = responseMessage;
@@ -20,7 +19,7 @@ public class RegisterResponse extends Response {
 
     public void analysist(){
         try {
-            this.jsonObject = new JSONObject(responseMessage);
+            JSONObject jsonObject = new JSONObject(responseMessage);
             this.message = (String) jsonObject.get("message");
             this.success = (boolean) jsonObject.get("success");
         } catch (JSONException e){

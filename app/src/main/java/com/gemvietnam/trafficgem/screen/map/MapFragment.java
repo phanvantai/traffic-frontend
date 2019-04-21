@@ -29,8 +29,11 @@ import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.MySupportMapFragment;
 import com.gemvietnam.trafficgem.library.Point;
+import com.gemvietnam.trafficgem.library.responseMessage.CurrentTrafficResponse;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
+import com.gemvietnam.trafficgem.service.DataExchange;
+import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -52,6 +55,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -68,6 +72,8 @@ import butterknife.OnClick;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
+import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_CURRENT;
 
 /**
  * The Main Fragment
@@ -95,8 +101,8 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
   private static int PLACE_PICKER_REQUEST = 2;
   private List<Polyline> polylines;
 
-  private Point[][] points = new Point[23][56];
-  private String[][] colors = new String[23][56];
+  private Point[][] points;
+  private String[][] colors;
   public static boolean mMapIsTouched = false;
   private double delLat = 0.0089573;
   private double delLon = 0.0088355;
@@ -189,28 +195,49 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
 
   }
 
-  private void setupListPoint() {
+  private void setupListPoint(CurrentTrafficResponse trafficResponse) {
     for (int i = 0; i < 23; i++) {
       for (int j = 0; j < 56; j++) {
         points[i][j] = new Point();
       }
     }
-
-    points[0][0].setLat(21.157200);
-    points[0][0].setLon(105.456390);
-    for (int i = 1; i < 23; i++) {
+    points[0][0].setLat(trafficResponse.getNorth());
+    points[0][0].setLon(trafficResponse.getWest());
+    for (int i = 1; i < trafficResponse.getHeight(); i++) {
       points[i][0].setLat(points[i - 1][0].getLat() - delLat);
       points[i][0].setLon(points[i - 1][0].getLon());
     }
-    for (int i = 0; i < 23; i++) {
-      for (int j = 1; j < 56; j++) {
+    for (int i = 0; i < trafficResponse.getHeight(); i++) {
+      for (int j = 1; j < trafficResponse.getWidth(); j++) {
         points[i][j].setLat(points[i][j - 1].getLat());
         points[i][j].setLon(points[i][j - 1].getLon() + delLon);
       }
     }
-    for (int i = 0; i < 23; i++)
-      for (int j = 0; j < 56; j++)
+    for (int i = 0; i < trafficResponse.getHeight(); i++)
+      for (int j = 0; j < trafficResponse.getWidth(); j++)
         points[i][j].setColor(transform(colors[i][j]));
+
+//    for (int i = 0; i < 23; i++) {
+//      for (int j = 0; j < 56; j++) {
+//        points[i][j] = new Point();
+//      }
+//    }
+//
+//    points[0][0].setLat(21.157200);
+//    points[0][0].setLon(105.456390);
+//    for (int i = 1; i < 23; i++) {
+//      points[i][0].setLat(points[i - 1][0].getLat() - delLat);
+//      points[i][0].setLon(points[i - 1][0].getLon());
+//    }
+//    for (int i = 0; i < 23; i++) {
+//      for (int j = 1; j < 56; j++) {
+//        points[i][j].setLat(points[i][j - 1].getLat());
+//        points[i][j].setLon(points[i][j - 1].getLon() + delLon);
+//      }
+//    }
+//    for (int i = 0; i < 23; i++)
+//      for (int j = 0; j < 56; j++)
+//        points[i][j].setColor(transform(colors[i][j]));
   }
 
   private int transform(String s) {
@@ -245,15 +272,48 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
 
   private void showTrafficState() {
     mMap.clear();
-    setupListColor();
-    setupListPoint();
-    setupListCell();
+    int layer = 1;
+    CustomToken customToken = Hawk.get(MY_TOKEN);
+    DataExchange dataExchange = new DataExchange(URL_CURRENT);
+    // layer = ???
+    dataExchange.getCurrent(customToken.getToken(), layer);
+    String response = dataExchange.getResponse();
+
+    CurrentTrafficResponse trafficResponse = new CurrentTrafficResponse(response);
+    trafficResponse.analysis();
+
+    int height = trafficResponse.getHeight();
+    int width = trafficResponse.getWidth();
+    double north = trafficResponse.getNorth();
+    double south = trafficResponse.getSouth();
+    double west = trafficResponse.getWest();
+    double east = trafficResponse.getEast();
+    points = new Point[height][width];
+    colors = new String[height][width];
+
+    // setup list color
+    for (int i = 0; i < height; i++) {
+      for (int j = 0; j < width; j++) {
+        colors[i][j] = trafficResponse.getColorArray()[i][j];
+      }
+    }
+    setupListPoint(trafficResponse);
+    // setup List Cell;
+    for (int i = 0; i < height; i++) {
+      for (int j = 1; j < width; j++) {
+        PolygonOptions polygonOptions = new PolygonOptions();
+        polygonOptions.addAll(points[i][j].getPeaks());
+        polygonOptions.strokeWidth(0);
+        Polygon polygon = mMap.addPolygon(polygonOptions);
+        polygon.setFillColor(points[i][j].getColor());
+      }
+    }
     mGridview.setVisibility(View.GONE);
 
-    MarkerOptions marker1 = new MarkerOptions().position(new LatLng(21.157200, 105.456390));
-    MarkerOptions marker2 = new MarkerOptions().position(new LatLng(21.157200, 105.951180));
-    MarkerOptions marker3 = new MarkerOptions().position(new LatLng(20.951180, 105.456390));
-    MarkerOptions marker4 = new MarkerOptions().position(new LatLng(20.951180, 105.951180));
+    MarkerOptions marker1 = new MarkerOptions().position(new LatLng(north, west));
+    MarkerOptions marker2 = new MarkerOptions().position(new LatLng(north, east));
+    MarkerOptions marker3 = new MarkerOptions().position(new LatLng(south, west));
+    MarkerOptions marker4 = new MarkerOptions().position(new LatLng(south, east));
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
     builder.include(marker1.getPosition());
     builder.include(marker2.getPosition());

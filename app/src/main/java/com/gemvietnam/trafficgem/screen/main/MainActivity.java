@@ -2,18 +2,15 @@ package com.gemvietnam.trafficgem.screen.main;
 
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.gemvietnam.base.ContainerActivity;
 import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
-import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuPresenter;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
@@ -22,12 +19,6 @@ import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.gemvietnam.trafficgem.utils.ViewUtils;
 import com.orhanobut.hawk.Hawk;
-
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import butterknife.BindView;
 
@@ -60,11 +51,6 @@ public class MainActivity extends ContainerActivity implements
 
     @Override
     public void initLayout() {
-
-        // get intent from doLogin activity
-        //Intent intent = getIntent();
-        //User user = (User) intent.getSerializableExtra("user");
-        // create chanel for notification (android O and above)
         AppUtils.createNotificationChanel(this);
 //    super.initLayout();
 
@@ -91,9 +77,6 @@ public class MainActivity extends ContainerActivity implements
      */
     private void startLocationTracker() {
         Intent startIntent = new Intent(this, LocationTracker.class);
-        // set more user's information
-        //Bundle bundle = startIntent.getExtras();
-        //bundle.putString("key", "value");
         startIntent.setAction(START_SERVICE);
         if (Build.VERSION.SDK_INT >= 26) {
             startForegroundService(startIntent);

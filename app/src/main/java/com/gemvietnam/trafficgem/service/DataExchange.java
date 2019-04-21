@@ -10,10 +10,14 @@ import com.gemvietnam.trafficgem.library.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -49,7 +53,7 @@ public class DataExchange implements IDataExchange {
     public void sendCredential(Credential credential) {
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
+            conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestMethod("POST");
             conn.connect();
             dos = new DataOutputStream(conn.getOutputStream());
@@ -165,7 +169,7 @@ public class DataExchange implements IDataExchange {
         int maxBufferSize = 1024*1024;
         init();
         try {
-            conn.setRequestProperty("Content-Type", "image/png");
+            conn.setRequestProperty("Content-Type", "image/jpg");
             conn.setRequestProperty("Authorization", token);
             conn.setRequestMethod("POST");
             conn.connect();
@@ -226,9 +230,20 @@ public class DataExchange implements IDataExchange {
             if(serverResponseCode == 200){
                 serverResponseMessage = conn.getResponseMessage();
             }
-            fileInputStream.close();
-            dos.flush();
-            dos.close();
+            // Get Response
+//            InputStream is = new BufferedInputStream(conn.getInputStream());
+//            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+//            StringBuffer response = new StringBuffer();
+//            String line;
+//            while ((line = rd.readLine()) != null) {
+//                response.append(line);
+//                response.append("\n");
+//            }
+//            rd.close();
+//            serverResponseMessage = response.toString();
+//            fileInputStream.close();
+//            dos.flush();
+//            dos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

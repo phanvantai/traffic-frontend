@@ -18,11 +18,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
+import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.library.responseMessage.RegisterResponse;
+import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
+import com.gemvietnam.trafficgem.utils.CustomToken;
+import com.orhanobut.hawk.Hawk;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
+import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_REGISTER;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
@@ -30,6 +39,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     @BindView(R.id.et_activity_register_input_name)
     EditText etName;
+    @BindView(R.id.et_activity_register_input_phone)
+    EditText etPhone;
+    @BindView(R.id.et_activity_register_input_address)
+    EditText etAddress;
     @BindView(R.id.et_activity_register_input_email)
     EditText etEmail;
     @BindView(R.id.et_activity_register_input_password)
@@ -45,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
     @BindView(R.id.civ_activity_register_avatar)
     CircleImageView civAvatar;
 
-    private String mVehicle;
+    String currentPhotoPath;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +87,6 @@ public class RegisterActivity extends AppCompatActivity {
                 } else {
                     register();
                 }
-
             }
         });
 
@@ -105,23 +117,20 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_GALLERY_IMAGE) {
-                Uri selectedImage = data.getData();
-                if (selectedImage != null) {
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        if (resultCode == RESULT_OK &&requestCode == SELECT_GALLERY_IMAGE) {
+            Uri selectedImage = data.getData();
+            if (selectedImage != null) {
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-                    Cursor cursor = getContentResolver().query(selectedImage,
-                            filePathColumn, null, null, null);
-                    cursor.moveToFirst();
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
 
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String picturePath = cursor.getString(columnIndex);
-                    cursor.close();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                currentPhotoPath = cursor.getString(columnIndex);
+                cursor.close();
 
-                    civAvatar.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-                }
-
+                civAvatar.setImageBitmap(BitmapFactory.decodeFile(currentPhotoPath));
             }
         }
 
@@ -139,7 +148,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        bRegister.setEnabled(false);
+        //bRegister.setEnabled(false);
 
         // create progress dialog
         final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this,
@@ -148,35 +157,54 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-        // use later
-        String name = etName.getText().toString();
-        String email = etEmail.getText().toString();
-        String password = etPassword.getText().toString();
-        String vehicle = sVehicle.getSelectedItem().toString();
-        Log.d(TAG, vehicle);
-
         // TODO: Implement your own register logic here.
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onRegisterSuccess or onRegisterFailed
-                        // depending on success
-                        onRegisterSuccess();
-                        // onRegisterFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 1000);
-    }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String phone = etPhone.getText().toString();
+                String address = etAddress.getText().toString();
+                String name = etName.getText().toString();
+                String email = etEmail.getText().toString();
+                String password = etPassword.getText().toString();
+                String vehicle = sVehicle.getSelectedItem().toString();
 
+                User user = new User(email, name, vehicle, phone, address, currentPhotoPath);
 
-    /**
-     * do something when register successfully
-     */
-    public void onRegisterSuccess() {
-        bRegister.setEnabled(true);
-        setResult(RESULT_OK, null);
-        finish();
+                String md5Password = AppUtils.md5Password(password);
+                user.setPassword(md5Password);
+
+                DataExchange dataExchange = new DataExchange(URL_REGISTER);
+                dataExchange.sendRegistrationInfo(user);
+                String response = dataExchange.getResponse();
+
+                RegisterResponse registerResponse = new RegisterResponse(response);
+                // gui anh kieu gi day, path currentPhotoPath, token chua co
+                //
+
+                Hawk.put(LAST_USER, user);
+                CustomToken customToken;
+                if (Hawk.contains(MY_TOKEN)) {
+                    customToken = Hawk.get(MY_TOKEN);
+                } else {
+                    customToken = CustomToken.getInstance();
+                }
+                // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
+                customToken.setDate(System.currentTimeMillis());
+                //customToken.setToken();
+                Hawk.put(MY_TOKEN, customToken);
+
+                //bRegister.setEnabled(true);
+                if (registerResponse.getSuccess()) {
+                    setResult(RESULT_OK, null);
+                    finish();
+                } else {
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }).start();
     }
 
     public void onRegisterFailed() {

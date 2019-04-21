@@ -1,18 +1,27 @@
 package com.gemvietnam.trafficgem.library.responseMessage;
 
-import com.google.gson.JsonParser;
+import com.gemvietnam.trafficgem.library.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static com.gemvietnam.trafficgem.utils.Constants.ADDRESS;
+import static com.gemvietnam.trafficgem.utils.Constants.EMAIL;
+import static com.gemvietnam.trafficgem.utils.Constants.IMAGE;
+import static com.gemvietnam.trafficgem.utils.Constants.MESSAGE;
+import static com.gemvietnam.trafficgem.utils.Constants.NAME;
+import static com.gemvietnam.trafficgem.utils.Constants.PHONE;
+import static com.gemvietnam.trafficgem.utils.Constants.SUCCESS;
+import static com.gemvietnam.trafficgem.utils.Constants.TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.VEHICLE;
 
 public class LoginResponse extends Response{
     private String responseMessage;
     private String message;
     private boolean success;
     private String token;
-    private String name;
-    private String pathImage;
-    private JSONObject jsonObject;
+    private User mUser;
+
     public LoginResponse(String responseMessage){
         this.responseMessage = responseMessage;
     }
@@ -24,15 +33,20 @@ public class LoginResponse extends Response{
     }
 
     public void analysis(){
-//        JsonParser parser = new JsonParser();
-//        JSONObject json = (JSONObject) parser.parse(responseCode);
         try {
-            this.jsonObject = new JSONObject(responseMessage);
-            this.message = (String) jsonObject.get("message");
-            this.success = (boolean) jsonObject.get("success");
-            this.token = (String) jsonObject.get("token");
-            this.name = (String) jsonObject.get("name");
-            this.pathImage = (String) jsonObject.get("image");
+            JSONObject jsonObject = new JSONObject(responseMessage);
+            this.message = (String) jsonObject.get(MESSAGE);
+            this.success = (boolean) jsonObject.get(SUCCESS);
+            if (success) {
+                this.token = (String) jsonObject.get(TOKEN);
+                String email = (String) jsonObject.get(EMAIL);
+                String name = (String) jsonObject.get(NAME);
+                String pathImage = (String) jsonObject.get(IMAGE);
+                String vehicle = (String) jsonObject.get(VEHICLE);
+                String phone = (String) jsonObject.get(PHONE);
+                String address = (String) jsonObject.get(ADDRESS);
+                mUser = new User(email, name, vehicle, phone, address, pathImage);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -42,13 +56,10 @@ public class LoginResponse extends Response{
         return token;
     }
 
-    public String getName(){
-        return name;
+    public User getUser() {
+        return mUser;
     }
 
-    public String getPathImage(){
-        return pathImage;
-    }
     @Override
     public String getMessage(){
         return message;
