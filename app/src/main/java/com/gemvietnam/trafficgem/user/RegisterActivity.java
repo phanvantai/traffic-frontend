@@ -70,6 +70,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        civAvatar.setVisibility(View.GONE);
+
         sVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -172,7 +174,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
-                String response, token;
+                String response, token = "";
                 RegisterResponse registerResponse = null;
 
                 String md5Password = AppUtils.md5Password(password);
@@ -190,7 +192,7 @@ public class RegisterActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 try {
-                    dataExchange.sendRegistrationInfo(user);
+                    //dataExchange.sendRegistrationInfo(user);
 //                    response = dataExchange.getResponse();
                     response = jsonObject.toString();
                     Log.d("test-response-register", response);
@@ -214,13 +216,14 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
                 customToken.setDate(System.currentTimeMillis());
-                //customToken.setToken();
+                customToken.setToken(token);
                 Hawk.put(MY_TOKEN, customToken);
 
                 //bRegister.setEnabled(true);
                 Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
                 if (registerResponse.getSuccess()) {
                     setResult(RESULT_OK, null);
+                    progressDialog.dismiss();
                     finish();
                 } else {
                     progressDialog.dismiss();

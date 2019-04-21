@@ -231,7 +231,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 // TODO: Implement successful register logic here
                 // If register is successfully, automatically doLogin and go to MainActivity
-                this.finish();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
         }
     }
