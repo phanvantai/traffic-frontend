@@ -22,6 +22,9 @@ import android.widget.Spinner;
 
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.Message;
+import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.service.DataExchange;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -32,14 +35,16 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
+import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.REQUEST_IMAGE_CAPTURE;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_REPORT;
 
 public class ReportActivity extends AppCompatActivity {
 
-
-    String mUrl = "";
-
     String mPathPicture = "";
+    User mUser;
+    CustomToken mCustomToken;
 
     @BindView(R.id.s_activity_report_list)
     Spinner sListReport;
@@ -114,6 +119,14 @@ public class ReportActivity extends AppCompatActivity {
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Date date = new Date();
         Message message = new Message(id, location, mPathPicture, date);
+
+        mUser = Hawk.get(LAST_USER);
+        mCustomToken = Hawk.get(MY_TOKEN);
+
+        DataExchange dataExchange = new DataExchange(URL_REPORT);
+        dataExchange.report(mCustomToken.getToken(), message);
+        String response = dataExchange.getResponse();
+
         //sendReport(mUrl, id, location, mPathPicture, date);
         finish();
     }

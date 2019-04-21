@@ -91,19 +91,21 @@ public class ProfileActivity extends AppCompatActivity {
                 UpdateProfile updateProfile = new UpdateProfile(name, phone, address);
 
                 DataExchange dataExchange = new DataExchange(URL_PROFILE);
-                dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
-                String response = dataExchange.getResponse();
+                //dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
+                //String response = dataExchange.getResponse();
 
-                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(response);
-                if (updateProfileResponse.getSuccess()) {
+                //UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(response);
+                //if (updateProfileResponse.getSuccess()) {
                     // thanh cong thi thong bao hay lam gi day
                     mLastUser.setName(name);
                     mLastUser.setPhone(phone);
                     mLastUser.setAddress(address);
                     Hawk.put(LAST_USER, mLastUser);
-                } else {
+                    Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
+                    finish();
+                //} else {
 
-                }
+                //}
             }
         });
 
@@ -160,12 +162,13 @@ public class ProfileActivity extends AppCompatActivity {
 //                    } else {
 //                        //Toast.makeText(getApplicationContext(), changePasswordResponse.getMessage(), Toast.LENGTH_LONG).show();
 //                    }
-
+                    Toast.makeText(getApplicationContext(), "Password Changed", Toast.LENGTH_LONG).show();
+                    finish();
                     //llUpdate.setVisibility(View.VISIBLE);
                     //llChange.setVisibility(View.GONE);
                     //bChangPassword.setVisibility(View.VISIBLE);
                 } else {
-                    //Toast.makeText(getApplicationContext(), "Error!!", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "Error!!", Toast.LENGTH_LONG).show();
                     //return;
                 }
             }
