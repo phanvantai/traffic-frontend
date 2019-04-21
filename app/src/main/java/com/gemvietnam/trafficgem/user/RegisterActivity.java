@@ -182,20 +182,21 @@ public class RegisterActivity extends AppCompatActivity {
                 DataExchange dataExchange = new DataExchange(URL_REGISTER);
 
                 // create response
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put(Constants.Success, true);
-                    jsonObject.put(Constants.Message, "success");
-                    jsonObject.put(Constants.Token,"fdaiojfad");
-                } catch (JSONException e){
-                    e.printStackTrace();
-                }
+//                JSONObject jsonObject = new JSONObject();
+//                try {
+//                    jsonObject.put(Constants.Success, true);
+//                    jsonObject.put(Constants.Message, "success");
+//                    jsonObject.put(Constants.Token,"fdaiojfad");
+//                } catch (JSONException e){
+//                    e.printStackTrace();
+//                }
                 // end demo
                 try {
                     Log.d("test-register", user.exportStringFormatJson());
                     dataExchange.sendRegistrationInfo(user);
 //                    response = dataExchange.getResponse();
-                    response = jsonObject.toString();
+//                    response = jsonObject.toString();
+                    response = dataExchange.getResponse();
                     Log.d("test-response-register", response);
                     registerResponse = new RegisterResponse(response);
                     registerResponse.analysist();

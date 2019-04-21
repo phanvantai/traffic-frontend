@@ -24,11 +24,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gemvietnam.Constants;
 import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.MySupportMapFragment;
 import com.gemvietnam.trafficgem.library.Point;
+import com.gemvietnam.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.CurrentTrafficResponse;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
@@ -56,6 +56,10 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.orhanobut.hawk.Hawk;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -279,6 +283,19 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     dataExchange.getCurrent(customToken.getToken(), layer);
     String response = dataExchange.getResponse();
 
+    //      START DEMO
+//    JSONObject jsonObject = new JSONObject();
+//    JSONObject jsonData = new JSONObject();
+//    JSONObject jsonGrid = new JSONObject();
+//    JSONArray jsonCells = new JSONArray();
+//    JSONObject jsonCell = new JSONObject();
+//    try {
+//      jS
+//    } catch (JSONException e){
+//      e.printStackTrace();
+//    }
+
+    //      END DEMO
     CurrentTrafficResponse trafficResponse = new CurrentTrafficResponse(response);
     trafficResponse.analysis();
 

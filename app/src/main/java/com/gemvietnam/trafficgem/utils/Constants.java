@@ -1,5 +1,5 @@
 package com.gemvietnam.trafficgem.utils;
-
+import com.gemvietnam.trafficgem.library.UpdateProfile;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -12,6 +12,7 @@ public class Constants {
     public static final String URL_CURRENT = URL_SERVER + "/api/getcurrent";
     public static final String URL_PASSWORD = URL_SERVER + "api/user/changepassword";
     public static final String URL_PROFILE = URL_SERVER + "api/user/editprofile";
+    public static final String URL_REPORT = URL_SERVER + "api/user/report";
 
     public static final String SUCCESS = "success";
     public static final String MESSAGE = "message";

@@ -152,6 +152,8 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
                         case SIGN_OUT:
                             iconId = R.drawable.ic_signout_white;
                             break;
+                        default:
+                            break;
                     }
                     entry.getKey().setCompoundDrawablesRelativeWithIntrinsicBounds(iconId, 0,0,0);
 

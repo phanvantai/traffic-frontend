@@ -54,6 +54,7 @@ public class MainActivity extends ContainerActivity implements
         AppUtils.createNotificationChanel(this);
 //    super.initLayout();
 
+        Hawk.init(getApplicationContext()).build();
         // start location tracking when start app
         startLocationTracker();
 

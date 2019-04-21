@@ -60,7 +60,11 @@ public abstract class ViewFragment<P extends IPresenter>
 
   @Override
   protected void startPresent() {
-    mPresenter.start();
+    try {
+      mPresenter.start();
+    } catch (Exception e) {
+      //
+    }
     mIsStarted = true;
   }
 
