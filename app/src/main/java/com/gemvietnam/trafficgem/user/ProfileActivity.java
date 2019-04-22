@@ -1,5 +1,6 @@
 package com.gemvietnam.trafficgem.user;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -32,15 +33,15 @@ import static com.gemvietnam.trafficgem.utils.Constants.URL_PASSWORD;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_PROFILE;
 
 public class ProfileActivity extends AppCompatActivity {
-
+    public static final int SELECT_GALLERY_IMAGE = 12;
     @BindView(R.id.ll_activity_profile_update_user)
     LinearLayout llUpdate;
     @BindView(R.id.civ_activity_profile_avatar)
     CircleImageView civAvatar;
     @BindView(R.id.et_activity_profile_input_address)
     EditText etAddress;
-    @BindView(R.id.et_activity_profile_input_email)
-    EditText etEmail;
+//    @BindView(R.id.et_activity_profile_input_email)
+//    EditText etEmail;
     @BindView(R.id.et_activity_profile_input_name)
     EditText etName;
     @BindView(R.id.et_activity_profile_input_phone)
@@ -78,9 +79,16 @@ public class ProfileActivity extends AppCompatActivity {
         etName.setText(mLastUser.getName());
         etPhone.setText(mLastUser.getPhone());
         etAddress.setText(mLastUser.getAddress());
-        etEmail.setText(mLastUser.getEmail());
+//        etEmail.setText(mLastUser.getEmail());
         sVehicle.setPrompt(mLastUser.getVehicle());
         llChange.setVisibility(View.GONE);
+
+        civAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getImageFroGallery();
+            }
+        });
 
         bUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,9 +96,11 @@ public class ProfileActivity extends AppCompatActivity {
                 String name = etName.getText().toString();
                 String phone = etPhone.getText().toString();
                 String address = etAddress.getText().toString();
-                UpdateProfile updateProfile = new UpdateProfile(name, phone, address);
+                String vehicle = sVehicle.getSelectedItem().toString();
+                UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
 
                 DataExchange dataExchange = new DataExchange(URL_PROFILE);
+                dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
 //                dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
 //                String response = dataExchange.getResponse();
 
@@ -100,6 +110,7 @@ public class ProfileActivity extends AppCompatActivity {
                     mLastUser.setName(name);
                     mLastUser.setPhone(phone);
                     mLastUser.setAddress(address);
+                    mLastUser.setVehicle(vehicle);
                     Hawk.put(LAST_USER, mLastUser);
 //                } else {
                     Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
@@ -173,4 +184,11 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void getImageFroGallery(){
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, SELECT_GALLERY_IMAGE);
+    }
+
 }
