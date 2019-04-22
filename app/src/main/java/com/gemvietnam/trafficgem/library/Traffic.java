@@ -5,19 +5,19 @@ import android.location.Location;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 public class Traffic {
     private Location mLocation;
-    private String mTimeStamp;
-    private String mDate;
-    private String mVehicle;
     private double mSpeed;
+    private String mVehicle;
+    private String mRecord_time;
     private String mDirection;
 
-    public Traffic(Location location, String timeStamp, String date, String transport, double speed, String direction) {
+    public Traffic(Location location, String record_time, String vehicle, double speed, String direction) {
         mLocation = location;
-        mTimeStamp = timeStamp;
-        mDate = date;
-        mVehicle = transport;
+        mRecord_time = record_time;
+        mVehicle = vehicle;
         mSpeed = speed;
         mDirection = direction;
     }
@@ -33,31 +33,23 @@ public class Traffic {
 
     public double getLon(){ return mLocation.getLongitude(); }
 
-    public void setTimeStamp(String mTimeStamp){
-        this.mTimeStamp = mTimeStamp;
+    public void setRecordTime(String time){ mRecord_time = time;}
+
+    public String getRecordTime(){ return mRecord_time;}
+
+    public void setVehicle(String mVehicle){
+        this.mVehicle = mVehicle;
     }
 
-    public String getTimeStamp(){
-        return mTimeStamp;
-    }
-
-    public void setDate(String date) { this.mDate = date;}
-
-    public String getDate(){ return mDate; }
-
-    public void setTransport(String mTransport){
-        this.mVehicle = mTransport;
-    }
-
-    public String getTransport(){
+    public String getVehicle(){
         return mVehicle;
     }
 
-    public void setSpeed(double mSpeed){
+    public void setAvgSpeed(double mSpeed){
         this.mSpeed = mSpeed;
     }
 
-    public double getSpeed(){
+    public double getAvgSpeed(){
         return mSpeed;
     }
 
@@ -65,18 +57,36 @@ public class Traffic {
 
     public String getDirection(){ return mDirection; }
 
-    public String exportStringFormatJson(){
+//    public String exportStringFormatJson(){
+//        JSONObject entry = new JSONObject();
+//        try {
+//            entry.put("lat", mLocation.getLatitude());
+//            entry.put("lng", mLocation.getLongitude());
+//            entry.put("avg_speed", mSpeed);
+//            entry.put("vehicle", mVehicle);
+//            entry.put("record_time", mRecord_time);
+//            entry.put("direction", mDirection);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        return entry.toString();
+//    }
+    public JSONObject exportJson(){
         JSONObject entry = new JSONObject();
         try {
-            entry.put("latitude", mLocation.getLatitude());
-            entry.put("longitude", mLocation.getLongitude());
+            entry.put("lat", mLocation.getLatitude());
+            entry.put("lng", mLocation.getLongitude());
             entry.put("avg_speed", mSpeed);
             entry.put("vehicle", mVehicle);
-            entry.put("record_time", mTimeStamp);
+            entry.put("record_time", mRecord_time);
             entry.put("direction", mDirection);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return entry.toString();
+        return entry;
+    }
+
+    public String exportStringFormatJson(){
+        return exportJson().toString();
     }
 }

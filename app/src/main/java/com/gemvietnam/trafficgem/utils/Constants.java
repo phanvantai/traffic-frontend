@@ -5,7 +5,7 @@ import java.util.Locale;
 
 public class Constants {
     // Url server
-    public static final String URL_SERVER = "";
+    public static final String URL_SERVER = "https://localhost:8000";
     public static final String URL_LOGIN = URL_SERVER + "/api/login";
     public static final String URL_MARKER = URL_SERVER + "/api/marker";
     public static final String URL_REGISTER = URL_SERVER + "/api/register";
@@ -41,8 +41,8 @@ public class Constants {
 
 
     // Format date and time in JsonObject
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-
+//    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+//    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+    public static final SimpleDateFormat RECORD_TIME_FORMAT = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy",Locale.getDefault());
     public static final int REQUEST_IMAGE_CAPTURE = 234;
 }

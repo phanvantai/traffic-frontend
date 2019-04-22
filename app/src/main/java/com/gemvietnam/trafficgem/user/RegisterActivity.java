@@ -192,12 +192,11 @@ public class RegisterActivity extends AppCompatActivity {
 //                }
                 // end demo
                 try {
-                    Log.d("test-register", user.exportStringFormatJson());
+//                    Log.d("test-register", user.exportStringFormatJson());
                     dataExchange.sendRegistrationInfo(user);
-//                    response = dataExchange.getResponse();
 //                    response = jsonObject.toString();
                     response = dataExchange.getResponse();
-                    Log.d("test-response-register", response);
+//                    Log.d("test-response-register", response);
                     registerResponse = new RegisterResponse(response);
                     registerResponse.analysist();
                     token = registerResponse.getToken();
@@ -223,13 +222,13 @@ public class RegisterActivity extends AppCompatActivity {
                 Hawk.put(MY_TOKEN, customToken);
 
                 //bRegister.setEnabled(true);
-                Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
+//                Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
                 if (registerResponse.getSuccess()) {
                     setResult(RESULT_OK, null);
                     finish();
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
             }

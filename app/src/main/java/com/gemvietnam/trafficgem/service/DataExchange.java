@@ -92,7 +92,6 @@ public class DataExchange implements IDataExchange {
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(user.exportStringFormatJson());
             Log.d("test-json-register", user.exportStringFormatJson());
-
         } catch (IOException e){
             e.printStackTrace();
         } catch (NullPointerException e){
@@ -112,6 +111,8 @@ public class DataExchange implements IDataExchange {
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(profile.exportStringFormatJson());
         } catch (IOException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
     }
@@ -135,6 +136,8 @@ public class DataExchange implements IDataExchange {
             }
             dos.writeBytes(entry.toString());
         } catch (IOException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
     }
@@ -162,8 +165,9 @@ public class DataExchange implements IDataExchange {
             conn.setRequestMethod("GET");
             conn.connect();
 
-
         } catch (IOException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
     }
@@ -213,6 +217,8 @@ public class DataExchange implements IDataExchange {
             }
         } catch (IOException e){
             e.printStackTrace();
+        } catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -240,6 +246,8 @@ public class DataExchange implements IDataExchange {
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(reportMessage.exportStringFormatJson());
         } catch (IOException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
     }

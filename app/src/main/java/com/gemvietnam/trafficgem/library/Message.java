@@ -46,6 +46,7 @@ public class Message {
             entry.put("longitude", location.getLongitude());
             DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss dd-mm-yyyy");
             entry.put("date", dateFormat.format(date));
+            entry.put("picture", picture);
         } catch (JSONException e){
             e.printStackTrace();
         }

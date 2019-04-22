@@ -35,4 +35,6 @@ public class GetReportResponse extends Response {
     public boolean getSuccess(){
         return success;
     }
+
+
 }

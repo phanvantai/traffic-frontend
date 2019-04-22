@@ -13,7 +13,7 @@ public class Constants {
     public static final String South = "south";
     public static final String North = "north";
     public static final String Color = "color";
-    public static final String Token = "token";
+    public static final String Token = "remember_token";
     public static final String Name = "name";
     public static final String pathImage = "image";
     public static final String Email = "email";
@@ -21,4 +21,5 @@ public class Constants {
     public static final String Address = "address";
     public static final String Vehicle = "vehicle";
     public static final String Password = "password";
+    public static final String MobileUser = "mobile_user";
 }

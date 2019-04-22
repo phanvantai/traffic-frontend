@@ -35,13 +35,14 @@ import org.json.JSONObject;
 import java.util.Date;
 
 import static com.gemvietnam.trafficgem.utils.Constants.CHANEL_ID;
-import static com.gemvietnam.trafficgem.utils.Constants.DATE_FORMAT;
+//import static com.gemvietnam.trafficgem.utils.Constants.DATE_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.ONGOING_NOTIFICATION_ID;
+import static com.gemvietnam.trafficgem.utils.Constants.RECORD_TIME_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
 import static com.gemvietnam.trafficgem.utils.Constants.STOP_SERVICE;
-import static com.gemvietnam.trafficgem.utils.Constants.TIME_FORMAT;
+//import static com.gemvietnam.trafficgem.utils.Constants.TIME_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_MARKER;
 
 /**
@@ -60,8 +61,9 @@ public class LocationTracker extends Service {
     User mLastUser;
 
     // date and time when get location
-    private String mDate;
-    private String mTimeStamp;
+//    private String mDate;
+//    private String mTimeStamp;
+    private String mRecord_Time;
 
     // user's transport
     private String mTransport;
@@ -162,11 +164,11 @@ public class LocationTracker extends Service {
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
                 while (true) {
-                    if (count == 3) {
+                    if (count == 60) {
                         try {
                             DataExchange trafficData = new DataExchange(URL_MARKER);
-                            Log.d("json-test-traffic-data", mObject.exportString());
-                            trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.exportString());
+                            Log.d("json-test-traffic-data", mObject.exportStringFormatJson());
+                            trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.exportStringFormatJson());
                             // send done
 
                             // receive response
@@ -175,8 +177,7 @@ public class LocationTracker extends Service {
                             //
 //                            SendMarkerResponse responseMsg = new SendMarkerResponse(response);
 //                            responseMsg.analysis();
-//                            responseMsg.getSu
-// ccess();
+//                            responseMsg.getSuccess();
 //                            responseMsg.getMessage();
                             //
                         } catch (Exception e) {
@@ -215,12 +216,13 @@ public class LocationTracker extends Service {
                     }
 
                     if (mCurrentLocation != null) {
-                        mDate = DATE_FORMAT.format(new Date());
-                        mTimeStamp = TIME_FORMAT.format(new Date());
+//                        mDate = DATE_FORMAT.format(new Date());
+//                        mTimeStamp = TIME_FORMAT.format(new Date());
+                        mRecord_Time = RECORD_TIME_FORMAT.format(new Date());
                         mSpeed = (3.6*distanceTo)/5d;
                         mDirection = getDirection(temp, mCurrentLocation);
 
-                        Traffic traffic = new Traffic(mCurrentLocation, mTimeStamp, mDate, mTransport, mSpeed, mDirection);
+                        Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time, mTransport, mSpeed, mDirection);
 
                         try {
                             mObject.pushDataTraffic(traffic);
@@ -254,7 +256,7 @@ public class LocationTracker extends Service {
         Y = loc2.getLongitude() - loc1.getLongitude();
 
         double denta = Math.sqrt(X*X + Y*Y);
-        //if(denta == 0)  return
+        if(denta == 0)  return "";
         double CosToOx, CosToOy;
         CosToOx = X/denta;
         CosToOy = Y/denta;

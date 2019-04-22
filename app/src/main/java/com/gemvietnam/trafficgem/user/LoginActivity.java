@@ -190,17 +190,27 @@ public class LoginActivity extends AppCompatActivity {
 //                LoginResponse loginResponse = new LoginResponse(converString);
                 LoginResponse loginResponse = new LoginResponse(response);
                 loginResponse.analysis();
-                Log.d("test-reponse-login2", loginResponse.getUser().exportStringFormatJson());
+//                Log.d("test-reponse-login2", loginResponse.getUser().exportStringFormatJson());
                 mLastUser = loginResponse.getUser();        // EDIT
-                mCustomToken.setDate(System.currentTimeMillis());
-                mCustomToken.setToken(loginResponse.getToken());
+                if(loginResponse.getSuccess()){
+                    mCustomToken.setDate(System.currentTimeMillis());
+                    mCustomToken.setToken(loginResponse.getToken());
 
-                // add to hawk
-                Hawk.put(LAST_USER, mLastUser);
-                Hawk.put(MY_TOKEN, mCustomToken);
+                    // add to hawk
+                    Hawk.put(LAST_USER, mLastUser);
+                    Hawk.put(MY_TOKEN, mCustomToken);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+//                mCustomToken.setDate(System.currentTimeMillis());
+//                mCustomToken.setToken(loginResponse.getToken());
+//
+//                // add to hawk
+//                Hawk.put(LAST_USER, mLastUser);
+//                Hawk.put(MY_TOKEN, mCustomToken);
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                startActivity(intent);
 
                 // temp
 //                User user = new User();
