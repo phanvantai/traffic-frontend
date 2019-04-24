@@ -10,9 +10,9 @@ public class Constants {
     public static final String URL_MARKER = URL_SERVER + "/api/marker";
     public static final String URL_REGISTER = URL_SERVER + "/api/register";
     public static final String URL_CURRENT = URL_SERVER + "/api/getcurrent";
-    public static final String URL_PASSWORD = URL_SERVER + "api/user/changepassword";
-    public static final String URL_PROFILE = URL_SERVER + "api/user/editprofile";
-    public static final String URL_REPORT = URL_SERVER + "api/user/report";
+    public static final String URL_PASSWORD = URL_SERVER + "/api/user/changepassword";
+    public static final String URL_PROFILE = URL_SERVER + "/api/user/editprofile";
+    public static final String URL_REPORT = URL_SERVER + "/api/user/report";
 
     public static final String SUCCESS = "success";
     public static final String MESSAGE = "message";

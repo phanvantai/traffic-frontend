@@ -171,24 +171,24 @@ public class LoginActivity extends AppCompatActivity {
                 String response = dataExchange.getResponse();
 
                 //  demo response.
-//                JSONObject login = new JSONObject();
-//                try {
-//                    login.put(Constants.Success, true);
-//                    login.put(Constants.Message, "success");
-//                    login.put(Constants.Token,"dfadfadfad");
-//                    login.put(Constants.Email, "t@gmail.com");
-//                    login.put(Constants.Name, "thanh");
-//                    login.put(Constants.Phone, "132564");
-//                    login.put(Constants.Address, "hanooi");
-//                    login.put(Constants.Vehicle, "car");
-//                    login.put(Constants.pathImage, "image");
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                String converString = login.toString();
-//                Log.d("test-reponse-login", converString);
-//                LoginResponse loginResponse = new LoginResponse(converString);
-                LoginResponse loginResponse = new LoginResponse(response);
+                JSONObject login = new JSONObject();
+                try {
+                    login.put(Constants.Success, true);
+                    login.put(Constants.Message, "success");
+                    login.put(Constants.Token,"dfadfadfad");
+                    login.put(Constants.Email, "t@gmail.com");
+                    login.put(Constants.Name, "thanh");
+                    login.put(Constants.Phone, "132564");
+                    login.put(Constants.Address, "hanooi");
+                    login.put(Constants.Vehicle, "car");
+                    login.put(Constants.pathImage, "image");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String converString = login.toString();
+                Log.d("test-reponse-login", converString);
+                LoginResponse loginResponse = new LoginResponse(converString);
+//                LoginResponse loginResponse = new LoginResponse(response);
                 loginResponse.analysis();
 //                Log.d("test-reponse-login2", loginResponse.getUser().exportStringFormatJson());
                 mLastUser = loginResponse.getUser();        // EDIT

@@ -101,7 +101,7 @@ public class CurrentTrafficResponse extends Response{
     }
 
     public double getSouth(){
-        double South = 0;
+        double South = 0d;
         try {
             South = (double) this.jsonGrid.get(Constants.South);
         } catch (JSONException e){
