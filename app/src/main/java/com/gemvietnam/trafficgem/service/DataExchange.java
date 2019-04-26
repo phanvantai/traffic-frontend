@@ -3,8 +3,7 @@ package com.gemvietnam.trafficgem.service;
 import android.util.Log;
 
 import com.gemvietnam.trafficgem.library.Credential;
-import com.gemvietnam.trafficgem.library.Message;
-import com.gemvietnam.trafficgem.library.Traffic;
+import com.gemvietnam.trafficgem.library.Report;
 import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.utils.Constants;
@@ -17,20 +16,20 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
-import javax.net.ssl.HttpsURLConnection;
+//import javax.net.ssl.HttpURLConnection;
 import javax.net.ssl.SSLContext;
 
 public class DataExchange implements IDataExchange {
     private String _url;
-    private HttpsURLConnection conn = null;
+//    private HttpsURLConnection conn = null;
+    private HttpURLConnection conn = null;
     private FileInputStream fileInputStream = null;
     private DataOutputStream dos = null;
     public DataExchange(String url){ this._url = url;}
@@ -39,10 +38,12 @@ public class DataExchange implements IDataExchange {
         try {
             URL url = new URL(_url);
             // open a Https connect to the url
-            conn = (HttpsURLConnection) url.openConnection();
+//            conn = (HttpsURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             SSLContext sc;
             sc = SSLContext.getInstance("TLS");
             sc.init(null, null, new SecureRandom());
+
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
             conn.setDoInput(true);
@@ -234,7 +235,7 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void report(String token, Message reportMessage){        // send report of user to server
+    public void report(String token, Report reportMessage){        // send report of user to server
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");

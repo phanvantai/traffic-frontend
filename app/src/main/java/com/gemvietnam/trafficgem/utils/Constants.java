@@ -5,7 +5,7 @@ import java.util.Locale;
 
 public class Constants {
     // Url server
-    public static final String URL_SERVER = "https://localhost:8000";
+    public static final String URL_SERVER = "http://68.183.238.65:8000";
     public static final String URL_LOGIN = URL_SERVER + "/api/login";
     public static final String URL_MARKER = URL_SERVER + "/api/marker";
     public static final String URL_REGISTER = URL_SERVER + "/api/register";
@@ -13,6 +13,7 @@ public class Constants {
     public static final String URL_PASSWORD = URL_SERVER + "/api/user/changepassword";
     public static final String URL_PROFILE = URL_SERVER + "/api/user/editprofile";
     public static final String URL_REPORT = URL_SERVER + "/api/user/report";
+    public static final String URL_AVATAR = URL_SERVER + "/api/user/avatar";
 
     public static final String SUCCESS = "success";
     public static final String MESSAGE = "message";
@@ -31,6 +32,10 @@ public class Constants {
     public static final String MY_TOKEN = "my_token";
     public static final String LAST_USER = "last_user";
 
+    public static final String IDMsg = "IDMsg";
+    public static final String Time_Stamp = "time_stamp";
+    public static final String Latitude = "lat";
+    public static final String Longitude = "lng";
     public static final String SALT_BCRYPT = "traffic";
 
     public static final long SESSION_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days

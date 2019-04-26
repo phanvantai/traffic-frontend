@@ -2,28 +2,27 @@ package com.gemvietnam.trafficgem.library;
 
 import android.location.Location;
 
+
 import com.gemvietnam.trafficgem.utils.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Message {
+public class Report {
     private int IDMsg;
     private Location location;
-    private String picture;
-    private String date;
+//    private String picture;
+    private String time_stamp;
 
-    public Message(){}
+    public Report(){}
 
-    public Message(int _IDMsg, Location _location, String _picture, String _date){
+    public Report(int _IDMsg, String _time_stamp, Location _location){
         IDMsg = _IDMsg;
         location = _location;
-        picture = _picture;
-        date = _date;
+//        picture = _picture;
+        time_stamp = _time_stamp;
     }
 
     public void setIDMsg(int _IDMsg){ IDMsg = _IDMsg;}
@@ -38,26 +37,25 @@ public class Message {
 
     public double getLongitude(){ return location.getLongitude(); }
 
-    public void setPicture(String _picture){ picture = _picture;}
+//    public void setPicture(String _picture){ picture = _picture;}
+//
+//    public String getPathPicture(){ return picture;}
 
-    public String getPathPicture(){ return picture;}
+    public void setDate(String _time_stamp){ time_stamp = _time_stamp;}
 
-    public void setDate(String _date){ date = _date;}
-
-    public String getDate(){ return date;}
+    public String getDate(){ return time_stamp;}
 
     public String exportStringFormatJson(){
         JSONObject entry = new JSONObject();
         try {
-            entry.put("IDMsg", IDMsg);
-            entry.put("lat", location.getLatitude());
-            entry.put("lng", location.getLongitude());
-            entry.put("date", Constants.RECORD_TIME_FORMAT.format(date));
-            entry.put("picture", picture);
+            entry.put(Constants.IDMsg, IDMsg);
+            entry.put(Constants.Time_Stamp, time_stamp);
+            entry.put(Constants.Latitude, location.getLatitude());
+            entry.put(Constants.Longitude, location.getLongitude());
+//            entry.put("picture", picture);
         } catch (JSONException e){
             e.printStackTrace();
         }
         return entry.toString();
     }
-
 }

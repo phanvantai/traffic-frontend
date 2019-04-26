@@ -174,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
                     // login
                 DataExchange login = new DataExchange(URL_LOGIN);
                 Log.d("test-login", credential.exportStringFormatJson());
-//                login.sendCredential(credential);
+                login.sendCredential(credential);
 //                LoginResponse loginResponse = new LoginResponse(login.getResponse());
                 LoginResponse loginResponse = new LoginResponse(demoLoginResponse());
                 loginResponse.analysis();
@@ -186,9 +186,9 @@ public class LoginActivity extends AppCompatActivity {
                     Hawk.put(MY_TOKEN, mCustomToken);
                         // get user profile
                     DataExchange getUserProfile = new DataExchange(URL_PROFILE);
-                    Log.d("test-token", mCustomToken.getToken());
                     getUserProfile.getUserProfile(mCustomToken.getToken());
                         // get response
+//                    GetProfileResponse getUserProfileResponse = new GetProfileResponse(getUserProfile.getResponse());
                     GetProfileResponse getUserProfileResponse = new GetProfileResponse(demoUserProfileResponse());
                     getUserProfileResponse.analysis();
                     mLastUser = getUserProfileResponse.getMobileUser();

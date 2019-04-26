@@ -1,6 +1,6 @@
 package com.gemvietnam.trafficgem.library.responseMessage;
 
-import com.gemvietnam.trafficgem.library.Message;
+import com.gemvietnam.trafficgem.library.Report;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +10,7 @@ public class GetReportResponse extends Response {
     private String message;
     private boolean success;
     private JSONObject jsonObject, jsonData;
-    private Message notification = null;
+    private Report report = null;
     public GetReportResponse(String responseMessage){ this.responseMessage = responseMessage;}
 
 
@@ -25,12 +25,12 @@ public class GetReportResponse extends Response {
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);
             if(success){
-                notification = new Message();
+                report = new Report();
                 this.jsonData = (JSONObject) jsonObject.get(Constants.Data);
-                notification.setIDMsg((int) jsonObject.get(Constants.IDMsg));
-                notification.setLatitude((double) jsonObject.get(Constants.Latitude));
-                notification.setLongitude((double) jsonObject.get(Constants.Longitude));
-                notification.setDate((String) jsonObject.get(Constants.Date));
+                report.setIDMsg((int) jsonObject.get(Constants.IDMsg));
+                report.setLatitude((double) jsonObject.get(Constants.Latitude));
+                report.setLongitude((double) jsonObject.get(Constants.Longitude));
+                report.setDate((String) jsonObject.get(Constants.Time_Stamp));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class GetReportResponse extends Response {
         return success;
     }
 
-    public Message getNotification(){
-        return notification;
+    public Report getNotification(){
+        return report;
     }
 }

@@ -4,31 +4,24 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.gemvietnam.trafficgem.R;
-import com.gemvietnam.trafficgem.library.Message;
+import com.gemvietnam.trafficgem.library.Report;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.orhanobut.hawk.Hawk;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+
 import java.util.Date;
 
 import butterknife.BindView;
@@ -43,8 +36,7 @@ public class ReportActivity extends AppCompatActivity {
 
 
 
-    String mPathPicture = "";
-    User mUser;
+//    String mPathPicture = "";
     CustomToken mCustomToken;
     @BindView(R.id.s_activity_report_list)
     Spinner sListReport;
@@ -119,14 +111,12 @@ public class ReportActivity extends AppCompatActivity {
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 //        Date date = new Date();
         String date = RECORD_TIME_FORMAT.format(new Date());
-        Message message = new Message(id, location, mPathPicture, date);
-        mUser = Hawk.get(LAST_USER);
+        Report report = new Report(id, date, location);
         mCustomToken = Hawk.get(MY_TOKEN);
 
         DataExchange dataExchange = new DataExchange(URL_REPORT);
-        dataExchange.report(mCustomToken.getToken(), message);
+        dataExchange.report(mCustomToken.getToken(), report);
         String response = dataExchange.getResponse();
-        //sendReport(mUrl, id, location, mPathPicture, date);
         finish();
     }
 

@@ -17,7 +17,7 @@ public class RegisterResponse extends Response {
         return responseMessage;
     }
 
-    public void analysist(){
+    public void analysis(){
         try {
             this.jsonObject = new JSONObject(responseMessage);
             this.message = (String) jsonObject.get(Constants.Message);

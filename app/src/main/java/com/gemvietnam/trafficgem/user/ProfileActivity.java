@@ -22,15 +22,11 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.ChangePasswordResponse;
-import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfileResponse;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.orhanobut.hawk.Hawk;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_AVATAR;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_PASSWORD;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_PROFILE;
 
@@ -49,8 +46,6 @@ public class ProfileActivity extends AppCompatActivity {
     CircleImageView civAvatar;
     @BindView(R.id.et_activity_profile_input_address)
     EditText etAddress;
-//    @BindView(R.id.et_activity_profile_input_email)
-//    EditText etEmail;
     @BindView(R.id.et_activity_profile_input_name)
     EditText etName;
     @BindView(R.id.et_activity_profile_input_phone)
@@ -88,7 +83,6 @@ public class ProfileActivity extends AppCompatActivity {
         etName.setText(mLastUser.getName());
         etPhone.setText(mLastUser.getPhone());
         etAddress.setText(mLastUser.getAddress());
-//        etEmail.setText(mLastUser.getEmail());
         sVehicle.setPrompt(mLastUser.getVehicle());
         llChange.setVisibility(View.GONE);
 
@@ -104,32 +98,6 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 doUpdateProfile();
             }
-//                String name = etName.getText().toString();
-//                String phone = etPhone.getText().toString();
-//                String address = etAddress.getText().toString();
-//                String vehicle = sVehicle.getSelectedItem().toString();
-//                UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
-//
-//                DataExchange dataExchange = new DataExchange(URL_PROFILE);
-//                Log.d("test-update-profile", updateProfile.exportStringFormatJson());
-//                dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
-//                dataExchange.getResponse();
-////                dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
-////                String response = dataExchange.getResponse();
-//
-////                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(response);
-////                if (updateProfileResponse.getSuccess()) {
-//                    // thanh cong thi thong bao hay lam gi day
-//                    mLastUser.setName(name);
-//                    mLastUser.setPhone(phone);
-//                    mLastUser.setAddress(address);
-//                    mLastUser.setVehicle(vehicle);
-//                    Hawk.put(LAST_USER, mLastUser);
-////                } else {
-//                    Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
-//                    finish();
-//                }
-//            }
         });
 
         bChangPassword.setOnClickListener(new View.OnClickListener() {
@@ -144,7 +112,6 @@ public class ProfileActivity extends AppCompatActivity {
         bOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Boolean valid = true;
                 doChangePassword();
             }
         });
@@ -192,13 +159,14 @@ public class ProfileActivity extends AppCompatActivity {
                 String phone = etPhone.getText().toString();
                 String address = etAddress.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
+
                 UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
                 Log.d("test-up","test");
                 DataExchange dataExchange = new DataExchange(URL_PROFILE);
                 Log.d("test-update-profile", updateProfile.exportStringFormatJson());
                 dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
-//                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(dataExchange.getResponse());
-                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(demoUpdateProfileResponse());
+
+                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(dataExchange.getResponse());
                 updateProfileResponse.analysis();
                 if(updateProfileResponse.getSuccess()){
                     mLastUser.setName(name);
@@ -206,10 +174,15 @@ public class ProfileActivity extends AppCompatActivity {
                     mLastUser.setAddress(address);
                     mLastUser.setVehicle(vehicle);
                     Hawk.put(LAST_USER, mLastUser);
+
                 }
+
+                String pathImage = "";      //
+                DataExchange updateAvatar = new DataExchange(URL_AVATAR);
+                updateAvatar.sendPicture(mCustomToken.getToken(), pathImage);
+                String responseUpdateAvatar = updateAvatar.getResponse();
 //                Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
                 finish();
-
             }
         }).start();
     }
@@ -220,13 +193,12 @@ public class ProfileActivity extends AppCompatActivity {
             public void run() {
                 String oldPass = etOld.getText().toString();
                 String md5Old = AppUtils.md5Password(oldPass);
+
                 String newPass = etNew.getText().toString();
                 String md5New = AppUtils.md5Password(newPass);
                 String reNew = etReNew.getText().toString();
 
                 if (validate()) {
-                    Log.d("test-old-pass", oldPass);
-                    Log.d("test-new-pass", newPass);
                     DataExchange dataExchange = new DataExchange(URL_PASSWORD);
                     dataExchange.changePassword(mCustomToken.getToken(), md5Old, md5New);
                     dataExchange.getResponse();
@@ -270,16 +242,5 @@ public class ProfileActivity extends AppCompatActivity {
             etReNew.setError(null);
         }
         return valid;
-    }
-
-    public String demoUpdateProfileResponse(){
-        JSONObject jsonObject = new JSONObject();
-        try{
-            jsonObject.put(Constants.Success, true);
-            jsonObject.put(Constants.Message, "success");
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-        return jsonObject.toString();
     }
 }

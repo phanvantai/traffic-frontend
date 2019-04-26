@@ -60,8 +60,6 @@ public class RegisterActivity extends AppCompatActivity {
     Button bRegister;
     @BindView(R.id.tv_activity_register_link_login)
     TextView tvLoginLink;
-    @BindView(R.id.civ_activity_register_avatar)
-    CircleImageView civAvatar;
 
     String currentPhotoPath;
     @Override
@@ -102,13 +100,6 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        civAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getImageFromGallery();
-            }
-        });
     }
 
     /**
@@ -134,8 +125,6 @@ public class RegisterActivity extends AppCompatActivity {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 currentPhotoPath = cursor.getString(columnIndex);
                 cursor.close();
-
-                civAvatar.setImageBitmap(BitmapFactory.decodeFile(currentPhotoPath));
             }
         }
 
@@ -179,19 +168,14 @@ public class RegisterActivity extends AppCompatActivity {
                 user.setPassword(md5Password);
 
                 DataExchange dataExchange = new DataExchange(URL_REGISTER);
+                dataExchange.sendRegistrationInfo(user);
 
-                try {
-                    dataExchange.sendRegistrationInfo(user);
-                } catch (NullPointerException e){
-                    e.printStackTrace();
-                }
-
+//                RegisterResponse registerResponse = new RegisterResponse(dataExchange.getResponse());
                 RegisterResponse registerResponse = new RegisterResponse(demoRegisterResponse());
-                registerResponse.analysist();
+                registerResponse.analysis();
                 if(registerResponse.getSuccess()){
                     //  CODE FOR RETURN MAIN LOGIN
-
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
                 }
 //                Hawk.put(LAST_USER, user);
