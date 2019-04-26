@@ -22,11 +22,15 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.ChangePasswordResponse;
+import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfileResponse;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.orhanobut.hawk.Hawk;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -180,7 +184,6 @@ public class ProfileActivity extends AppCompatActivity {
 //    }
 
     public void doUpdateProfile(){
-        Log.d("abc", "abc");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -194,13 +197,16 @@ public class ProfileActivity extends AppCompatActivity {
                 DataExchange dataExchange = new DataExchange(URL_PROFILE);
                 Log.d("test-update-profile", updateProfile.exportStringFormatJson());
                 dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
-                dataExchange.getResponse();
-
-                mLastUser.setName(name);
-                mLastUser.setPhone(phone);
-                mLastUser.setAddress(address);
-                mLastUser.setVehicle(vehicle);
-                Hawk.put(LAST_USER, mLastUser);
+//                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(dataExchange.getResponse());
+                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(demoUpdateProfileResponse());
+                updateProfileResponse.analysis();
+                if(updateProfileResponse.getSuccess()){
+                    mLastUser.setName(name);
+                    mLastUser.setPhone(phone);
+                    mLastUser.setAddress(address);
+                    mLastUser.setVehicle(vehicle);
+                    Hawk.put(LAST_USER, mLastUser);
+                }
 //                Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
                 finish();
 
@@ -264,5 +270,16 @@ public class ProfileActivity extends AppCompatActivity {
             etReNew.setError(null);
         }
         return valid;
+    }
+
+    public String demoUpdateProfileResponse(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put(Constants.Success, true);
+            jsonObject.put(Constants.Message, "success");
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }

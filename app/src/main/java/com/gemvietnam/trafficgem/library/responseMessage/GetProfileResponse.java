@@ -9,8 +9,8 @@ public class GetProfileResponse extends Response {
     private String responseMessage;
     private String message;
     private boolean success;
-    private JSONObject jsonObject, jsonMobileUser ;
-
+    private JSONObject jsonObject, jsonUserProfile ;
+    private User user = new User();
     public GetProfileResponse(String responseMessage){ this.responseMessage = responseMessage;}
 
 
@@ -24,7 +24,9 @@ public class GetProfileResponse extends Response {
             this.jsonObject = new JSONObject(responseMessage);
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);
-            this.jsonMobileUser = (JSONObject) jsonObject.get(Constants.MobileUser);
+            if(success){
+                this.jsonUserProfile = (JSONObject) jsonObject.get(Constants.Data);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -40,10 +42,12 @@ public class GetProfileResponse extends Response {
     public User getMobileUser(){
         User user = new User();
         try {
-            user.setEmail((String) jsonMobileUser.get(Constants.Email));
-            user.setName((String) jsonMobileUser.get(Constants.Name));
-            user.setPhone((String) jsonMobileUser.get(Constants.Phone));
-            user.setAddress((String) jsonMobileUser.get(Constants.Address));
+            user.setEmail((String) jsonUserProfile.get(Constants.Email));
+            user.setName((String) jsonUserProfile.get(Constants.Name));
+            user.setPhone((String) jsonUserProfile.get(Constants.Phone));
+            user.setAddress((String) jsonUserProfile.get(Constants.Address));
+            user.setVehicle((String) jsonUserProfile.get(Constants.Vehicle));
+            user.setAvatar((String ) jsonUserProfile.get(Constants.pathImage));
         } catch (JSONException e){
             e.printStackTrace();
         }

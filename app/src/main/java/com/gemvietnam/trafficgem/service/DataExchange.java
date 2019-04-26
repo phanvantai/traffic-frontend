@@ -7,6 +7,7 @@ import com.gemvietnam.trafficgem.library.Message;
 import com.gemvietnam.trafficgem.library.Traffic;
 import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.utils.Constants;
 
 
 import org.json.JSONException;
@@ -70,8 +71,6 @@ public class DataExchange implements IDataExchange {
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(credential.exportStringFormatJson());
             Log.d("test-json-login", credential.exportStringFormatJson());
-
-            Log.d("json3", "json3");
         } catch (IOException e){
             e.printStackTrace();
         } catch (NullPointerException e){
@@ -102,7 +101,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("PUT");
             conn.connect();
 
@@ -122,7 +121,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("PUT");
             conn.connect();
 
@@ -146,8 +145,8 @@ public class DataExchange implements IDataExchange {
     public void getFuture(String token, int layer) {        //  send request to server to receive future traffic data
         init();
         try {
-            conn.setRequestProperty("Authorization", token);
-            conn.setRequestProperty("Layer", String.valueOf(layer));
+            conn.setRequestProperty(Constants.TOKEN, token);
+            conn.setRequestProperty(Constants.LAYER, String.valueOf(layer));
             conn.setRequestMethod("GET");
             conn.connect();
 
@@ -160,8 +159,8 @@ public class DataExchange implements IDataExchange {
     public void getCurrent(String token, int layer) {       // send request to server to receive current traffic data
         init();
         try {
-            conn.setRequestProperty("Authorization", token);
-            conn.setRequestProperty("Layer", String.valueOf(layer));
+            conn.setRequestProperty(Constants.TOKEN, token);
+            conn.setRequestProperty(Constants.LAYER, String.valueOf(layer));
             conn.setRequestMethod("GET");
             conn.connect();
 
@@ -177,7 +176,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("POST");
             conn.connect();
 
@@ -196,7 +195,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "image/png");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("POST");
             conn.connect();
 
@@ -226,7 +225,7 @@ public class DataExchange implements IDataExchange {
     public void getUserProfile(String token) {      // send request to server to receive profile
         init();
         try {
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("GET");
             conn.connect();
         } catch (IOException e){
@@ -239,7 +238,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("POST");
             conn.connect();
 

@@ -20,6 +20,7 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
+import com.gemvietnam.trafficgem.library.responseMessage.GetProfileResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.LoginResponse;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.service.DataExchange;
@@ -30,12 +31,16 @@ import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
+import static com.gemvietnam.trafficgem.utils.Constants.LOGIN_TIME_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_PROFILE;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_SERVER;
 
 public class LoginActivity extends AppCompatActivity {
@@ -163,66 +168,34 @@ public class LoginActivity extends AppCompatActivity {
                 String email = etEditMail.getText().toString();
                 String password = etEditPassword.getText().toString();
                 String md5Password = AppUtils.md5Password(password);
-                Credential credential = new Credential(email, md5Password);
+                String loginTime = LOGIN_TIME_FORMAT.format(new Date());
 
-                DataExchange dataExchange = new DataExchange(URL_LOGIN);
+                Credential credential = new Credential(email, md5Password, loginTime);
+                    // login
+                DataExchange login = new DataExchange(URL_LOGIN);
                 Log.d("test-login", credential.exportStringFormatJson());
-                dataExchange.sendCredential(credential);
-                String response = dataExchange.getResponse();
-
-                //  demo response.
-                JSONObject login = new JSONObject();
-                try {
-                    login.put(Constants.Success, true);
-                    login.put(Constants.Message, "success");
-                    login.put(Constants.Token,"dfadfadfad");
-                    login.put(Constants.Email, "t@gmail.com");
-                    login.put(Constants.Name, "thanh");
-                    login.put(Constants.Phone, "132564");
-                    login.put(Constants.Address, "hanooi");
-                    login.put(Constants.Vehicle, "car");
-                    login.put(Constants.pathImage, "image");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                String converString = login.toString();
-                Log.d("test-reponse-login", converString);
-                LoginResponse loginResponse = new LoginResponse(converString);
-//                LoginResponse loginResponse = new LoginResponse(response);
+//                login.sendCredential(credential);
+//                LoginResponse loginResponse = new LoginResponse(login.getResponse());
+                LoginResponse loginResponse = new LoginResponse(demoLoginResponse());
                 loginResponse.analysis();
-//                Log.d("test-reponse-login2", loginResponse.getUser().exportStringFormatJson());
-                mLastUser = loginResponse.getUser();        // EDIT
                 if(loginResponse.getSuccess()){
                     mCustomToken.setDate(System.currentTimeMillis());
                     mCustomToken.setToken(loginResponse.getToken());
 
                     // add to hawk
-                    Hawk.put(LAST_USER, mLastUser);
                     Hawk.put(MY_TOKEN, mCustomToken);
+                        // get user profile
+                    DataExchange getUserProfile = new DataExchange(URL_PROFILE);
+                    Log.d("test-token", mCustomToken.getToken());
+                    getUserProfile.getUserProfile(mCustomToken.getToken());
+                        // get response
+                    GetProfileResponse getUserProfileResponse = new GetProfileResponse(demoUserProfileResponse());
+                    getUserProfileResponse.analysis();
+                    mLastUser = getUserProfileResponse.getMobileUser();
+                    Hawk.put(LAST_USER, mLastUser);
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                 }
-//                mCustomToken.setDate(System.currentTimeMillis());
-//                mCustomToken.setToken(loginResponse.getToken());
-//
-//                // add to hawk
-//                Hawk.put(LAST_USER, mLastUser);
-//                Hawk.put(MY_TOKEN, mCustomToken);
-
-//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                startActivity(intent);
-
-                // temp
-//                User user = new User();
-//                user.setEmail(email);
-//                mCustomToken.setDate(System.currentTimeMillis());
-//                mCustomToken.setToken(md5Password);
-//                Hawk.put(LAST_USER, user);
-//                Hawk.put(MY_TOKEN, mCustomToken);
-//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                startActivity(intent);
-
-                // onLoginFailed();
                 progressDialog.dismiss();
             }
         }).start();
@@ -281,5 +254,38 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return valid;
+    }
+
+    public String demoLoginResponse(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(Constants.Success, true);
+            jsonObject.put(Constants.Message, "success");
+            jsonObject.put(Constants.Token, "1111111111");
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
+
+    public String demoUserProfileResponse(){
+        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonData = new JSONObject();
+        try {
+            jsonObject.put(Constants.Success, true);
+            jsonObject.put(Constants.Message, "success");
+
+            jsonData.put(Constants.Email, "thanh@gmail.com");
+            jsonData.put(Constants.Name, "thanh");
+            jsonData.put(Constants.Phone, "123456");
+            jsonData.put(Constants.Address, "ha noi");
+            jsonData.put(Constants.Vehicle, "cars");
+            jsonData.put(Constants.pathImage, "image");
+
+            jsonObject.put("data", jsonData);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }

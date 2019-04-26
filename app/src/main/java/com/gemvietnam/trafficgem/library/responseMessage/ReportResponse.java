@@ -3,26 +3,26 @@ package com.gemvietnam.trafficgem.library.responseMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class RegisterResponse extends Response {
+public class ReportResponse extends Response {
     private String responseMessage;
     private String message;
     private boolean success;
-    private JSONObject jsonObject;
-    public RegisterResponse(String responseMessage){
-        this.responseMessage = responseMessage;
-    }
+    private JSONObject jsonObject ;
+
+    public ReportResponse(String responseMessage){ this.responseMessage = responseMessage;}
+
 
     @Override
-    public String getResponseMessage(){
+    public String getResponseMessage() {
         return responseMessage;
     }
 
-    public void analysist(){
+    public void analysis(){
         try {
             this.jsonObject = new JSONObject(responseMessage);
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -35,5 +35,4 @@ public class RegisterResponse extends Response {
     public boolean getSuccess(){
         return success;
     }
-
 }

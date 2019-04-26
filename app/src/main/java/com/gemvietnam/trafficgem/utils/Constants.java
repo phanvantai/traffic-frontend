@@ -25,6 +25,8 @@ public class Constants {
     public static final String PHONE = "phone";
     public static final String ADDRESS = "address";
     public static final String IMAGE = "image";
+    public static final String TIME = "time";
+    public static final String LAYER = "layer";
 
     public static final String MY_TOKEN = "my_token";
     public static final String LAST_USER = "last_user";
@@ -41,8 +43,7 @@ public class Constants {
 
 
     // Format date and time in JsonObject
-//    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-//    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-    public static final SimpleDateFormat RECORD_TIME_FORMAT = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy",Locale.getDefault());
+    public static final SimpleDateFormat RECORD_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+    public static final SimpleDateFormat LOGIN_TIME_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss",Locale.getDefault());
     public static final int REQUEST_IMAGE_CAPTURE = 234;
 }

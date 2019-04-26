@@ -21,6 +21,7 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.RegisterResponse;
+import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
@@ -172,8 +173,6 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
-                String response, token;
-                RegisterResponse registerResponse = null;
 
                 String md5Password = AppUtils.md5Password(password);
                 User user = new User(email, name, vehicle, phone, address);
@@ -181,55 +180,41 @@ public class RegisterActivity extends AppCompatActivity {
 
                 DataExchange dataExchange = new DataExchange(URL_REGISTER);
 
-                // create response
-//                JSONObject jsonObject = new JSONObject();
-//                try {
-//                    jsonObject.put(Constants.Success, true);
-//                    jsonObject.put(Constants.Message, "success");
-//                    jsonObject.put(Constants.Token,"fdaiojfad");
-//                } catch (JSONException e){
-//                    e.printStackTrace();
-//                }
-                // end demo
                 try {
-//                    Log.d("test-register", user.exportStringFormatJson());
                     dataExchange.sendRegistrationInfo(user);
-//                    response = jsonObject.toString();
-                    response = dataExchange.getResponse();
-//                    Log.d("test-response-register", response);
-                    registerResponse = new RegisterResponse(response);
-                    registerResponse.analysist();
-                    token = registerResponse.getToken();
-                    Log.d("test-token", token);
                 } catch (NullPointerException e){
                     e.printStackTrace();
                 }
 
+                RegisterResponse registerResponse = new RegisterResponse(demoRegisterResponse());
+                registerResponse.analysist();
+                if(registerResponse.getSuccess()){
+                    //  CODE FOR RETURN MAIN LOGIN
 
-                // gui anh kieu gi day, path currentPhotoPath, token chua co
-                //
-
-                Hawk.put(LAST_USER, user);
-                CustomToken customToken;
-                if (Hawk.contains(MY_TOKEN)) {
-                    customToken = Hawk.get(MY_TOKEN);
-                } else {
-                    customToken = CustomToken.getInstance();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
                 }
-                // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
-                customToken.setDate(System.currentTimeMillis());
-                //customToken.setToken();
-                Hawk.put(MY_TOKEN, customToken);
-
-                //bRegister.setEnabled(true);
-//                Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
-                if (registerResponse.getSuccess()) {
-                    setResult(RESULT_OK, null);
-                    finish();
-                } else {
-                    progressDialog.dismiss();
-//                    Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_LONG).show();
-                }
+//                Hawk.put(LAST_USER, user);
+//                CustomToken customToken;
+//                if (Hawk.contains(MY_TOKEN)) {
+//                    customToken = Hawk.get(MY_TOKEN);
+//                } else {
+//                    customToken = CustomToken.getInstance();
+//                }
+//                // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
+//                customToken.setDate(System.currentTimeMillis());
+//                //customToken.setToken();
+//                Hawk.put(MY_TOKEN, customToken);
+//
+//                //bRegister.setEnabled(true);
+////                Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
+//                if (registerResponse.getSuccess()) {
+//                    setResult(RESULT_OK, null);
+//                    finish();
+//                } else {
+//                    progressDialog.dismiss();
+////                    Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_LONG).show();
+//                }
 
             }
         }).start();
@@ -282,5 +267,16 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         return valid;
+    }
+
+    public String demoRegisterResponse(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put(Constants.Success, true);
+            jsonObject.put(Constants.Message, "success");
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }

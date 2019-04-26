@@ -36,6 +36,7 @@ import butterknife.ButterKnife;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.RECORD_TIME_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.REQUEST_IMAGE_CAPTURE;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_REPORT;
 public class ReportActivity extends AppCompatActivity {
@@ -116,7 +117,8 @@ public class ReportActivity extends AppCompatActivity {
             return;
         }
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Date date = new Date();
+//        Date date = new Date();
+        String date = RECORD_TIME_FORMAT.format(new Date());
         Message message = new Message(id, location, mPathPicture, date);
         mUser = Hawk.get(LAST_USER);
         mCustomToken = Hawk.get(MY_TOKEN);
