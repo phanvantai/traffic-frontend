@@ -8,7 +8,6 @@ public class RegisterResponse extends Response {
     private String message;
     private boolean success;
     private JSONObject jsonObject;
-    private String token;
     public RegisterResponse(String responseMessage){
         this.responseMessage = responseMessage;
     }
@@ -18,12 +17,11 @@ public class RegisterResponse extends Response {
         return responseMessage;
     }
 
-    public void analysist(){
+    public void analysis(){
         try {
             this.jsonObject = new JSONObject(responseMessage);
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);
-            if(success) this.token = (String) jsonObject.get(Constants.Token);
         } catch (JSONException e){
             e.printStackTrace();
         }
@@ -38,5 +36,4 @@ public class RegisterResponse extends Response {
         return success;
     }
 
-    public String getToken(){ return token; }
 }

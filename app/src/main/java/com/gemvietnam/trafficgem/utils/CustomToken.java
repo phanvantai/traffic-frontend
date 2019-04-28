@@ -35,14 +35,6 @@ public class CustomToken {
     }
 
     public boolean isExpired() {
-        if (mToken == null) {
-            return true;
-        }
-        long size;
-        size = System.currentTimeMillis() - this.mDate;
-        if (size >= 60*5*1000 /*432000000*/) {// 5 days
-            return true;
-        }
-        else return false;
+        return true;
     }
 }

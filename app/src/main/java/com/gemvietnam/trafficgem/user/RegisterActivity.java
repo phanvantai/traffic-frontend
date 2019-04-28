@@ -18,11 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
-import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
-import com.gemvietnam.trafficgem.library.responseMessage.LoginResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.RegisterResponse;
+import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
@@ -37,7 +36,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_REGISTER;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -62,8 +60,6 @@ public class RegisterActivity extends AppCompatActivity {
     Button bRegister;
     @BindView(R.id.tv_activity_register_link_login)
     TextView tvLoginLink;
-    @BindView(R.id.civ_activity_register_avatar)
-    CircleImageView civAvatar;
 
     String currentPhotoPath;
     @Override
@@ -72,8 +68,6 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         ButterKnife.bind(this);
-
-        civAvatar.setVisibility(View.GONE);
 
         sVehicle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -106,13 +100,6 @@ public class RegisterActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        civAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getImageFromGallery();
-            }
-        });
     }
 
     /**
@@ -138,8 +125,6 @@ public class RegisterActivity extends AppCompatActivity {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 currentPhotoPath = cursor.getString(columnIndex);
                 cursor.close();
-
-                civAvatar.setImageBitmap(BitmapFactory.decodeFile(currentPhotoPath));
             }
         }
 
@@ -177,67 +162,46 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
-                String response, token = "";
-                RegisterResponse registerResponse = null;
 
                 String md5Password = AppUtils.md5Password(password);
-                User user = new User(email, name, md5Password, vehicle, phone, address);
+                User user = new User(email, name, vehicle, phone, address);
+                user.setPassword(md5Password);
 
-                DataExchange dataExchange = new DataExchange(URL_REGISTER);
+                //DataExchange dataExchange = new DataExchange(URL_REGISTER);
+                //dataExchange.sendRegistrationInfo(user);
+                String response = AppUtils.executePostHttp(URL_REGISTER, user.exportStringFormatJson());
+                Log.e("TaiPV", response);
 
-                // demo response
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put(Constants.Success, true);
-                    jsonObject.put(Constants.Message, "success");
-                    //jsonObject.put(Constants.Token,"fdaiojfad");
-                } catch (JSONException e){
-                    e.printStackTrace();
+//                RegisterResponse registerResponse = new RegisterResponse(dataExchange.getResponse());
+                RegisterResponse registerResponse = new RegisterResponse(demoRegisterResponse());
+                registerResponse.analysis();
+                if(registerResponse.getSuccess()){
+                    //  CODE FOR RETURN MAIN LOGIN
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
                 }
-                try {
-                    //dataExchange.sendRegistrationInfo(user);
-//                    response = dataExchange.getResponse();
-                    response = jsonObject.toString();
-                    Log.d("test-response-register", response);
-                    registerResponse = new RegisterResponse(response);
-                    registerResponse.analysist();
-                    //token = registerResponse.getToken();
-                } catch (NullPointerException e){
-                    e.printStackTrace();
-                }
-
-                // gui anh kieu gi day, path currentPhotoPath, token chua co
-                //
-
-                //bRegister.setEnabled(true);
-                Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
-                if (registerResponse.getSuccess()) {
-                    Credential credential = new Credential(email, "");
-                    DataExchange dataExchange1 = new DataExchange(URL_LOGIN);
-                    dataExchange1.sendCredential(credential);
-                    String response1 = dataExchange1.getResponse();
-
-                    LoginResponse loginResponse = new LoginResponse(response1);
-                    loginResponse.analysis();
-
-                    Hawk.put(LAST_USER, user);
-                    CustomToken customToken;
-                    if (Hawk.contains(MY_TOKEN)) {
-                        customToken = Hawk.get(MY_TOKEN);
-                    } else {
-                        customToken = CustomToken.getInstance();
-                    }
-                    // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
-                    customToken.setDate(System.currentTimeMillis());
-                    customToken.setToken(loginResponse.getToken());
-                    Hawk.put(MY_TOKEN, customToken);
-                    setResult(RESULT_OK, null);
-                    progressDialog.dismiss();
-                    finish();
-                } else {
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_LONG).show();
-                }
+                progressDialog.dismiss();
+//                Hawk.put(LAST_USER, user);
+//                CustomToken customToken;
+//                if (Hawk.contains(MY_TOKEN)) {
+//                    customToken = Hawk.get(MY_TOKEN);
+//                } else {
+//                    customToken = CustomToken.getInstance();
+//                }
+//                // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
+//                customToken.setDate(System.currentTimeMillis());
+//                //customToken.setToken();
+//                Hawk.put(MY_TOKEN, customToken);
+//
+//                //bRegister.setEnabled(true);
+////                Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
+//                if (registerResponse.getSuccess()) {
+//                    setResult(RESULT_OK, null);
+//                    finish();
+//                } else {
+//                    progressDialog.dismiss();
+////                    Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_LONG).show();
+//                }
 
             }
         }).start();
@@ -290,5 +254,16 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         return valid;
+    }
+
+    public String demoRegisterResponse(){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            jsonObject.put(Constants.Success, true);
+            jsonObject.put(Constants.Message, "success");
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }

@@ -79,7 +79,7 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        //Hawk.init(getContext()).build();
+        Hawk.init(getContext()).build();
 
 //        mMinusImg.setVisibility(View.VISIBLE);
 //        mPlusImg.setVisibility(View.GONE);
@@ -152,8 +152,8 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
                         case SIGN_OUT:
                             iconId = R.drawable.ic_signout_white;
                             break;
-                            default:
-                                break;
+                        default:
+                            break;
                     }
                     entry.getKey().setCompoundDrawablesRelativeWithIntrinsicBounds(iconId, 0,0,0);
 

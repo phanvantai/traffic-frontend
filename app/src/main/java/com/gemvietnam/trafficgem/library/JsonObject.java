@@ -12,23 +12,26 @@ public class JsonObject {
 
     public void init(){
         try {
-            mObject.put("mCoordinates", mCoordinates);
+            mObject.put("markers", mCoordinates);
         }   catch (JSONException e){
             e.printStackTrace();
         }
     }
 
-    public void pushDataTraffic(Traffic traffic) throws JSONException {
-        JSONObject entry = new JSONObject();
-        entry.put("latitude", traffic.getLat());
-        entry.put("longitude", traffic.getLon());
-        entry.put("timeStamp", traffic.getTimeStamp());
-        entry.put("date", traffic.getDate());
-        entry.put("transport", traffic.getTransport());
-        entry.put("speed", traffic.getSpeed());
-        entry.put("direction", traffic.getDirection());
-        mCoordinates.put(entry);
+//    public void pushDataTraffic(Traffic traffic) throws JSONException {
+//        JSONObject entry = new JSONObject();
+//        entry.put("lat", traffic.getLat());
+//        entry.put("lng", traffic.getLon());
+//        entry.put("avg_speed", traffic.getAvgSpeed());
+//        entry.put("vehicle", traffic.getVehicle());
+//        entry.put("record_time", traffic.getRecordTime());
+//        entry.put("direction", traffic.getDirection());
+//        mCoordinates.put(entry);
+//    }
+
+    public void pushDataTraffic(Traffic traffic) throws JSONException{
+        mCoordinates.put(traffic.exportJson());
     }
 
-    public String exportString() { return mObject.toString();}
+    public String exportStringFormatJson() { return mObject.toString();}
 }

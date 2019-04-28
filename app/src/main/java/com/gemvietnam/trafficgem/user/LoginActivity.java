@@ -20,6 +20,7 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.Credential;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
+import com.gemvietnam.trafficgem.library.responseMessage.GetProfileResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.LoginResponse;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.service.DataExchange;
@@ -30,13 +31,22 @@ import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.gemvietnam.trafficgem.utils.Constants.ADDRESS;
+import static com.gemvietnam.trafficgem.utils.Constants.AVATAR;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
-import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.LOGIN_TIME_FORMAT;
+import static com.gemvietnam.trafficgem.utils.Constants.MESSAGE;
+import static com.gemvietnam.trafficgem.utils.Constants.NAME;
+import static com.gemvietnam.trafficgem.utils.Constants.PHONE;
+import static com.gemvietnam.trafficgem.utils.Constants.SUCCESS;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_GET_PROFILE;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_SERVER;
+import static com.gemvietnam.trafficgem.utils.Constants.VEHICLE;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -53,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvRegisterLink;
 
     User mLastUser;
-    CustomToken mCustomToken;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,30 +70,32 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        Hawk.init(getApplicationContext()).build();
-        // hide keyboard
-        //ViewUtils.hideKeyBoard(this);
-
-        // get myToken object
-        if (Hawk.contains(MY_TOKEN)) {
-            mCustomToken = Hawk.get(MY_TOKEN);
-        } else {
-            mCustomToken = CustomToken.getInstance();
+        if (!Hawk.isBuilt()) {
+            Hawk.init(getApplicationContext()).build();
         }
 
         checkPermissions();
 
-        if (!mCustomToken.isExpired()) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        } else {
-            mCustomToken.removeToken();
+        // hide keyboard
+        //ViewUtils.hideKeyBoard(this);
+
+        // kiểm tra xem đã có user đăng nhập chưa
+        if (Hawk.contains(LAST_USER)) {
+            // nếu có thì kiểm tra phiên đăng nhập
+            mLastUser = Hawk.get(LAST_USER);
+
+            if (!mLastUser.isExpired()) {
+                // nếu còn thời gian thì vào thẳng MainAcitivity
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            }
         }
 
-        // set on click doLogin button
+        // Thưc hiện hành động khi bấm vào nút Login
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // kiểm tra xem có mạng hay không đã
                 if (!AppUtils.networkOk(getApplicationContext())) {
                     AppUtils.showAlertNetwork(LoginActivity.this);
                 } else {
@@ -93,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // set on click register link
+        // Thưc hiện hành động khi bấm vào Register link
         tvRegisterLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * doing login, It's not completely yet
+     * doing login
      */
     public void doLogin() {
         Log.d(TAG, "Login");
@@ -155,63 +166,109 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
 
         // TODO: Implement your own authentication logic here.
-        // do something here, below is test
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // use email, password to check on server
+                // thông tin đăng nhập gửi cho server
                 String email = etEditMail.getText().toString();
                 String password = etEditPassword.getText().toString();
                 String md5Password = AppUtils.md5Password(password);
-                Credential credential = new Credential(email, md5Password);
+                String loginTime = LOGIN_TIME_FORMAT.format(new Date());
 
-                DataExchange dataExchange = new DataExchange(URL_LOGIN);
-                dataExchange.sendCredential(credential);
-                String response = dataExchange.getResponse();
+                // giá trị trả về khi login
+                String message = "", token = "";
+                boolean success = false;
 
-                //  demo response.
-                JSONObject login = new JSONObject();
+                // giá trị trả về khi get user profile
+                String name = "", phone = "", address = "", vehicle = "", avatar = "";
+
+                Credential credential = new Credential(email, md5Password, loginTime);
+
+                String response = AppUtils.executePostHttp(URL_LOGIN, credential.exportStringFormatJson());
+                Log.e("TaiPV", response);
+
                 try {
-                    login.put(Constants.Success, true);
-                    login.put(Constants.Message, "success");
-                    login.put(Constants.Token,"dfadfadfad");
-                    login.put(Constants.Email, "t@gmail.com");
-                    login.put(Constants.Name, "thanh");
-                    login.put(Constants.Phone, "132564");
-                    login.put(Constants.Address, "hanooi");
-                    login.put(Constants.Vehicle, "car");
-                    login.put(Constants.pathImage, "image");
+                    JSONObject loginJson = new JSONObject(response);
+                    message = (String) loginJson.get(MESSAGE);
+                    success = (boolean) loginJson.get(SUCCESS);
+                    //token = (String) loginJson.get(TOKEN);
+                    // tạm thời để thế này vì remember_token từ server là null
+                    token = md5Password;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                String converString = login.toString();
-                Log.d("test-reponse-login", converString);
-                LoginResponse loginResponse = new LoginResponse(converString);
-                loginResponse.analysis();
-                Log.d("test-reponse-login2", loginResponse.getUser().exportStringFormatJson());
-                mLastUser = loginResponse.getUser();        // EDIT
-                mCustomToken.setDate(System.currentTimeMillis());
-                mCustomToken.setToken(loginResponse.getToken());
+                if (success) {
+                    // nếu đăng nhập thành công
 
-                // add to hawk
-                Hawk.put(LAST_USER, mLastUser);
-                Hawk.put(MY_TOKEN, mCustomToken);
+                    // check user xem có trong Hawk chưa,
+                    // nếu có rồi thì set last user, chưa thì lấy get user profile
+                    if (Hawk.contains(email)) {
+                        Hawk.put(LAST_USER, Hawk.get(email));
+                    } else {
+                        // thực hiện request lên server để lấy thông tin user lần đầu đăng nhập
+                        // đang lỗi, không biết là do method hay là vì không có token???
+                        String profileResponse = AppUtils.executeGetHttp(URL_GET_PROFILE, token);
+                        //Log.e("TaiPV", profileResponse);
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                        try {
+                            JSONObject profileJson = new JSONObject(profileResponse);
+                            success = (boolean) profileJson.get(SUCCESS);
+                            if (success) {
+                                // Lấy thông tin user từ response và thêm vào Hawk
+                                JSONObject userJson = (JSONObject) profileJson.get("data");
+                                name = (String) userJson.get(NAME);
+                                phone = (String) userJson.get(PHONE);
+                                address = (String) userJson.get(ADDRESS);
+                                vehicle = (String) userJson.get(VEHICLE);
+                                avatar = (String) userJson.get(AVATAR);
+                                mLastUser = new User(email, name, vehicle, phone, address);
+                                mLastUser.setAvatar(avatar);
+                                mLastUser.setLastLogin(System.currentTimeMillis());
 
-                // temp
-//                User user = new User();
-//                user.setEmail(email);
-//                mCustomToken.setDate(System.currentTimeMillis());
-//                mCustomToken.setToken(md5Password);
-//                Hawk.put(LAST_USER, user);
-//                Hawk.put(MY_TOKEN, mCustomToken);
-//                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                startActivity(intent);
+                                Hawk.put(email, mLastUser);
+                                Hawk.put(LAST_USER, mLastUser);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    // close progress dialog
+                    progressDialog.dismiss();
 
-                // onLoginFailed();
-                progressDialog.dismiss();
+                    User user = Hawk.get(LAST_USER);
+                    Log.e("TaiPV", user.exportStringFormatJson());
+
+                    // có thông tin last user rồi thì vào MainActivity thôi
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                }
+
+                // login
+                //DataExchange login = new DataExchange(URL_LOGIN);
+                //login.sendCredential(credential);
+                //LoginResponse loginResponse = new LoginResponse(login.getResponse());
+                //LoginResponse loginResponse = new LoginResponse(response);
+                //loginResponse.analysis();
+                //if(loginResponse.getSuccess()){
+//                    mCustomToken.setDate(System.currentTimeMillis());
+//                    mCustomToken.setToken(loginResponse.getToken());
+//
+//                    // add to hawk
+//                    Hawk.put(MY_TOKEN, mCustomToken);
+//                        // get user profile
+//                    DataExchange getUserProfile = new DataExchange(URL_PROFILE);
+//                    getUserProfile.getUserProfile(mCustomToken.getToken());
+//                        // get response
+////                    GetProfileResponse getUserProfileResponse = new GetProfileResponse(getUserProfile.getResponse());
+//                    GetProfileResponse getUserProfileResponse = new GetProfileResponse(demoUserProfileResponse());
+//                    getUserProfileResponse.analysis();
+//                    mLastUser = getUserProfileResponse.getMobileUser();
+//                    Hawk.put(LAST_USER, mLastUser);
+
+                //}
             }
         }).start();
 
@@ -231,8 +288,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // TODO: Implement successful register logic here
                 // If register is successfully, automatically doLogin and go to MainActivity
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                this.finish();
             }
         }
     }
@@ -270,5 +326,38 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return valid;
+    }
+
+    public String demoLoginResponse(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(Constants.Success, true);
+            jsonObject.put(Constants.Message, "success");
+            jsonObject.put(Constants.Token, "1111111111");
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
+
+    public String demoUserProfileResponse(){
+        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonData = new JSONObject();
+        try {
+            jsonObject.put(Constants.Success, true);
+            jsonObject.put(Constants.Message, "success");
+
+            jsonData.put(Constants.Email, "thanh@gmail.com");
+            jsonData.put(Constants.Name, "thanh");
+            jsonData.put(Constants.Phone, "123456");
+            jsonData.put(Constants.Address, "ha noi");
+            jsonData.put(Constants.Vehicle, "cars");
+            jsonData.put(Constants.pathImage, "image");
+
+            jsonObject.put("data", jsonData);
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }

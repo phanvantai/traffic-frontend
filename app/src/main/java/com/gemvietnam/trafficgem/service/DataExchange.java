@@ -3,10 +3,10 @@ package com.gemvietnam.trafficgem.service;
 import android.util.Log;
 
 import com.gemvietnam.trafficgem.library.Credential;
-import com.gemvietnam.trafficgem.library.Message;
-import com.gemvietnam.trafficgem.library.Traffic;
+import com.gemvietnam.trafficgem.library.Report;
 import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.utils.Constants;
 
 
 import org.json.JSONException;
@@ -16,20 +16,20 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
-import javax.net.ssl.HttpsURLConnection;
+//import javax.net.ssl.HttpURLConnection;
 import javax.net.ssl.SSLContext;
 
 public class DataExchange implements IDataExchange {
     private String _url;
-    private HttpsURLConnection conn = null;
+//    private HttpsURLConnection conn = null;
+    private HttpURLConnection conn = null;
     private FileInputStream fileInputStream = null;
     private DataOutputStream dos = null;
     public DataExchange(String url){ this._url = url;}
@@ -38,10 +38,12 @@ public class DataExchange implements IDataExchange {
         try {
             URL url = new URL(_url);
             // open a Https connect to the url
-            conn = (HttpsURLConnection) url.openConnection();
+//            conn = (HttpsURLConnection) url.openConnection();
+            conn = (HttpURLConnection) url.openConnection();
             SSLContext sc;
             sc = SSLContext.getInstance("TLS");
             sc.init(null, null, new SecureRandom());
+
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
             conn.setDoInput(true);
@@ -67,7 +69,6 @@ public class DataExchange implements IDataExchange {
             conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestMethod("POST");
             conn.connect();
-
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(credential.exportStringFormatJson());
             Log.d("test-json-login", credential.exportStringFormatJson());
@@ -89,7 +90,6 @@ public class DataExchange implements IDataExchange {
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(user.exportStringFormatJson());
             Log.d("test-json-register", user.exportStringFormatJson());
-
         } catch (IOException e){
             e.printStackTrace();
         } catch (NullPointerException e){
@@ -102,7 +102,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("PUT");
             conn.connect();
 
@@ -110,6 +110,10 @@ public class DataExchange implements IDataExchange {
             dos.writeBytes(profile.exportStringFormatJson());
         } catch (IOException e){
             e.printStackTrace();
+        } catch (NullPointerException e){
+            e.printStackTrace();
+        } catch (Exception e){
+
         }
     }
 
@@ -118,7 +122,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("PUT");
             conn.connect();
 
@@ -133,6 +137,8 @@ public class DataExchange implements IDataExchange {
             dos.writeBytes(entry.toString());
         } catch (IOException e){
             e.printStackTrace();
+        } catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -140,8 +146,8 @@ public class DataExchange implements IDataExchange {
     public void getFuture(String token, int layer) {        //  send request to server to receive future traffic data
         init();
         try {
-            conn.setRequestProperty("Authorization", token);
-            conn.setRequestProperty("Layer", String.valueOf(layer));
+            conn.setRequestProperty(Constants.TOKEN, token);
+            conn.setRequestProperty(Constants.LAYER, String.valueOf(layer));
             conn.setRequestMethod("GET");
             conn.connect();
 
@@ -154,13 +160,14 @@ public class DataExchange implements IDataExchange {
     public void getCurrent(String token, int layer) {       // send request to server to receive current traffic data
         init();
         try {
-            conn.setRequestProperty("Authorization", token);
-            conn.setRequestProperty("Layer", String.valueOf(layer));
+            conn.setRequestProperty(Constants.TOKEN, token);
+            conn.setRequestProperty(Constants.LAYER, String.valueOf(layer));
             conn.setRequestMethod("GET");
             conn.connect();
 
-
         } catch (IOException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
     }
@@ -170,7 +177,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("POST");
             conn.connect();
 
@@ -189,7 +196,7 @@ public class DataExchange implements IDataExchange {
         init();
         try {
             conn.setRequestProperty("Content-Type", "image/png");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("POST");
             conn.connect();
 
@@ -210,6 +217,8 @@ public class DataExchange implements IDataExchange {
             }
         } catch (IOException e){
             e.printStackTrace();
+        } catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -217,7 +226,7 @@ public class DataExchange implements IDataExchange {
     public void getUserProfile(String token) {      // send request to server to receive profile
         init();
         try {
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("GET");
             conn.connect();
         } catch (IOException e){
@@ -226,17 +235,19 @@ public class DataExchange implements IDataExchange {
     }
 
     @Override
-    public void report(String token, Message reportMessage){        // send report of user to server
+    public void report(String token, Report reportMessage){        // send report of user to server
         init();
         try {
             conn.setRequestProperty("Content-Type", "text/plain");
-            conn.setRequestProperty("Authorization", token);
+            conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("POST");
             conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(reportMessage.exportStringFormatJson());
         } catch (IOException e){
+            e.printStackTrace();
+        } catch (NullPointerException e){
             e.printStackTrace();
         }
     }
