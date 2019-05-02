@@ -12,10 +12,16 @@ import com.gemvietnam.trafficgem.utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 //import javax.net.ssl.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
 public class DataExchange implements IDataExchange {
@@ -38,26 +45,16 @@ public class DataExchange implements IDataExchange {
         try {
             URL url = new URL(_url);
             // open a Https connect to the url
-//            conn = (HttpsURLConnection) url.openConnection();
             conn = (HttpURLConnection) url.openConnection();
-            SSLContext sc;
-            sc = SSLContext.getInstance("TLS");
-            sc.init(null, null, new SecureRandom());
-
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setDoInput(true);
             conn.setDoOutput(true);
-            conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
-            conn.setFixedLengthStreamingMode(_url.getBytes().length);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Content-Language", "en-US");
             conn.setUseCaches(false);
+            conn.setDoInput(true);
+            conn.setConnectTimeout(30000);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
             e.printStackTrace();
         }
     }
@@ -66,12 +63,15 @@ public class DataExchange implements IDataExchange {
     public void sendCredential(Credential credential) {
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain");
+//            conn.setFixedLengthStreamingMode(credential.exportStringFormatJson().getBytes().length);
             conn.setRequestMethod("POST");
             conn.connect();
+//            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
+//            wr.write(credential.exportStringFormatJson().getBytes());
+//            wr.flush();
+//            wr.close();
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(credential.exportStringFormatJson());
-            Log.d("test-json-login", credential.exportStringFormatJson());
         } catch (IOException e){
             e.printStackTrace();
         } catch (NullPointerException e){
@@ -83,28 +83,33 @@ public class DataExchange implements IDataExchange {
     public void sendRegistrationInfo(User user) {
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain");
+//            conn.setFixedLengthStreamingMode(user.exportStringFormatJson().getBytes().length);
             conn.setRequestMethod("POST");
             conn.connect();
 
+//            OutputStream wr = new BufferedOutputStream(conn.getOutputStream());
+//            wr.write(user.exportStringFormatJson().getBytes());
+//            wr.flush();
+//            wr.close();
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(user.exportStringFormatJson());
             Log.d("test-json-register", user.exportStringFormatJson());
+
         } catch (IOException e){
             e.printStackTrace();
         } catch (NullPointerException e){
             e.printStackTrace();
         }
+
+
     }
 
     @Override
     public void updateProfile(String token, UpdateProfile profile) {        // send user's profile changed
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("PUT");
-            conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
             dos.writeBytes(profile.exportStringFormatJson());
@@ -121,10 +126,8 @@ public class DataExchange implements IDataExchange {
     public void changePassword(String token, String oldPassword, String newPassword) {      //
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("PUT");
-            conn.connect();
 
             dos = new DataOutputStream(conn.getOutputStream());
             JSONObject entry = new JSONObject();
@@ -253,21 +256,30 @@ public class DataExchange implements IDataExchange {
     }
     @Override
     public String getResponse(){        // receive response from server format string.
-        String serverResponseMessage = "";
+//        String serverResponseMessage = "";
+        StringBuffer serverResponseMessage = new StringBuffer();
         int serverResponseCode;
         try {
             serverResponseCode = conn.getResponseCode();
-            if(serverResponseCode == 200){
-                serverResponseMessage = conn.getResponseMessage();
-            }
-            fileInputStream.close();
-            dos.flush();
-            dos.close();
+            Log.d("test-response-code", String.valueOf(serverResponseCode));
+//            if(serverResponseCode == 200){
+//                serverResponseMessage = conn.getResponseMessage();
+
+                InputStream is = new BufferedInputStream(conn.getInputStream());
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    serverResponseMessage.append(line);
+                    serverResponseMessage.append("\n");
+                }
+                rd.close();
+//            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-        return serverResponseMessage;
+        Log.d("Response", serverResponseMessage.toString());
+        return serverResponseMessage.toString();
     }
 }

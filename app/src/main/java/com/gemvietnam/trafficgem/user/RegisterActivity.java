@@ -167,41 +167,29 @@ public class RegisterActivity extends AppCompatActivity {
                 User user = new User(email, name, vehicle, phone, address);
                 user.setPassword(md5Password);
 
-                //DataExchange dataExchange = new DataExchange(URL_REGISTER);
-                //dataExchange.sendRegistrationInfo(user);
-                String response = AppUtils.executePostHttp(URL_REGISTER, user.exportStringFormatJson());
-                Log.e("TaiPV", response);
+                DataExchange dataExchange = new DataExchange(URL_REGISTER);
+                dataExchange.sendRegistrationInfo(user);
+//                String getResponse = AppUtils.executePostHttp(URL_REGISTER, user.exportStringFormatJson());
 
-//                RegisterResponse registerResponse = new RegisterResponse(dataExchange.getResponse());
-                RegisterResponse registerResponse = new RegisterResponse(demoRegisterResponse());
+//                Log.e("TaiPV", response);
+//                Log.d("test-response--", dataExchange.getResponse());
+                String getResponse = dataExchange.getResponse();
+                RegisterResponse registerResponse = new RegisterResponse(getResponse);
                 registerResponse.analysis();
+                final String messageResponse = registerResponse.getMessage();
                 if(registerResponse.getSuccess()){
                     //  CODE FOR RETURN MAIN LOGIN
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), (String)messageResponse, Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
-                progressDialog.dismiss();
-//                Hawk.put(LAST_USER, user);
-//                CustomToken customToken;
-//                if (Hawk.contains(MY_TOKEN)) {
-//                    customToken = Hawk.get(MY_TOKEN);
-//                } else {
-//                    customToken = CustomToken.getInstance();
-//                }
-//                // doan nay cung khong co token nen khong khoi tao dc session, tinh thoi gian dang nhap
-//                customToken.setDate(System.currentTimeMillis());
-//                //customToken.setToken();
-//                Hawk.put(MY_TOKEN, customToken);
-//
-//                //bRegister.setEnabled(true);
-////                Log.d("Test-success", String.valueOf(registerResponse.getSuccess()));
-//                if (registerResponse.getSuccess()) {
-//                    setResult(RESULT_OK, null);
-//                    finish();
-//                } else {
-//                    progressDialog.dismiss();
-////                    Toast.makeText(getApplicationContext(), registerResponse.getMessage(), Toast.LENGTH_LONG).show();
-//                }
+//                progressDialog.dismiss();
 
             }
         }).start();

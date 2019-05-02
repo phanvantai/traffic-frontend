@@ -27,10 +27,10 @@ public class LoginResponse extends Response{
             this.jsonObject = new JSONObject(responseMessage);
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);
-
-//            if(success){
-//                this.token = (String) jsonObject.get(Constants.Token);
-//            }
+            Log.d("Test-success-1", String.valueOf(success));
+            if(success){
+                this.token = (String) jsonObject.get(Constants.Token);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

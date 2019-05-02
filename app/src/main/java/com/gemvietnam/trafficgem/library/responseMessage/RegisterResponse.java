@@ -19,6 +19,7 @@ public class RegisterResponse extends Response {
 
     public void analysis(){
         try {
+
             this.jsonObject = new JSONObject(responseMessage);
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);

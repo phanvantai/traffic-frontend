@@ -271,7 +271,7 @@ public class AppUtils {
             SSLContext sc;
             sc = SSLContext.getInstance("TLS");
             sc.init(null, null, new SecureRandom());
-            connection.setSSLSocketFactory(sc.getSocketFactory());
+//            connection.setSSLSocketFactory(sc.getSocketFactory());
             connection.setDoOutput(true);
             connection.setFixedLengthStreamingMode(urlParameters.getBytes().length);
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -372,6 +372,7 @@ public class AppUtils {
                 response.append(line);
                 response.append("\n");
             }
+            Log.d("Test-response", response.toString());
             rd.close();
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
