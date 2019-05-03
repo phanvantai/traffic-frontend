@@ -232,17 +232,24 @@ public class AppUtils {
      * @param pass
      * @return
      */
-    public static String md5Password(String pass) {
+    public static String md5PasswordLogin(String pass, String time) {
         String tokenCodeMd5 = "";
         // Check
         if (!TextUtils.isEmpty(pass)) {
             // Ca 2 deu rong
-            tokenCodeMd5 = AppUtils.md5(pass.getBytes());
+            tokenCodeMd5 = AppUtils.md5((md5(pass.getBytes())+time).getBytes());
         }
 
         return tokenCodeMd5;
     }
 
+    public static String md5PasswordRegister(String pass){
+        String hashCode = "";
+        if(!TextUtils.isEmpty(pass)){
+            hashCode = md5(pass.getBytes());
+        }
+        return hashCode;
+    }
     /**
      * Return bcrypt hash
      * @param pass

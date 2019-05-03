@@ -192,10 +192,10 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String oldPass = etOld.getText().toString();
-                String md5Old = AppUtils.md5Password(oldPass);
+                String md5Old = AppUtils.md5PasswordRegister(oldPass);
 
                 String newPass = etNew.getText().toString();
-                String md5New = AppUtils.md5Password(newPass);
+                String md5New = AppUtils.md5PasswordRegister(newPass);
                 String reNew = etReNew.getText().toString();
 
                 if (validate()) {

@@ -163,7 +163,8 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = etPassword.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
 
-                String md5Password = AppUtils.md5Password(password);
+//                String md5Password = AppUtils.md5Password(password, );
+                String md5Password = AppUtils.md5PasswordRegister(password);
                 User user = new User(email, name, vehicle, phone, address);
                 user.setPassword(md5Password);
 

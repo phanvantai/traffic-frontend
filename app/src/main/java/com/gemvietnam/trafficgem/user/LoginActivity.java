@@ -173,9 +173,9 @@ public class LoginActivity extends AppCompatActivity {
                 // thông tin đăng nhập gửi cho server
                 String email = etEditMail.getText().toString();
                 String password = etEditPassword.getText().toString();
-                String md5Password = AppUtils.md5Password(password);
                 String loginTime = LOGIN_TIME_FORMAT.format(new Date());
 
+                String md5Password = AppUtils.md5PasswordLogin(password, loginTime);
                 // giá trị trả về khi login
                 String message = "", token = "";
                 boolean success = false;
