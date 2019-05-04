@@ -48,7 +48,7 @@ public class DataExchange implements IDataExchange {
             conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Content-Language", "en-US");
+//            conn.setRequestProperty("Content-Language", "en-US");
             conn.setUseCaches(false);
             conn.setDoInput(true);
             conn.setConnectTimeout(30000);
@@ -229,9 +229,13 @@ public class DataExchange implements IDataExchange {
     public void getUserProfile(String token) {      // send request to server to receive profile
         init();
         try {
-            conn.setRequestProperty(Constants.TOKEN, token);
+            Log.d("test-token", token);
+            conn.setRequestProperty("remember_token", token);
             conn.setRequestMethod("GET");
             conn.connect();
+
+//            dos = new DataOutputStream(conn.getOutputStream());
+//            dos.writeBytes("");
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -241,7 +245,6 @@ public class DataExchange implements IDataExchange {
     public void report(String token, Report reportMessage){        // send report of user to server
         init();
         try {
-            conn.setRequestProperty("Content-Type", "text/plain");
             conn.setRequestProperty(Constants.TOKEN, token);
             conn.setRequestMethod("POST");
             conn.connect();
@@ -259,27 +262,28 @@ public class DataExchange implements IDataExchange {
 //        String serverResponseMessage = "";
         StringBuffer serverResponseMessage = new StringBuffer();
         int serverResponseCode;
+
         try {
             serverResponseCode = conn.getResponseCode();
             Log.d("test-response-code", String.valueOf(serverResponseCode));
-//            if(serverResponseCode == 200){
+//          if(serverResponseCode == 200) {
 //                serverResponseMessage = conn.getResponseMessage();
 
-                InputStream is = new BufferedInputStream(conn.getInputStream());
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                String line;
-                while ((line = rd.readLine()) != null) {
-                    serverResponseMessage.append(line);
-                    serverResponseMessage.append("\n");
-                }
-                rd.close();
-//            }
+              InputStream is = new BufferedInputStream(conn.getInputStream());
+              BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+              String line;
+              while ((line = rd.readLine()) != null) {
+                  serverResponseMessage.append(line);
+                  serverResponseMessage.append("\n");
+              }
+              rd.close();
+//          }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-        Log.d("Response", serverResponseMessage.toString());
+        Log.d("test--Response", serverResponseMessage.toString());
         return serverResponseMessage.toString();
     }
 }

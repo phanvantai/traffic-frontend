@@ -164,7 +164,7 @@ public class LocationTracker extends Service {
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
                 while (true) {
-                    if (count == 60) {
+                    if (count == 3) {
                         try {
                             DataExchange trafficData = new DataExchange(URL_MARKER);
                             Log.d("json-test-traffic-data", mObject.exportStringFormatJson());
