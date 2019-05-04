@@ -141,7 +141,7 @@ public class AppUtils {
         toast.setDuration(length);
         toast.show();
     }
-    
+
     /**
      * Decode sampled bitmap from resource.
      *
@@ -197,7 +197,7 @@ public class AppUtils {
         }
         return inSampleSize;
     }
-    
+
     /**
      * Md5.
      *
@@ -226,23 +226,30 @@ public class AppUtils {
 
         return "";
     }
-    
+
     /**
      * Return MD5 hash string
      * @param pass
      * @return
      */
-    public static String md5Password(String pass) {
+    public static String md5PasswordLogin(String pass, String time) {
         String tokenCodeMd5 = "";
         // Check
         if (!TextUtils.isEmpty(pass)) {
             // Ca 2 deu rong
-            tokenCodeMd5 = AppUtils.md5(pass.getBytes());
+            tokenCodeMd5 = AppUtils.md5((md5(pass.getBytes())+time).getBytes());
         }
 
         return tokenCodeMd5;
     }
 
+    public static String md5PasswordRegister(String pass){
+        String hashCode = "";
+        if(!TextUtils.isEmpty(pass)){
+            hashCode = md5(pass.getBytes());
+        }
+        return hashCode;
+    }
     /**
      * Return bcrypt hash
      * @param pass
@@ -271,7 +278,7 @@ public class AppUtils {
             SSLContext sc;
             sc = SSLContext.getInstance("TLS");
             sc.init(null, null, new SecureRandom());
-            connection.setSSLSocketFactory(sc.getSocketFactory());
+//            connection.setSSLSocketFactory(sc.getSocketFactory());
             connection.setDoOutput(true);
             connection.setFixedLengthStreamingMode(urlParameters.getBytes().length);
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -334,7 +341,7 @@ public class AppUtils {
         }
         return response.toString();
     }
-    
+
     /**
      * Execute post http connection (HttpURLConnection)
      *
@@ -372,6 +379,7 @@ public class AppUtils {
                 response.append(line);
                 response.append("\n");
             }
+            Log.d("Test-response", response.toString());
             rd.close();
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
@@ -437,7 +445,7 @@ public class AppUtils {
         }
         return response.toString();
     }
-    
+
     /**
      * Check network
      *
@@ -456,7 +464,7 @@ public class AppUtils {
         }
         return false;
     }
-    
+
     /**
      * View no network alert
      */
