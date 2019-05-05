@@ -47,11 +47,12 @@ public class GetProfileResponse extends Response {
             user.setPhone((String) jsonUserProfile.get(Constants.Phone));
             user.setAddress((String) jsonUserProfile.get(Constants.Address));
             user.setVehicle((String) jsonUserProfile.get(Constants.Vehicle));
-            String pathAvatar = "";
-            if(jsonUserProfile.get(Constants.pathImage) == null){
-                pathAvatar = "null";
-            }
-            user.setAvatar(pathAvatar);
+//            String pathAvatar = "";
+//            if(jsonUserProfile.get(Constants.pathImage) == null){
+//                pathAvatar = "null";
+//            }
+//            user.setAvatar(pathAvatar);
+            user.setAvatar((String) jsonUserProfile.get(Constants.pathImage));
         } catch (JSONException e){
             e.printStackTrace();
         }

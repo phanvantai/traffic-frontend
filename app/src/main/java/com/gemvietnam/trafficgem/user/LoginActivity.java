@@ -55,6 +55,7 @@ import static com.gemvietnam.trafficgem.utils.Constants.AVATAR;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.LOGIN_TIME_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.MESSAGE;
+import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.NAME;
 import static com.gemvietnam.trafficgem.utils.Constants.PHONE;
 import static com.gemvietnam.trafficgem.utils.Constants.SUCCESS;
@@ -77,7 +78,6 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvRegisterLink;
 
     User mLastUser;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,15 +94,17 @@ public class LoginActivity extends AppCompatActivity {
         //ViewUtils.hideKeyBoard(this);
 
         // kiểm tra xem đã có user đăng nhập chưa
-//        if (Hawk.contains(LAST_USER)) {
-//            // nếu có thì kiểm tra phiên đăng nhập
-//            mLastUser = Hawk.get(LAST_USER);
-//            if (!mLastUser.isExpired()) {
-//                // nếu còn thời gian thì vào thẳng MainAcitivity
-//                Intent intent = new Intent(this, MainActivity.class);
-//                startActivity(intent);
-//            }
-//        }
+        if (Hawk.contains(LAST_USER)) {
+            // nếu có thì kiểm tra phiên đăng nhập
+            mLastUser = Hawk.get(LAST_USER);
+            Log.d("last-user", mLastUser.exportStringFormatJson());
+            if (!mLastUser.isExpired()) {
+                Log.d("expired", "true");
+                // nếu còn thời gian thì vào thẳng MainAcitivity
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            }
+        }
 
         // Thưc hiện hành động khi bấm vào nút Login
         bLogin.setOnClickListener(new View.OnClickListener() {
@@ -190,44 +192,45 @@ public class LoginActivity extends AppCompatActivity {
                 String md5Password = AppUtils.md5PasswordLogin(password, loginTime);
 
                 Credential credential = new Credential(email, md5Password, loginTime);
+                Hawk.put(Constants.Password, AppUtils.md5PasswordRegister(password));
                 DataExchange login = new DataExchange();
                 String responseLoginFormatString = login.sendCredential(credential.exportStringFormatJson());
                 Log.d("test-response-login", responseLoginFormatString);
                 final LoginResponse loginResponse = new LoginResponse(responseLoginFormatString);
                 loginResponse.analysis();
-
                 if (loginResponse.getSuccess()) {
                     // nếu đăng nhập thành công
-
+                    Log.d("test-tokne", loginResponse.getToken());
                     // check user xem có trong Hawk chưa,
                     // nếu có rồi thì set last user, chưa thì lấy get user profile
 //                    if (Hawk.contains(email)) {
+//                        Log.d("test-message", "contains");
 //                        Hawk.put(LAST_USER, Hawk.get(email));
 //                    } else {
-//                        String profileResponse = AppUtils.executeGetHttp(URL_GET_PROFILE, token);
-//                        DataExchange userProfile = new DataExchange(URL_GET_PROFILE);
-//                        userProfile.getUserProfile(loginResponse.getToken());
-
                         DataExchange getUserProfile = new DataExchange();
                         String userProfileResponse = getUserProfile.getUserProfile(loginResponse.getToken());
+                        Log.d("test-user-profile", userProfileResponse);
                         GetProfileResponse userProfile = new GetProfileResponse(userProfileResponse);
                         userProfile.analysis();
                         mLastUser = userProfile.getMobileUser();
                         mLastUser.setLastLogin(System.currentTimeMillis());
+                        mLastUser.setToken(loginResponse.getToken());
                         Hawk.put(email, mLastUser);
                         Hawk.put(LAST_USER, mLastUser);
-                        progressDialog.dismiss();
+//                    }
+
+                    progressDialog.dismiss();
                     // có thông tin last user rồi thì vào MainActivity thôi
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(getApplicationContext(), loginResponse.getMessage() , Toast.LENGTH_LONG).show();
-
                         }
                     });
+                    progressDialog.dismiss();
                 }
             }
         }).start();

@@ -171,6 +171,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                 DataExchange resigster = new DataExchange();
                 String getResponse = resigster.sendRegistrationInfo(user.exportStringFormatJson());
+//                String getResponse = AppUtils.executePostHttp(URL_REGISTER, user.exportStringFormatJson());
+                Log.d("test-request-register", user.exportStringFormatJson());
                 Log.d("test-response-register", getResponse);
                 RegisterResponse registerResponse = new RegisterResponse(getResponse);
                 registerResponse.analysis();
@@ -188,7 +190,7 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     });
                 }
-//                progressDialog.dismiss();
+                progressDialog.dismiss();
 
             }
         }).start();

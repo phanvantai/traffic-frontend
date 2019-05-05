@@ -55,14 +55,10 @@ public class LocationTracker extends Service {
     // location, update each 5s
     private Location mCurrentLocation;
 
-    // CustomToken
-    CustomToken mCustomToken;
     // User
     User mLastUser;
 
     // date and time when get location
-//    private String mDate;
-//    private String mTimeStamp;
     private String mRecord_Time;
 
     // user's transport
@@ -135,7 +131,7 @@ public class LocationTracker extends Service {
         String action = intent.getAction();
         if (action.equals(START_SERVICE)) {
             startInForeground(this);
-//            doStart();
+            doStart();
         } else if (action.equals(STOP_SERVICE)) {
             Log.i("TaiPV", "Received Stop Foreground Intent");
             //your end service code
@@ -155,21 +151,21 @@ public class LocationTracker extends Service {
             @Override
             public void run() {
                 Location temp = null;
-                mCustomToken = Hawk.get(MY_TOKEN);
                 mLastUser = Hawk.get(LAST_USER);
                 float distanceTo;
-                int count = 0;
+                int count = -1;
                 JSONObject jsonObject = new JSONObject();
                 mObject = new JsonObject();
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
                 while (true) {
-                    if (count == 3) {
+                    if (count >= 3) {
                         try {
                             DataExchange trafficData = new DataExchange();
                             String responseTrafficData = "";
-                            responseTrafficData = trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.exportStringFormatJson());
-                            Log.d("test-traffic-data", responseTrafficData);
+                            Log.d("test-traffic-data", mObject.exportStringFormatJson());
+                            responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
+                            Log.d("test-response-traffic", responseTrafficData);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

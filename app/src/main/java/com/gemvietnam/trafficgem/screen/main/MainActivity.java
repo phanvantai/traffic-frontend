@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import com.gemvietnam.base.ContainerActivity;
 import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
+import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuPresenter;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
@@ -24,6 +25,7 @@ import com.orhanobut.hawk.Hawk;
 
 import butterknife.BindView;
 
+import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
 import static com.gemvietnam.trafficgem.utils.Constants.STOP_SERVICE;
@@ -117,9 +119,9 @@ public class MainActivity extends ContainerActivity implements
         if (menuItem.equals(MenuItem.SIGN_OUT)) {
 //        PrefWrapper.clearUser(this);
         ActivityUtils.startActivity(this, LoginActivity.class);
-            CustomToken customToken = Hawk.get(MY_TOKEN);
-            customToken.removeToken();
-            Hawk.put(MY_TOKEN, customToken);
+            User mLastUser = Hawk.get(LAST_USER);
+            mLastUser.setToken(null);
+            Hawk.put(LAST_USER, mLastUser);
             finish();
         } else if (menuItem.equals(MenuItem.VIEW_EVENT)) {
             AppUtils.createDialog(this);

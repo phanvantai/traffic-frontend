@@ -22,6 +22,7 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.ChangePasswordResponse;
+import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfileResponse;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
@@ -68,7 +69,6 @@ public class ProfileActivity extends AppCompatActivity {
     EditText etReNew;
 
     User mLastUser;
-    CustomToken mCustomToken;
     String currentPhotoPath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,6 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mLastUser = Hawk.get(LAST_USER);
-        mCustomToken = Hawk.get(MY_TOKEN);
 
 //        AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
         etName.setText(mLastUser.getName());
@@ -161,11 +160,10 @@ public class ProfileActivity extends AppCompatActivity {
                 String vehicle = sVehicle.getSelectedItem().toString();
 
                 UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
-                Log.d("test-up","test");
                 DataExchange dataExchange = new DataExchange();
                 String getResponse = "";
-                getResponse = dataExchange.updateProfile(mCustomToken.getToken(), updateProfile.exportStringFormatJson());
-
+                getResponse = dataExchange.updateProfile(mLastUser.getToken(), updateProfile.exportStringFormatJson());
+                Log.d("test-update-profile", getResponse);
                 UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(getResponse);
                 updateProfileResponse.analysis();
                 if(updateProfileResponse.getSuccess()){
@@ -174,15 +172,19 @@ public class ProfileActivity extends AppCompatActivity {
                     mLastUser.setAddress(address);
                     mLastUser.setVehicle(vehicle);
                     Hawk.put(LAST_USER, mLastUser);
-
                 }
 
                 String pathImage = "";      //      EDIT PATH IMAGE
                 String getResponseUpdateAvatar = "";
                 DataExchange updateAvatar = new DataExchange();
-                getResponseUpdateAvatar = updateAvatar.sendPicture(mCustomToken.getToken(), pathImage);
+                getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), pathImage);
 
-                Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
+                    }
+                });
                 finish();
             }
         }).start();
@@ -202,21 +204,30 @@ public class ProfileActivity extends AppCompatActivity {
                 if (validate()) {
                     DataExchange dataExchange = new DataExchange();
                     String getResposeChangePassword = "";
-                    getResposeChangePassword = dataExchange.changePassword(mCustomToken.getToken(), md5Old, md5New);
-
+                    getResposeChangePassword = dataExchange.changePassword(mLastUser.getToken(), md5Old, md5New);
+                    Log.d("test-response-pass", getResposeChangePassword);
                     Log.d("test-pass", "test");
-                    Toast.makeText(getApplicationContext(), "Password Changed", Toast.LENGTH_LONG).show();
+                    final ChangePasswordResponse changePasswordResponse = new ChangePasswordResponse(getResposeChangePassword);
+                    changePasswordResponse.analysis();
+                    if(changePasswordResponse.getSuccess()){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Password Changed", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), changePasswordResponse.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     finish();
                     //llUpdate.setVisibility(View.VISIBLE);
                     //llChange.setVisibility(View.GONE);
                     //bChangPassword.setVisibility(View.VISIBLE);
-                } else {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), "Error!", Toast.LENGTH_LONG).show();
-                        }
-                    });
                 }
             }
         }).start();
@@ -227,25 +238,39 @@ public class ProfileActivity extends AppCompatActivity {
         String oldPass = etOld.getText().toString();
         String newPass = etNew.getText().toString();
         String reNew = etReNew.getText().toString();
-        if (oldPass.isEmpty() || oldPass.length() < 4 || oldPass.length() > 10) {
-            etOld.setError(getApplicationContext().getString(R.string.rule_password));
+
+        if(!AppUtils.md5PasswordRegister(oldPass).equals(Hawk.get(Constants.Password))){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    etOld.setError("Password does no match!");
+                }
+            });
             valid = false;
-        } else {
-            etOld.setError(null);
+        }
+
+        if (oldPass.isEmpty() || oldPass.length() < 4 || oldPass.length() > 10) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    etOld.setError(getApplicationContext().getString(R.string.rule_password));
+                }
+            });
+            valid = false;
         }
 
         if (newPass.isEmpty() || newPass.length() < 4 || newPass.length() > 10) {
             etNew.setError(getApplicationContext().getString(R.string.rule_password));
             valid = false;
-        } else {
-            etNew.setError(null);
+//        } else {
+//            etNew.setError(null);
         }
 
         if (!newPass.equals(reNew)) {
             etReNew.setError(getApplicationContext().getString(R.string.rule_repassword));
             valid = false;
-        } else {
-            etReNew.setError(null);
+//        } else {
+//            etReNew.setError(null);
         }
         return valid;
     }

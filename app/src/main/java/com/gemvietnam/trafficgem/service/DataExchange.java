@@ -278,12 +278,23 @@ package com.gemvietnam.trafficgem.service;
 //    }
 //}
 
+import android.util.Log;
+
 import com.gemvietnam.trafficgem.utils.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -341,6 +352,61 @@ public class DataExchange implements IDataExchange {
         }
         return responseString;
     }
+
+
+
+//        @Override
+//    public String sendRegistrationInfo(String user) {
+//
+//        HttpURLConnection conn = null;
+//        FileInputStream fileInputStream = null;
+//        DataOutputStream dos = null;
+//
+//            try {
+//            URL url = new URL(URL_REGISTER);
+//            // open a Https connect to the url
+//            conn = (HttpURLConnection) url.openConnection();
+//            conn.setDoOutput(true);
+//            conn.setRequestProperty("Content-Type", "application/json");
+////            conn.setRequestProperty("Content-Language", "en-US");
+//            conn.setUseCaches(false);
+//            conn.setDoInput(true);
+//            conn.setConnectTimeout(30000);
+//
+//                conn.setRequestMethod("POST");
+//            conn.connect();
+//            dos = new DataOutputStream(conn.getOutputStream());
+//            dos.writeBytes(user);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        StringBuffer serverResponseMessage = new StringBuffer();
+//        int serverResponseCode;
+//
+//        try {
+//            serverResponseCode = conn.getResponseCode();
+//            Log.d("test-response-code", String.valueOf(serverResponseCode));
+//            InputStream is = new BufferedInputStream(conn.getInputStream());
+//            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+//            String line;
+//            while ((line = rd.readLine()) != null) {
+//                serverResponseMessage.append(line);
+//                serverResponseMessage.append("\n");
+//            }
+//            rd.close();
+////          }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (NullPointerException e){
+//            e.printStackTrace();
+//        }
+//        Log.d("test--Response", serverResponseMessage.toString());
+//        return serverResponseMessage.toString();
+//    }
+
 
     @Override
     public String updateProfile(String token, String profile){
