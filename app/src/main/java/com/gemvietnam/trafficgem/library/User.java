@@ -85,12 +85,12 @@ public class User {
             entry.put(Constants.Email, mEmail);
             entry.put(Constants.Name, mName);
             //if(mPassword == null)   mPassword = "NULL";
-            entry.put(Constants.Password, mPassword);
+//            entry.put(Constants.Password, mPassword);
             entry.put(Constants.Vehicle, mVehicle);
             entry.put(Constants.Phone, mPhone);
             entry.put(Constants.Address, mAddress);
             //if(mAvatar == null)  mAvatar = "NULL";
-            //entry.put(Constants.pathImage, mAvatar);
+//            entry.put(Constants.pathImage, mAvatar);
         } catch (JSONException e){
             e.printStackTrace();
         }

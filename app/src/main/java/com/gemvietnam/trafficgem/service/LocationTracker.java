@@ -135,7 +135,7 @@ public class LocationTracker extends Service {
         String action = intent.getAction();
         if (action.equals(START_SERVICE)) {
             startInForeground(this);
-            doStart();
+//            doStart();
         } else if (action.equals(STOP_SERVICE)) {
             Log.i("TaiPV", "Received Stop Foreground Intent");
             //your end service code
@@ -164,24 +164,14 @@ public class LocationTracker extends Service {
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
                 while (true) {
-                    if (count == 60) {
+                    if (count == 3) {
                         try {
-                            DataExchange trafficData = new DataExchange(URL_MARKER);
-                            Log.d("json-test-traffic-data", mObject.exportStringFormatJson());
-                            trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.exportStringFormatJson());
-                            // send done
-
-                            // receive response
-                            String response = trafficData.getResponse();
-
-                            //
-//                            SendMarkerResponse responseMsg = new SendMarkerResponse(response);
-//                            responseMsg.analysis();
-//                            responseMsg.getSuccess();
-//                            responseMsg.getMessage();
-                            //
+                            DataExchange trafficData = new DataExchange();
+                            String responseTrafficData = "";
+                            responseTrafficData = trafficData.sendDataTraffic(mCustomToken.getToken(), mObject.exportStringFormatJson());
+                            Log.d("test-traffic-data", responseTrafficData);
                         } catch (Exception e) {
-                            //
+                            e.printStackTrace();
                         }
                         count = 0;
                         mObject = new JsonObject();
@@ -216,8 +206,6 @@ public class LocationTracker extends Service {
                     }
 
                     if (mCurrentLocation != null) {
-//                        mDate = DATE_FORMAT.format(new Date());
-//                        mTimeStamp = TIME_FORMAT.format(new Date());
                         mRecord_Time = RECORD_TIME_FORMAT.format(new Date());
                         mSpeed = (3.6*distanceTo)/5d;
                         mDirection = getDirection(temp, mCurrentLocation);

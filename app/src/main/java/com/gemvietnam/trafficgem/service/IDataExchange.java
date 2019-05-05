@@ -5,30 +5,32 @@ import com.gemvietnam.trafficgem.library.Report;
 import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
 
+import java.io.IOException;
+
+import okhttp3.Request;
+
 
 public interface IDataExchange {
     // send
-    public void sendCredential(Credential credential);
+    public String sendCredential(String credential);
 
-    public void sendRegistrationInfo(User user);
+    public String sendRegistrationInfo(String user);
 
-    public void updateProfile(String token, UpdateProfile profile);
+    public String updateProfile(String token, String profile);
 
-    public void changePassword(String token, String oldPassword, String newPassword);
+    public String changePassword(String token, String oldPassword, String newPassword);
 
-    public void getFuture(String token, int layer);
+    public String getFuture(String token, int layer);
 
-    public void getCurrent(String token, int layer);
+    public String getCurrent(String token, int layer);
 
-    public void sendDataTraffic(String token, String dataTraffic);
+    public String sendDataTraffic(String token, String dataTraffic);
 
-    public void sendPicture(String token, String pathPicture);
+    public String sendPicture(String token, String pathPicture);
 
-    public void getUserProfile(String token);
+    public String getUserProfile(String token);
 
-    public void report(String token, Report reportMessage);
+    public String report(String token, String reportMessage);
 
-    // receive
 
-    public String getResponse();
 }

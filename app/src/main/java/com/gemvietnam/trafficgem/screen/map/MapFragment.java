@@ -278,24 +278,11 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     mMap.clear();
     int layer = 1;
     CustomToken customToken = Hawk.get(MY_TOKEN);
-    DataExchange dataExchange = new DataExchange(URL_CURRENT);
+//    DataExchange dataExchange = new DataExchange(URL_CURRENT);
     // layer = ???
 //    dataExchange.getCurrent(customToken.getToken(), layer);
 //    String response = dataExchange.getResponse();
     String response = testResponse();
-    //      START DEMO
-//    JSONObject jsonObject = new JSONObject();
-//    JSONObject jsonData = new JSONObject();
-//    JSONObject jsonGrid = new JSONObject();
-//    JSONArray jsonCells = new JSONArray();
-//    JSONObject jsonCell = new JSONObject();
-//    try {
-//      jS
-//    } catch (JSONException e){
-//      e.printStackTrace();
-//    }
-
-    //      END DEMO
     CurrentTrafficResponse trafficResponse = new CurrentTrafficResponse(response);
     trafficResponse.analysis();
 //

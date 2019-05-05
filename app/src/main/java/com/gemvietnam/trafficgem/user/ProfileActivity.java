@@ -162,11 +162,11 @@ public class ProfileActivity extends AppCompatActivity {
 
                 UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
                 Log.d("test-up","test");
-                DataExchange dataExchange = new DataExchange(URL_EDIT_PROFILE);
-                Log.d("test-update-profile", updateProfile.exportStringFormatJson());
-                dataExchange.updateProfile(mCustomToken.getToken(), updateProfile);
+                DataExchange dataExchange = new DataExchange();
+                String getResponse = "";
+                getResponse = dataExchange.updateProfile(mCustomToken.getToken(), updateProfile.exportStringFormatJson());
 
-                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(dataExchange.getResponse());
+                UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(getResponse);
                 updateProfileResponse.analysis();
                 if(updateProfileResponse.getSuccess()){
                     mLastUser.setName(name);
@@ -177,11 +177,12 @@ public class ProfileActivity extends AppCompatActivity {
 
                 }
 
-                String pathImage = "";      //
-                DataExchange updateAvatar = new DataExchange(URL_AVATAR);
-                updateAvatar.sendPicture(mCustomToken.getToken(), pathImage);
-                String responseUpdateAvatar = updateAvatar.getResponse();
-//                Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
+                String pathImage = "";      //      EDIT PATH IMAGE
+                String getResponseUpdateAvatar = "";
+                DataExchange updateAvatar = new DataExchange();
+                getResponseUpdateAvatar = updateAvatar.sendPicture(mCustomToken.getToken(), pathImage);
+
+                Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
                 finish();
             }
         }).start();
@@ -199,18 +200,23 @@ public class ProfileActivity extends AppCompatActivity {
                 String reNew = etReNew.getText().toString();
 
                 if (validate()) {
-                    DataExchange dataExchange = new DataExchange(URL_PASSWORD);
-                    dataExchange.changePassword(mCustomToken.getToken(), md5Old, md5New);
-                    dataExchange.getResponse();
+                    DataExchange dataExchange = new DataExchange();
+                    String getResposeChangePassword = "";
+                    getResposeChangePassword = dataExchange.changePassword(mCustomToken.getToken(), md5Old, md5New);
+
                     Log.d("test-pass", "test");
-//                    Toast.makeText(getApplicationContext(), "Password Changed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Password Changed", Toast.LENGTH_LONG).show();
                     finish();
                     //llUpdate.setVisibility(View.VISIBLE);
                     //llChange.setVisibility(View.GONE);
                     //bChangPassword.setVisibility(View.VISIBLE);
                 } else {
-                    //Toast.makeText(getApplicationContext(), "Error!!", Toast.LENGTH_LONG).show();
-                    //return;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Error!", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
         }).start();

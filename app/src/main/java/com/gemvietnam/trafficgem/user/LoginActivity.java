@@ -31,13 +31,23 @@ import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.gemvietnam.trafficgem.utils.Constants.ADDRESS;
@@ -84,15 +94,15 @@ public class LoginActivity extends AppCompatActivity {
         //ViewUtils.hideKeyBoard(this);
 
         // kiểm tra xem đã có user đăng nhập chưa
-        if (Hawk.contains(LAST_USER)) {
-            // nếu có thì kiểm tra phiên đăng nhập
-            mLastUser = Hawk.get(LAST_USER);
-            if (!mLastUser.isExpired()) {
-                // nếu còn thời gian thì vào thẳng MainAcitivity
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-            }
-        }
+//        if (Hawk.contains(LAST_USER)) {
+//            // nếu có thì kiểm tra phiên đăng nhập
+//            mLastUser = Hawk.get(LAST_USER);
+//            if (!mLastUser.isExpired()) {
+//                // nếu còn thời gian thì vào thẳng MainAcitivity
+//                Intent intent = new Intent(this, MainActivity.class);
+//                startActivity(intent);
+//            }
+//        }
 
         // Thưc hiện hành động khi bấm vào nút Login
         bLogin.setOnClickListener(new View.OnClickListener() {
@@ -180,56 +190,36 @@ public class LoginActivity extends AppCompatActivity {
                 String md5Password = AppUtils.md5PasswordLogin(password, loginTime);
 
                 Credential credential = new Credential(email, md5Password, loginTime);
-                DataExchange login = new DataExchange(URL_LOGIN);
-                login.sendCredential(credential);
-                final LoginResponse loginResponse = new LoginResponse(login.getResponse());
+                DataExchange login = new DataExchange();
+                String responseLoginFormatString = login.sendCredential(credential.exportStringFormatJson());
+                Log.d("test-response-login", responseLoginFormatString);
+                final LoginResponse loginResponse = new LoginResponse(responseLoginFormatString);
                 loginResponse.analysis();
 
-                Log.d("test-success", String.valueOf(loginResponse.getSuccess()));
                 if (loginResponse.getSuccess()) {
                     // nếu đăng nhập thành công
 
                     // check user xem có trong Hawk chưa,
                     // nếu có rồi thì set last user, chưa thì lấy get user profile
-                    if (Hawk.contains(email)) {
-                        Hawk.put(LAST_USER, Hawk.get(email));
-                    } else {
+//                    if (Hawk.contains(email)) {
+//                        Hawk.put(LAST_USER, Hawk.get(email));
+//                    } else {
 //                        String profileResponse = AppUtils.executeGetHttp(URL_GET_PROFILE, token);
 //                        DataExchange userProfile = new DataExchange(URL_GET_PROFILE);
 //                        userProfile.getUserProfile(loginResponse.getToken());
 
-//                        GetProfileResponse userProfileResponse = new GetProfileResponse(userProfile.getResponse());
-//                        userProfileResponse.analysis();
-//                        mLastUser = userProfileResponse.getMobileUser();
-//                        mLastUser.setLastLogin(System.currentTimeMillis());
-                        OkHttpClient client = new OkHttpClient();
-                        Request request = new Request.Builder().
-                                url(URL_GET_PROFILE).get().addHeader("Content-Type", "application/json").
-                                addHeader("remember_token", loginResponse.getToken()).
-                                addHeader("cache-control", "no-cache").build();
-                        Response response = null;
-                        GetProfileResponse userProfileResponse = null;
-                        try {
-                            response = client.newCall(request).execute();
-//                            Log.d("test-response", response.body().string());
-                            String userResponse = response.body().string().toString();
-                            Log.d("test-response----", userResponse);
-                            userProfileResponse = new GetProfileResponse(userResponse);
-                            userProfileResponse.analysis();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Log.d("test-user-response", userProfileResponse.getMobileUser().exportStringFormatJson());
-                        mLastUser = userProfileResponse.getMobileUser();
+                        DataExchange getUserProfile = new DataExchange();
+                        String userProfileResponse = getUserProfile.getUserProfile(loginResponse.getToken());
+                        GetProfileResponse userProfile = new GetProfileResponse(userProfileResponse);
+                        userProfile.analysis();
+                        mLastUser = userProfile.getMobileUser();
                         mLastUser.setLastLogin(System.currentTimeMillis());
                         Hawk.put(email, mLastUser);
                         Hawk.put(LAST_USER, mLastUser);
-                    }
-                    // close progress dialog
-                    progressDialog.dismiss();
+                        progressDialog.dismiss();
                     // có thông tin last user rồi thì vào MainActivity thôi
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
                 } else {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -239,30 +229,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 }
-
-                // login
-                //DataExchange login = new DataExchange(URL_LOGIN);
-                //login.sendCredential(credential);
-                //LoginResponse loginResponse = new LoginResponse(login.getResponse());
-                //LoginResponse loginResponse = new LoginResponse(response);
-                //loginResponse.analysis();
-                //if(loginResponse.getSuccess()){
-//                    mCustomToken.setDate(System.currentTimeMillis());
-//                    mCustomToken.setToken(loginResponse.getToken());
-//
-//                    // add to hawk
-//                    Hawk.put(MY_TOKEN, mCustomToken);
-//                        // get user profile
-//                    DataExchange getUserProfile = new DataExchange(URL_PROFILE);
-//                    getUserProfile.getUserProfile(mCustomToken.getToken());
-//                        // get response
-////                    GetProfileResponse getUserProfileResponse = new GetProfileResponse(getUserProfile.getResponse());
-//                    GetProfileResponse getUserProfileResponse = new GetProfileResponse(demoUserProfileResponse());
-//                    getUserProfileResponse.analysis();
-//                    mLastUser = getUserProfileResponse.getMobileUser();
-//                    Hawk.put(LAST_USER, mLastUser);
-
-                //}
             }
         }).start();
 

@@ -28,9 +28,9 @@ public class LoginResponse extends Response{
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);
 
-//            if(success){
-//                this.token = (String) jsonObject.get(Constants.Token);
-//            }
+            if(success){
+                this.token = (String) jsonObject.get(Constants.Token);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

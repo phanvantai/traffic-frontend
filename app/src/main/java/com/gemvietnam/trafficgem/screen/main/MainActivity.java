@@ -15,9 +15,11 @@ import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuPresenter;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
 import com.gemvietnam.trafficgem.service.LocationTracker;
+import com.gemvietnam.trafficgem.user.LoginActivity;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.gemvietnam.trafficgem.utils.ViewUtils;
+import com.gemvietnam.utils.ActivityUtils;
 import com.orhanobut.hawk.Hawk;
 
 import butterknife.BindView;
@@ -113,8 +115,8 @@ public class MainActivity extends ContainerActivity implements
 
         // on click sign out
         if (menuItem.equals(MenuItem.SIGN_OUT)) {
-//      PrefWrapper.clearUser(this);
-//      ActivityUtils.startActivity(this, LoginActivity.class);
+//        PrefWrapper.clearUser(this);
+        ActivityUtils.startActivity(this, LoginActivity.class);
             CustomToken customToken = Hawk.get(MY_TOKEN);
             customToken.removeToken();
             Hawk.put(MY_TOKEN, customToken);

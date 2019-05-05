@@ -30,6 +30,8 @@ import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -162,21 +164,17 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
-
-//                String md5Password = AppUtils.md5Password(password, );
                 String md5Password = AppUtils.md5PasswordRegister(password);
+
                 User user = new User(email, name, vehicle, phone, address);
                 user.setPassword(md5Password);
 
-                DataExchange dataExchange = new DataExchange(URL_REGISTER);
-                dataExchange.sendRegistrationInfo(user);
-//                String getResponse = AppUtils.executePostHttp(URL_REGISTER, user.exportStringFormatJson());
-
-//                Log.e("TaiPV", response);
-//                Log.d("test-response--", dataExchange.getResponse());
-                String getResponse = dataExchange.getResponse();
+                DataExchange resigster = new DataExchange();
+                String getResponse = resigster.sendRegistrationInfo(user.exportStringFormatJson());
+                Log.d("test-response-register", getResponse);
                 RegisterResponse registerResponse = new RegisterResponse(getResponse);
                 registerResponse.analysis();
+
                 final String messageResponse = registerResponse.getMessage();
                 if(registerResponse.getSuccess()){
                     //  CODE FOR RETURN MAIN LOGIN

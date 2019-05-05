@@ -114,9 +114,9 @@ public class ReportActivity extends AppCompatActivity {
         Report report = new Report(id, date, location);
         mCustomToken = Hawk.get(MY_TOKEN);
 
-        DataExchange dataExchange = new DataExchange(URL_REPORT);
-        dataExchange.report(mCustomToken.getToken(), report);
-        String response = dataExchange.getResponse();
+//        DataExchange dataExchange = new DataExchange(URL_REPORT);
+//        dataExchange.report(mCustomToken.getToken(), report);
+//        String response = dataExchange.getResponse();
         finish();
     }
 
