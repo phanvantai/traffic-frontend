@@ -23,11 +23,15 @@ import com.gemvietnam.trafficgem.library.UpdateProfile;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.ChangePasswordResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
+import com.gemvietnam.trafficgem.library.responseMessage.UpdateAvatarResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfileResponse;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.orhanobut.hawk.Hawk;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,10 +82,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         mLastUser = Hawk.get(LAST_USER);
 
-//        AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
+        AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
         etName.setText(mLastUser.getName());
         etPhone.setText(mLastUser.getPhone());
         etAddress.setText(mLastUser.getAddress());
+        Log.d("test-vehicle", mLastUser.getVehicle());
         sVehicle.setPrompt(mLastUser.getVehicle());
         llChange.setVisibility(View.GONE);
 
@@ -136,7 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 currentPhotoPath = cursor.getString(columnIndex);
                 cursor.close();
-
+                Log.d("test-path-image", currentPhotoPath);
                 civAvatar.setImageBitmap(BitmapFactory.decodeFile(currentPhotoPath));
 
 //                doUpdataAvatar();
@@ -144,10 +149,6 @@ public class ProfileActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-//    public void doUpdataAvatar(){
-//        new Thread()
-//    }
 
     public void doUpdateProfile(){
         new Thread(new Runnable() {
@@ -158,7 +159,7 @@ public class ProfileActivity extends AppCompatActivity {
                 String phone = etPhone.getText().toString();
                 String address = etAddress.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
-
+                Log.d("vehicle", vehicle);
                 UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
                 DataExchange dataExchange = new DataExchange();
                 String getResponse = dataExchange.updateProfile(mLastUser.getToken(), updateProfile.exportStringFormatJson());
@@ -173,9 +174,16 @@ public class ProfileActivity extends AppCompatActivity {
                     Hawk.put(LAST_USER, mLastUser);
                 }
 
-                String pathImage = "";      //      EDIT PATH IMAGE
-                DataExchange updateAvatar = new DataExchange();
-                String getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), pathImage);
+//                String pathImage = "";      //      EDIT PATH IMAGE
+                if(currentPhotoPath != null){
+                    DataExchange updateAvatar = new DataExchange();
+                    String getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), currentPhotoPath);
+                    UpdateAvatarResponse updateAvatarResponse = new UpdateAvatarResponse(demoUpdateResponse());
+                    updateAvatarResponse.analysis();
+                    if(updateAvatarResponse.getSuccess()){
+                        mLastUser.setAvatar(currentPhotoPath);
+                    }
+                }
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -271,5 +279,16 @@ public class ProfileActivity extends AppCompatActivity {
 //            etReNew.setError(null);
         }
         return valid;
+    }
+
+    public String demoUpdateResponse(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(Constants.Success, true);
+            jsonObject.put(Constants.Message, "success");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }

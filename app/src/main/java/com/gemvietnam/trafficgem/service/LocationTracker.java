@@ -162,6 +162,7 @@ public class LocationTracker extends Service {
                     if (count >= 3) {
                         try {
                             DataExchange trafficData = new DataExchange();
+//                            Log.d("test-traffic-data", mObject.exportStringFormatJson());
                             String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
 //                            Log.d("test-response-traffic", responseTrafficData);
                         } catch (Exception e) {

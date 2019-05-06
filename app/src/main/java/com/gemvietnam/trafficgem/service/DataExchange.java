@@ -288,6 +288,7 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -297,11 +298,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.gemvietnam.trafficgem.utils.Constants.URL_AVATAR;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_CURRENT;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_EDIT_PROFILE;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_FUTURE;
@@ -479,7 +482,29 @@ public class DataExchange implements IDataExchange {
 
     @Override
     public String sendPicture(String token, String pathPicture) {
-        return null;
+        String fileName = pathPicture.substring(pathPicture.lastIndexOf("/")+1);
+        File sourceFile = new File(pathPicture);
+        final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/*");
+
+        RequestBody body = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart(Constants.AVATAR, fileName, RequestBody.create(MEDIA_TYPE_PNG, sourceFile))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(URL_AVATAR)
+                .post(body)
+                .build();
+
+        Response response = null;
+        String responseFormatString = "";
+        try {
+            response = client.newCall(request).execute();
+            responseFormatString = response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return responseFormatString;
     }
 
     @Override

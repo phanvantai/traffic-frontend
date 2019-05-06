@@ -43,7 +43,7 @@
             <EditText android:id="@+id/et_activity_profile_input_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords"
+                android:inputType="phone"
                 android:hint="Phone Number" />
         </android.support.design.widget.TextInputLayout>
 
