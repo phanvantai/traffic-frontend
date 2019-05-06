@@ -302,7 +302,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.gemvietnam.trafficgem.utils.Constants.URL_CURRENT;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_EDIT_PROFILE;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_FUTURE;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_GET_PROFILE;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_MARKER;
@@ -352,61 +354,6 @@ public class DataExchange implements IDataExchange {
         }
         return responseString;
     }
-
-
-
-//        @Override
-//    public String sendRegistrationInfo(String user) {
-//
-//        HttpURLConnection conn = null;
-//        FileInputStream fileInputStream = null;
-//        DataOutputStream dos = null;
-//
-//            try {
-//            URL url = new URL(URL_REGISTER);
-//            // open a Https connect to the url
-//            conn = (HttpURLConnection) url.openConnection();
-//            conn.setDoOutput(true);
-//            conn.setRequestProperty("Content-Type", "application/json");
-////            conn.setRequestProperty("Content-Language", "en-US");
-//            conn.setUseCaches(false);
-//            conn.setDoInput(true);
-//            conn.setConnectTimeout(30000);
-//
-//                conn.setRequestMethod("POST");
-//            conn.connect();
-//            dos = new DataOutputStream(conn.getOutputStream());
-//            dos.writeBytes(user);
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        StringBuffer serverResponseMessage = new StringBuffer();
-//        int serverResponseCode;
-//
-//        try {
-//            serverResponseCode = conn.getResponseCode();
-//            Log.d("test-response-code", String.valueOf(serverResponseCode));
-//            InputStream is = new BufferedInputStream(conn.getInputStream());
-//            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-//            String line;
-//            while ((line = rd.readLine()) != null) {
-//                serverResponseMessage.append(line);
-//                serverResponseMessage.append("\n");
-//            }
-//            rd.close();
-////          }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (NullPointerException e){
-//            e.printStackTrace();
-//        }
-//        Log.d("test--Response", serverResponseMessage.toString());
-//        return serverResponseMessage.toString();
-//    }
-
 
     @Override
     public String updateProfile(String token, String profile){
@@ -465,12 +412,46 @@ public class DataExchange implements IDataExchange {
 
     @Override
     public String getFuture(String token, int layer) {
-        return null;
+        Request request = new Request.Builder()
+                .url(URL_FUTURE)
+                .addHeader("Content-Type", "application/json charset=utf-8;")
+                .addHeader(Constants.TOKEN, token)
+                .addHeader(Constants.LAYER, String.valueOf(layer))
+                .addHeader("cache-control", "no-cache")
+                .get()
+                .build();
+
+        Response response = null;
+        String responseString = "";
+        try {
+            response = client.newCall(request).execute();
+            responseString = response.body().string();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return responseString;
     }
 
     @Override
     public String getCurrent(String token, int layer) {
-        return null;
+        Request request = new Request.Builder()
+                .url(URL_CURRENT)
+                .addHeader("Content-Type", "application/json charset=utf-8;")
+                .addHeader(Constants.TOKEN, token)
+                .addHeader(Constants.LAYER, String.valueOf(layer))
+                .addHeader("cache-control", "no-cache")
+                .get()
+                .build();
+
+        Response response = null;
+        String responseString = "";
+        try {
+            response = client.newCall(request).execute();
+            responseString = response.body().string();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return responseString;
     }
 
     @Override
@@ -505,7 +486,7 @@ public class DataExchange implements IDataExchange {
     public String getUserProfile(String token){
         Request request = new Request.Builder()
                 .url(URL_GET_PROFILE)
-                .addHeader("Content-Type", "aplication/json charset=utf-8;")
+                .addHeader("Content-Type", "application/json charset=utf-8;")
                 .addHeader(Constants.TOKEN, token)
                 .addHeader("cache-control", "no-cache")
                 .get()

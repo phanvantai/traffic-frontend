@@ -29,6 +29,7 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.MySupportMapFragment;
 import com.gemvietnam.trafficgem.library.Point;
 import com.gemvietnam.Constants;
+import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.CurrentTrafficResponse;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
@@ -76,6 +77,7 @@ import butterknife.OnClick;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
+import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_CURRENT;
 
@@ -277,17 +279,15 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
   private void showTrafficState() {
     mMap.clear();
     int layer = 1;
-    CustomToken customToken = Hawk.get(MY_TOKEN);
-//    DataExchange dataExchange = new DataExchange(URL_CURRENT);
-    // layer = ???
-//    dataExchange.getCurrent(customToken.getToken(), layer);
-//    String response = dataExchange.getResponse();
-    String response = testResponse();
+    User user = Hawk.get(LAST_USER);
+    DataExchange trafficState = new DataExchange();
+    String response = trafficState.getCurrent(user.getToken(), layer);
+    Log.d("test-traffic-state", response);
     CurrentTrafficResponse trafficResponse = new CurrentTrafficResponse(response);
     trafficResponse.analysis();
-//
-
-
+    if(!trafficResponse.getSuccess()){
+      return;
+    }
     int height = trafficResponse.getHeight();
     Log.d("test-height", String.valueOf(height));
     int width = trafficResponse.getWidth();

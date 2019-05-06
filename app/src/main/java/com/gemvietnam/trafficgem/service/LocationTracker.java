@@ -61,8 +61,8 @@ public class LocationTracker extends Service {
     // date and time when get location
     private String mRecord_Time;
 
-    // user's transport
-    private String mTransport;
+    // user's vehicle
+    private String mVehicle;
 
     // user's speed
     private double mSpeed;
@@ -162,10 +162,8 @@ public class LocationTracker extends Service {
                     if (count >= 3) {
                         try {
                             DataExchange trafficData = new DataExchange();
-                            String responseTrafficData = "";
-                            Log.d("test-traffic-data", mObject.exportStringFormatJson());
-                            responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
-                            Log.d("test-response-traffic", responseTrafficData);
+                            String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
+//                            Log.d("test-response-traffic", responseTrafficData);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -204,9 +202,9 @@ public class LocationTracker extends Service {
                     if (mCurrentLocation != null) {
                         mRecord_Time = RECORD_TIME_FORMAT.format(new Date());
                         mSpeed = (3.6*distanceTo)/5d;
+                        mVehicle = mLastUser.getVehicle();
                         mDirection = getDirection(temp, mCurrentLocation);
-
-                        Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time, mTransport, mSpeed, mDirection);
+                        Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time, mVehicle, mSpeed, mDirection);
 
                         try {
                             mObject.pushDataTraffic(traffic);

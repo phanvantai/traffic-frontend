@@ -4,6 +4,7 @@ package com.gemvietnam.trafficgem.screen.main;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -84,8 +85,14 @@ public class MainActivity extends ContainerActivity implements
         Intent startIntent = new Intent(this, LocationTracker.class);
         startIntent.setAction(START_SERVICE);
         if (Build.VERSION.SDK_INT >= 26) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
             startForegroundService(startIntent);
         } else {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
             startService(startIntent);
         }
     }

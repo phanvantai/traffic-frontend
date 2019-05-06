@@ -215,6 +215,7 @@ public class LoginActivity extends AppCompatActivity {
                         mLastUser = userProfile.getMobileUser();
                         mLastUser.setLastLogin(System.currentTimeMillis());
                         mLastUser.setToken(loginResponse.getToken());
+                        Log.d("test-user--", mLastUser.exportStringFormatJson());
                         Hawk.put(email, mLastUser);
                         Hawk.put(LAST_USER, mLastUser);
 //                    }

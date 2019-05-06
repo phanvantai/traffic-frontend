@@ -161,8 +161,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
                 DataExchange dataExchange = new DataExchange();
-                String getResponse = "";
-                getResponse = dataExchange.updateProfile(mLastUser.getToken(), updateProfile.exportStringFormatJson());
+                String getResponse = dataExchange.updateProfile(mLastUser.getToken(), updateProfile.exportStringFormatJson());
                 Log.d("test-update-profile", getResponse);
                 UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(getResponse);
                 updateProfileResponse.analysis();
@@ -175,9 +174,8 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
                 String pathImage = "";      //      EDIT PATH IMAGE
-                String getResponseUpdateAvatar = "";
                 DataExchange updateAvatar = new DataExchange();
-                getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), pathImage);
+                String getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), pathImage);
 
                 runOnUiThread(new Runnable() {
                     @Override
