@@ -121,14 +121,14 @@ public class MainActivity extends ContainerActivity implements
         if (mDrawerLayout.isDrawerOpen(mLeftDrawer)) {
             mDrawerLayout.closeDrawer(mLeftDrawer);
         }
-
         // on click sign out
         if (menuItem.equals(MenuItem.SIGN_OUT)) {
-//        PrefWrapper.clearUser(this);
-        ActivityUtils.startActivity(this, LoginActivity.class);
+            ActivityUtils.startActivity(this, LoginActivity.class);
             User mLastUser = Hawk.get(LAST_USER);
             mLastUser.setToken(null);
             Hawk.put(LAST_USER, mLastUser);
+            Intent stopIntent = new Intent(this, LocationTracker.class);
+            stopIntent.setAction(STOP_SERVICE);
             finish();
         } else if (menuItem.equals(MenuItem.VIEW_EVENT)) {
             AppUtils.createDialog(this);

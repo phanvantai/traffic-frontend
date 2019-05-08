@@ -22,6 +22,7 @@ import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.Response;
 import com.gemvietnam.trafficgem.library.responseMessage.SendMarkerResponse;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
+import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -50,8 +51,8 @@ import static com.gemvietnam.trafficgem.utils.Constants.URL_MARKER;
  * Service collect location data
  */
 public class LocationTracker extends Service {
+    private static volatile Boolean runThread = true;
     private Context mContext;
-
     // location, update each 5s
     private Location mCurrentLocation;
 
@@ -131,10 +132,12 @@ public class LocationTracker extends Service {
         String action = intent.getAction();
         if (action.equals(START_SERVICE)) {
             startInForeground(this);
+            StartThread();
             doStart();
         } else if (action.equals(STOP_SERVICE)) {
             Log.i("TaiPV", "Received Stop Foreground Intent");
             //your end service code
+            StopThread();
             stopForeground(true);
             stopSelf();
         }
@@ -153,26 +156,12 @@ public class LocationTracker extends Service {
                 Location temp = null;
                 mLastUser = Hawk.get(LAST_USER);
                 float distanceTo;
-                int count = -1;
+                int count = 0;
                 JSONObject jsonObject = new JSONObject();
                 mObject = new JsonObject();
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
-                while (true) {
-                    if (count >= 3) {
-                        try {
-                            DataExchange trafficData = new DataExchange();
-//                            Log.d("test-traffic-data", mObject.exportStringFormatJson());
-                            String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
-//                            Log.d("test-response-traffic", responseTrafficData);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        count = 0;
-                        mObject = new JsonObject();
-                        mObject.setJsonObject(jsonObject);
-                        mObject.init();
-                    }
+                while (runThread) {
                     if (ActivityCompat.checkSelfPermission(mContext,
                             Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                             &&  ActivityCompat.checkSelfPermission(mContext,
@@ -216,18 +205,38 @@ public class LocationTracker extends Service {
                     }
                     count++;
                     temp = mCurrentLocation;
+
+                    if (count >= 3) {
+                        try {
+                            DataExchange trafficData = new DataExchange();
+                            Log.d("test-traffic-data", mObject.exportStringFormatJson());
+                            String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        count = 0;
+                        mObject = new JsonObject();
+                        mObject.setJsonObject(jsonObject);
+                        mObject.init();
+                    }
                     try {
                         // Sleep 5s
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
         }).start();
-    }
+        Log.d("test-thread-run", String.valueOf(runThread));
 
+    }
+    public void StartThread(){
+        this.runThread = true;
+    }
+    public void StopThread(){
+        this.runThread = false;
+    }
     // orientation based on 2 position
     private String getDirection(Location loc1, Location loc2){
         Directions direction = null;

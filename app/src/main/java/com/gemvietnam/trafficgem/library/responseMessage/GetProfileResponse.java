@@ -25,7 +25,7 @@ public class GetProfileResponse extends Response {
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);
             if(success){
-                this.jsonUserProfile = (JSONObject) jsonObject.get(Constants.Data);
+                this.jsonUserProfile = (JSONObject) jsonObject.get(Constants.Mobile_User);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -42,17 +42,19 @@ public class GetProfileResponse extends Response {
     public User getMobileUser(){
         User user = new User();
         try {
-            user.setEmail((String) jsonUserProfile.get(Constants.Email));
+            String email = jsonUserProfile.getString(Constants.Email);
+            user.setEmail(email);
+            String phone = jsonUserProfile.getString(Constants.Phone);
             user.setName((String) jsonUserProfile.get(Constants.Name));
-            user.setPhone((String) jsonUserProfile.get(Constants.Phone));
+            user.setPhone(phone);
             user.setAddress((String) jsonUserProfile.get(Constants.Address));
             user.setVehicle((String) jsonUserProfile.get(Constants.Vehicle));
-//            String pathAvatar = "";
-//            if(jsonUserProfile.get(Constants.pathImage) == null){
-//                pathAvatar = "null";
-//            }
-//            user.setAvatar(pathAvatar);
-            user.setAvatar((String) jsonUserProfile.get(Constants.pathImage));
+            String pathAvatar = "";
+            if(jsonUserProfile.get(Constants.pathImage) == null){
+                pathAvatar = "null";
+            }
+            user.setAvatar(pathAvatar);
+//            user.setAvatar((String) jsonUserProfile.get(Constants.pathImage));
         } catch (JSONException e){
             e.printStackTrace();
         }

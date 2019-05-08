@@ -17,6 +17,7 @@ public class Constants {
     public static final String URL_REPORT = URL_SERVER + "/api/user/report";
     public static final String URL_GET_REPORT = URL_SERVER + "/api/user/notification";
     public static final String URL_AVATAR = URL_SERVER + "/api/user/avatar";
+    public static final String URL_VIEW_AVATAR = URL_SERVER + "/storage/avatars/";
 
     public static final String SUCCESS = "success";
     public static final String MESSAGE = "message";

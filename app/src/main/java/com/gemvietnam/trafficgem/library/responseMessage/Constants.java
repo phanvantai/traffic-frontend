@@ -4,7 +4,8 @@ public class Constants {
     public static final String Message = "message";
     public static final String Success = "success";
 
-    public static final String Data = "mobile_user";
+    public static final String Data = "data";
+    public static final String Mobile_User = "mobile_user";
     public static final String Grid = "grid";
     public static final String Cells = "cells";
 
@@ -19,7 +20,7 @@ public class Constants {
     public static final String Token = "remember_token";
 
     public static final String Name = "name";
-    public static final String pathImage = "image";
+    public static final String pathImage = "avatar";
     public static final String Email = "email";
     public static final String Phone = "phone";
     public static final String Address = "address";

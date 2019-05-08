@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,7 +38,7 @@ public class ReportActivity extends AppCompatActivity {
 
 
 //    String mPathPicture = "";
-    CustomToken mCustomToken;
+    User mLastUser;
     @BindView(R.id.s_activity_report_list)
     Spinner sListReport;
     @BindView(R.id.b_activity_report_ok)
@@ -112,8 +113,10 @@ public class ReportActivity extends AppCompatActivity {
 //        Date date = new Date();
         String date = RECORD_TIME_FORMAT.format(new Date());
         Report report = new Report(id, date, location);
-        mCustomToken = Hawk.get(MY_TOKEN);
-
+        mLastUser = Hawk.get(LAST_USER);
+        DataExchange sendReport = new DataExchange();
+        String response = sendReport.report(mLastUser.getToken(), String.valueOf(id));
+        Log.d("test-report", response);
 //        DataExchange dataExchange = new DataExchange(URL_REPORT);
 //        dataExchange.report(mCustomToken.getToken(), report);
 //        String response = dataExchange.getResponse();

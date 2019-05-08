@@ -24,6 +24,7 @@ import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_VIEW_AVATAR;
 
 /**
  * The LeftMenu Fragment
@@ -90,7 +91,9 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-//        AppUtils.loadImage(user.getPathAvatar(), mProfileImg);
+        if (!"null".equals(user.getPathAvatar())) {
+            AppUtils.loadImage(URL_VIEW_AVATAR + user.getPathAvatar(), mProfileImg);
+        }
         mExpandLl.setVisibility(View.VISIBLE);
         mReport.setOnClickListener(new View.OnClickListener() {
             @Override

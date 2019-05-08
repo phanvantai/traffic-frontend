@@ -6,10 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +24,6 @@ import com.gemvietnam.trafficgem.library.responseMessage.UpdateAvatarResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfileResponse;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
-import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONException;
@@ -81,12 +77,14 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mLastUser = Hawk.get(LAST_USER);
+        Log.d("test-avatar", mLastUser.getPathAvatar());
+        if(mLastUser.getPathAvatar() != null){
+            AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
+        }
 
-        AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
         etName.setText(mLastUser.getName());
         etPhone.setText(mLastUser.getPhone());
         etAddress.setText(mLastUser.getAddress());
-        Log.d("test-vehicle", mLastUser.getVehicle());
         sVehicle.setPrompt(mLastUser.getVehicle());
         llChange.setVisibility(View.GONE);
 
@@ -163,7 +161,6 @@ public class ProfileActivity extends AppCompatActivity {
                 UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
                 DataExchange dataExchange = new DataExchange();
                 String getResponse = dataExchange.updateProfile(mLastUser.getToken(), updateProfile.exportStringFormatJson());
-                Log.d("test-update-profile", getResponse);
                 UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(getResponse);
                 updateProfileResponse.analysis();
                 if(updateProfileResponse.getSuccess()){
@@ -174,17 +171,17 @@ public class ProfileActivity extends AppCompatActivity {
                     Hawk.put(LAST_USER, mLastUser);
                 }
 
-//                String pathImage = "";      //      EDIT PATH IMAGE
+
                 if(currentPhotoPath != null){
                     DataExchange updateAvatar = new DataExchange();
                     String getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), currentPhotoPath);
+                    Log.d("test-update-avatar", getResponseUpdateAvatar);
                     UpdateAvatarResponse updateAvatarResponse = new UpdateAvatarResponse(demoUpdateResponse());
                     updateAvatarResponse.analysis();
                     if(updateAvatarResponse.getSuccess()){
                         mLastUser.setAvatar(currentPhotoPath);
                     }
                 }
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

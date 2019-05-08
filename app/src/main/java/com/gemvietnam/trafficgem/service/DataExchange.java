@@ -313,6 +313,7 @@ import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_MARKER;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_PASSWORD;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_REGISTER;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_REPORT;
 
 public class DataExchange implements IDataExchange {
 
@@ -482,16 +483,18 @@ public class DataExchange implements IDataExchange {
 
     @Override
     public String sendPicture(String token, String pathPicture) {
-        String fileName = pathPicture.substring(pathPicture.lastIndexOf("/")+1);
+        //String fileName = pathPicture.substring(pathPicture.lastIndexOf("/")+1);
         File sourceFile = new File(pathPicture);
         final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/*");
 
         RequestBody body = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart(Constants.AVATAR, fileName, RequestBody.create(MEDIA_TYPE_PNG, sourceFile))
+                .addFormDataPart(Constants.AVATAR, sourceFile.getName(), RequestBody.create(MEDIA_TYPE_PNG, sourceFile))
                 .build();
 
         Request request = new Request.Builder()
+                .addHeader(Constants.TOKEN, token)
+                .addHeader("cache-control", "no-cache")
                 .url(URL_AVATAR)
                 .post(body)
                 .build();
@@ -530,7 +533,25 @@ public class DataExchange implements IDataExchange {
 
     @Override
     public String report(String token, String reportMessage) {
-        return null;
+        RequestBody body = RequestBody.create(JSON, reportMessage);
+        Request request = new Request.Builder()
+                .url(URL_REPORT)
+                .addHeader("Content-Type", "application/json charset=utf-8")
+                .addHeader(Constants.TOKEN, token)
+                .addHeader("cache-control", "no-cache")
+                .post(body)
+                .build();
+
+        Response response = null;
+        String responseFormatString = "";
+        try {
+            response = client.newCall(request).execute();
+            responseFormatString = response.body().string();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return responseFormatString;
     }
 
 }

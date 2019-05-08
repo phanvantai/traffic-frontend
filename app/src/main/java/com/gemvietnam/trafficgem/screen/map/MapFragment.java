@@ -247,6 +247,7 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
   }
 
   private int transform(String s) {
+    if(s == null) return getResources().getColor(R.color.gray);
     switch (s) {
       case "#FF0000":
         return getResources().getColor(R.color.red);
@@ -259,8 +260,7 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
       case "#808080":
         return getResources().getColor(R.color.gray);
       default:
-//        return getResources().getColor(R.color.gray);
-        return Color.RED;
+        return getResources().getColor(R.color.gray);
     }
   }
 
@@ -285,11 +285,12 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     Log.d("test-traffic-state", response);
     CurrentTrafficResponse trafficResponse = new CurrentTrafficResponse(response);
     trafficResponse.analysis();
-    if(!trafficResponse.getSuccess()){
-      return;
-    }
+//    if(!trafficResponse.getSuccess()){
+//      return;
+//    }
+//    Log.d("test-traffic-", testResponse());
+//    Log.d("height", trafficResponse.getResponseMessage());
     int height = trafficResponse.getHeight();
-    Log.d("test-height", String.valueOf(height));
     int width = trafficResponse.getWidth();
     double north = trafficResponse.getNorth();
     double south = trafficResponse.getSouth();
@@ -299,8 +300,13 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
 //    colors = new String[height][width];
 //    colors = setupListColor();
     colors = trafficResponse.getColorArray();
-    Log.d("test-color",colors[0][0]);
-    Log.d("test-color1",colors[22][55]);
+//    if (colors.length < 23){
+//      colors = demoCells();
+//    }
+
+    Log.d("Test-size-colors", String.valueOf(colors.length));
+//    Log.d("test-color",colors[0][0]);
+//    Log.d("test-color1",colors[22][55]);
     // setup list color
 //    for (int i = 0; i < height; i++) {
 //      for (int j = 0; j < width; j++) {
@@ -334,8 +340,8 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 //    mMap.getUiSettings().setScrollGesturesEnabled(false);
     mMap.animateCamera(cu);
-  }
 
+}
   private void showLocation() {
     mLocationSearchCv.setVisibility(View.VISIBLE);
     mSearchCancelImg.setVisibility(View.GONE);
@@ -688,5 +694,15 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
             "    }\n" +
             "}");
     return test;
+  }
+
+  public String[][] demoCells(){
+    String[][] cells = new String[23][56];
+    for(int i=0; i<23; i++){
+      for(int j=0; j<56; j++){
+        cells[i][j] = "#808080";
+      }
+    }
+    return cells;
   }
 }
