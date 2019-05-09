@@ -109,17 +109,16 @@ public class ReportActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 //        Date date = new Date();
         String date = RECORD_TIME_FORMAT.format(new Date());
         Report report = new Report(id, date, location);
+        Log.d("test-report----", report.exportStringFormatJson());
         mLastUser = Hawk.get(LAST_USER);
         DataExchange sendReport = new DataExchange();
-        String response = sendReport.report(mLastUser.getToken(), String.valueOf(id));
+        String response = sendReport.report(mLastUser.getToken(),report.exportStringFormatJson());
         Log.d("test-report", response);
-//        DataExchange dataExchange = new DataExchange(URL_REPORT);
-//        dataExchange.report(mCustomToken.getToken(), report);
-//        String response = dataExchange.getResponse();
+        Log.d("test-send-report", report.exportStringFormatJson());
         finish();
     }
 

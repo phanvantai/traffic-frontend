@@ -18,9 +18,9 @@
     <string name="repassword_user">Re-enter Password</string>
     <string name="no_account">No account yet? Create one</string>
     <string name="welcome">Welcome to TrafficGEM</string>
-    <string name="rule_name">At least 3 characters</string>
+    <string name="rule_name">At least 2 characters</string>
     <string name="rule_email">Enter a valid email address</string>
-    <string name="rule_password">Between 4 and 10 alphanumeric characters</string>
+    <string name="rule_password">Passwords must be at least 8 characters</string>
     <string name="rule_repassword">Password does not match!</string>
     <string name="view_traffic">View Traffic State</string>
     <string name="view_event">View Traffic Events</string>

@@ -214,7 +214,7 @@ public class RegisterActivity extends AppCompatActivity {
         String password = etPassword.getText().toString();
         String rePassword = etRePassword.getText().toString();
 
-        if (name.isEmpty() || name.length() < 3) {
+        if (name.isEmpty() || name.length() < 2) {
             etName.setError(this.getString(R.string.rule_name));
             valid = false;
         } else {
@@ -228,7 +228,7 @@ public class RegisterActivity extends AppCompatActivity {
             etEmail.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+        if (password.isEmpty() || password.length() < 8 ) {
             etPassword.setError(this.getString(R.string.rule_password));
             valid = false;
         } else {

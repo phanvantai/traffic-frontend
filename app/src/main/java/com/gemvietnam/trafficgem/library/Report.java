@@ -47,8 +47,8 @@ public class Report {
         try {
             entry.put(Constants.IDMsg, IDMsg);
             entry.put(Constants.Time_Stamp, time_stamp);
-            entry.put(Constants.Latitude, location.getLatitude());
-            entry.put(Constants.Longitude, location.getLongitude());
+            entry.put(Constants.Latitude, (double) Math.round(location.getLatitude()*100)/100);
+            entry.put(Constants.Longitude, (double) Math.round(location.getLongitude()*100)/100);
 //            entry.put("picture", picture);
         } catch (JSONException e){
             e.printStackTrace();

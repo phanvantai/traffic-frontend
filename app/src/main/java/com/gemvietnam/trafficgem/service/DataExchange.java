@@ -278,6 +278,7 @@ package com.gemvietnam.trafficgem.service;
 //    }
 //}
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.gemvietnam.trafficgem.utils.Constants;
@@ -287,6 +288,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -483,9 +485,10 @@ public class DataExchange implements IDataExchange {
 
     @Override
     public String sendPicture(String token, String pathPicture) {
-        //String fileName = pathPicture.substring(pathPicture.lastIndexOf("/")+1);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
         File sourceFile = new File(pathPicture);
-        final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/*");
+        Log.d("test-name-image", sourceFile.getName());
+        final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/*jpg");
 
         RequestBody body = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -494,7 +497,7 @@ public class DataExchange implements IDataExchange {
 
         Request request = new Request.Builder()
                 .addHeader(Constants.TOKEN, token)
-                .addHeader("cache-control", "no-cache")
+//                .addHeader("cache-control", "no-cache")
                 .url(URL_AVATAR)
                 .post(body)
                 .build();

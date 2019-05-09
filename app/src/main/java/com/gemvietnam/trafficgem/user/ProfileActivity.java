@@ -75,10 +75,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         ButterKnife.bind(this);
-
         mLastUser = Hawk.get(LAST_USER);
         Log.d("test-avatar", mLastUser.getPathAvatar());
-        if(mLastUser.getPathAvatar() != null){
+        if(mLastUser.getPathAvatar() != ""){
             AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
         }
 
@@ -141,7 +140,6 @@ public class ProfileActivity extends AppCompatActivity {
                 cursor.close();
                 Log.d("test-path-image", currentPhotoPath);
                 civAvatar.setImageBitmap(BitmapFactory.decodeFile(currentPhotoPath));
-
 //                doUpdataAvatar();
             }
         }
@@ -168,20 +166,20 @@ public class ProfileActivity extends AppCompatActivity {
                     mLastUser.setPhone(phone);
                     mLastUser.setAddress(address);
                     mLastUser.setVehicle(vehicle);
+                    if(currentPhotoPath != null){
+                        DataExchange updateAvatar = new DataExchange();
+                        String getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), currentPhotoPath);
+                        Log.d("test-update-avatar", getResponseUpdateAvatar);
+                        UpdateAvatarResponse updateAvatarResponse = new UpdateAvatarResponse(demoUpdateResponse());
+                        updateAvatarResponse.analysis();
+                        if(updateAvatarResponse.getSuccess()){
+                            mLastUser.setAvatar(currentPhotoPath);
+                        }
+                    }
                     Hawk.put(LAST_USER, mLastUser);
                 }
 
 
-                if(currentPhotoPath != null){
-                    DataExchange updateAvatar = new DataExchange();
-                    String getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), currentPhotoPath);
-                    Log.d("test-update-avatar", getResponseUpdateAvatar);
-                    UpdateAvatarResponse updateAvatarResponse = new UpdateAvatarResponse(demoUpdateResponse());
-                    updateAvatarResponse.analysis();
-                    if(updateAvatarResponse.getSuccess()){
-                        mLastUser.setAvatar(currentPhotoPath);
-                    }
-                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -162,74 +163,76 @@ public class LocationTracker extends Service {
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
                 while (runThread) {
-                    if (ActivityCompat.checkSelfPermission(mContext,
-                            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                            &&  ActivityCompat.checkSelfPermission(mContext,
-                            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    // Permissions ok, we get last location
-                    mFusedLocationProviderClient.getLastLocation()
-                            .addOnSuccessListener(new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
-                                    // Got last known location. In some rare situations this can be null.
-                                    if (location != null) {
-                                        // Logic to handle location object
-                                        mCurrentLocation = location;
-                                    }
+
+                    if(AppUtils.networkOk(getApplicationContext())){
+                        mCurrentLocation = getLastLocation();
+                        if (temp == null) {
+                            distanceTo = 0;
+                            temp = mCurrentLocation;    // avoid errors direction
+                        } else {
+                            distanceTo = mCurrentLocation.distanceTo(temp);
+                        }
+
+                        if (mCurrentLocation != null) {
+                            mRecord_Time = RECORD_TIME_FORMAT.format(new Date());
+                            mSpeed = (3.6*distanceTo)/5d;
+                            if(!checkSpeed(mSpeed)) continue;
+                            mVehicle = mLastUser.getVehicle();
+                            mDirection = getDirection(temp, mCurrentLocation);
+                            Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time, mVehicle, mSpeed, mDirection);
+                            try {
+                                mObject.pushDataTraffic(traffic);       // synthetic traffic data
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            count++;
+                            temp = mCurrentLocation;
+                            if (count >= 1) {
+                                try {
+                                    DataExchange trafficData = new DataExchange();
+                                    Log.d("test-traffic-data", mObject.exportStringFormatJson());
+                                    String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            });
-
-
-                    if (temp == null) {
-                        distanceTo = 0;
-                        temp = mCurrentLocation;    // avoid errors direction
-                    } else {
-                        distanceTo = mCurrentLocation.distanceTo(temp);
-                    }
-
-                    if (mCurrentLocation != null) {
-                        mRecord_Time = RECORD_TIME_FORMAT.format(new Date());
-                        mSpeed = (3.6*distanceTo)/5d;
-                        mVehicle = mLastUser.getVehicle();
-                        mDirection = getDirection(temp, mCurrentLocation);
-                        Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time, mVehicle, mSpeed, mDirection);
-
-                        try {
-                            mObject.pushDataTraffic(traffic);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                                count = 0;
+                                mObject = new JsonObject();
+                                mObject.setJsonObject(jsonObject);
+                                mObject.init();
+                            }
                         }
+                    }
 
-                    }
-                    count++;
-                    temp = mCurrentLocation;
-
-                    if (count >= 3) {
-                        try {
-                            DataExchange trafficData = new DataExchange();
-                            Log.d("test-traffic-data", mObject.exportStringFormatJson());
-                            String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        count = 0;
-                        mObject = new JsonObject();
-                        mObject.setJsonObject(jsonObject);
-                        mObject.init();
-                    }
-                    try {
-                        // Sleep 5s
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    SystemClock.sleep(5000);        // SLEEP 5s
                 }
             }
         }).start();
-        Log.d("test-thread-run", String.valueOf(runThread));
+    }
 
+    public Location getLastLocation(){
+        if (ActivityCompat.checkSelfPermission(mContext,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                &&  ActivityCompat.checkSelfPermission(mContext,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+        mFusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            mCurrentLocation = location;
+                        }
+                    }
+                });
+        return mCurrentLocation;
+    }
+    public boolean checkSpeed(double avg_Speed){
+        boolean check = true;
+        if(avg_Speed < 0.21d)   check = false;
+        return check;
     }
     public void StartThread(){
         this.runThread = true;

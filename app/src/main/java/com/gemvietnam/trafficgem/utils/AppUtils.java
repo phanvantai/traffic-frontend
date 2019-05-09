@@ -456,7 +456,6 @@ public class AppUtils {
         if (context == null) {
             return false;
         }
-
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo nwInfo = cm.getActiveNetworkInfo();
         if (nwInfo != null && nwInfo.isConnected()) {

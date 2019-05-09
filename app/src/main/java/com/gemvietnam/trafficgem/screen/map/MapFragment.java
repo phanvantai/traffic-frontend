@@ -106,7 +106,7 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
   private static final int DESTINATION_CODE_AUTOCOMPLETE = 12;
   private static int PLACE_PICKER_REQUEST = 2;
   private List<Polyline> polylines;
-
+  private int height, width;
   private Point[][] points;
   private String[][] colors;
   public static boolean mMapIsTouched = false;
@@ -191,9 +191,9 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     list.add(list22);
     list.add(list23);
 
-    for (int i = 0; i < 23; i++) {
+    for (int i = 0; i < height; i++) {
       int k = 1;
-      for (int j = 0; j < 56; j++) {
+      for (int j = 0; j < width; j++) {
         colors[i][j] = list.get(i).substring(k, k + 7);
         k = k + 10;
       }
@@ -265,8 +265,8 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
   }
 
   private void setupListCell() {
-    for (int i = 0; i < 23; i++) {
-      for (int j = 1; j < 56; j++) {
+    for (int i = 0; i < height; i++) {
+      for (int j = 1; j < width; j++) {
         PolygonOptions polygonOptions = new PolygonOptions();
         polygonOptions.addAll(points[i][j].getPeaks());
         polygonOptions.strokeWidth(0);
@@ -285,13 +285,15 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     Log.d("test-traffic-state", response);
     CurrentTrafficResponse trafficResponse = new CurrentTrafficResponse(response);
     trafficResponse.analysis();
-//    if(!trafficResponse.getSuccess()){
-//      return;
-//    }
+    if(!trafficResponse.getSuccess()){
+      return;
+    }
 //    Log.d("test-traffic-", testResponse());
 //    Log.d("height", trafficResponse.getResponseMessage());
-    int height = trafficResponse.getHeight();
-    int width = trafficResponse.getWidth();
+    height = trafficResponse.getHeight();
+    width = trafficResponse.getWidth();
+    Log.d("height-width", String.valueOf(height));
+    Log.d("height-width", String.valueOf(width));
     double north = trafficResponse.getNorth();
     double south = trafficResponse.getSouth();
     double west = trafficResponse.getWest();
@@ -697,9 +699,9 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
   }
 
   public String[][] demoCells(){
-    String[][] cells = new String[23][56];
-    for(int i=0; i<23; i++){
-      for(int j=0; j<56; j++){
+    String[][] cells = new String[height][width];
+    for(int i=0; i<height; i++){
+      for(int j=0; j<width; j++){
         cells[i][j] = "#808080";
       }
     }
