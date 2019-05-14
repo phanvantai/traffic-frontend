@@ -110,8 +110,9 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
   private Point[][] points;
   private String[][] colors;
   public static boolean mMapIsTouched = false;
-  private double delLat = 0.0089573;
-  private double delLon = 0.0088355;
+//  private double delLat = 0.0089573;
+//  private double delLon = 0.0088355;
+  private double delLat, delLon;
 
   public static MapFragment getInstance() {
     return new MapFragment();
@@ -205,6 +206,8 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     for (int i = 0; i < trafficResponse.getHeight(); i++) {
       for (int j = 0; j < trafficResponse.getWidth(); j++) {
         points[i][j] = new Point();
+        points[i][j].setDelLat(delLat);
+        points[i][j].setDelLon(delLon);
       }
     }
     points[0][0].setLat(trafficResponse.getNorth());
@@ -298,7 +301,10 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     double south = trafficResponse.getSouth();
     double west = trafficResponse.getWest();
     double east = trafficResponse.getEast();
+    delLat = (east - west) / width;
+    delLon = (north - south) / height;
     points = new Point[height][width];
+
 //    colors = new String[height][width];
 //    colors = setupListColor();
     colors = trafficResponse.getColorArray();

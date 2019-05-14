@@ -156,6 +156,7 @@ public class LocationTracker extends Service {
             public void run() {
                 Location temp = null;
                 mLastUser = Hawk.get(LAST_USER);
+                mVehicle = mLastUser.getVehicle();
                 float distanceTo;
                 int count = 0;
                 JSONObject jsonObject = new JSONObject();
@@ -163,22 +164,25 @@ public class LocationTracker extends Service {
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
                 while (runThread) {
-
+                    Log.d("start", "start");
                     if(AppUtils.networkOk(getApplicationContext())){
                         mCurrentLocation = getLastLocation();
                         if (temp == null) {
                             distanceTo = 0;
                             temp = mCurrentLocation;    // avoid errors direction
                         } else {
-                            distanceTo = mCurrentLocation.distanceTo(temp);
+                            distanceTo = temp.distanceTo(mCurrentLocation);
                         }
 
                         if (mCurrentLocation != null) {
                             mRecord_Time = RECORD_TIME_FORMAT.format(new Date());
                             mSpeed = (3.6*distanceTo)/5d;
-                            if(!checkSpeed(mSpeed)) continue;
-                            mVehicle = mLastUser.getVehicle();
                             mDirection = getDirection(temp, mCurrentLocation);
+                            if(!checkSpeed(mSpeed)) {
+                                temp = mCurrentLocation;
+                                SystemClock.sleep(5000);
+                                continue;
+                            }
                             Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time, mVehicle, mSpeed, mDirection);
                             try {
                                 mObject.pushDataTraffic(traffic);       // synthetic traffic data
@@ -186,11 +190,19 @@ public class LocationTracker extends Service {
                                 e.printStackTrace();
                             }
                             count++;
-                            temp = mCurrentLocation;
-                            if (count >= 1) {
+                            if (count >= 60) {
                                 try {
                                     DataExchange trafficData = new DataExchange();
-                                    Log.d("test-traffic-data", mObject.exportStringFormatJson());
+                                    String diplay = "\n-------------------" +
+                                            "\nLatTemp: "+temp.getLatitude()+
+                                            "\nLonTemp: "+temp.getLongitude()+
+                                            "\nLatCur: "+mCurrentLocation.getLatitude()+
+                                            "\nLonCur: "+mCurrentLocation.getLongitude()+
+                                            "\nDistance: "+distanceTo+
+                                            "\navg: "+mSpeed+
+                                            "\nTime: "+mRecord_Time;
+                                    AppUtils.writeFile(diplay);
+                                    Log.d("test", diplay);
                                     String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -201,9 +213,18 @@ public class LocationTracker extends Service {
                                 mObject.init();
                             }
                         }
+                        temp = getLastLocation();
                     }
-
-                    SystemClock.sleep(5000);        // SLEEP 5s
+//                    SystemClock.sleep(5000);        // SLEEP 5s
+//                    Thread.Sleep(5000);
+                    Log.d("mid", "mid");
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        Log.d("test-time", "failed");
+                        e.printStackTrace();
+                    }
+                    Log.d("end", "end");
                 }
             }
         }).start();
@@ -231,7 +252,7 @@ public class LocationTracker extends Service {
     }
     public boolean checkSpeed(double avg_Speed){
         boolean check = true;
-        if(avg_Speed < 0.21d)   check = false;
+        if(avg_Speed <= 0.1d)   check = false;
         return check;
     }
     public void StartThread(){

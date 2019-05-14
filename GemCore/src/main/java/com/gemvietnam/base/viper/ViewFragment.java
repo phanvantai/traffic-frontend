@@ -148,4 +148,5 @@ public abstract class ViewFragment<P extends IPresenter>
   protected boolean needTranslationAnimation() {
     return true;
   }
+
 }

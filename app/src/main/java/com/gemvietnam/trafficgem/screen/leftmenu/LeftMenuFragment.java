@@ -1,9 +1,13 @@
 package com.gemvietnam.trafficgem.screen.leftmenu;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,9 @@ import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.ReportActivity;
 import com.orhanobut.hawk.Hawk;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import butterknife.BindView;
@@ -84,15 +91,31 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
 
 //        mMinusImg.setVisibility(View.VISIBLE);
 //        mPlusImg.setVisibility(View.GONE);
+        Log.d("test-left", "true");
         User user = Hawk.get(LAST_USER);
+        Log.d("test-user----", user.exportStringFormatJson());
         try {
             mNameTv.setText(user.getName());
             mEmailTv.setText(user.getEmail());
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-        if (!"null".equals(user.getPathAvatar())) {
-            AppUtils.loadImage(URL_VIEW_AVATAR + user.getPathAvatar(), mProfileImg);
+        if (!"null".equals(user.getPathAvatar()) && user.getPathAvatar() != "") {
+            Log.d("test-image", user.getPathAvatar());
+//            AppUtils.loadImage(URL_VIEW_AVATAR+user.getPathAvatar(), mProfileImg);
+//            ImageView imageView = (ImageView) getActivity().findViewById(R.id.menu_profile_img);
+//            imageView.setImageBitmap(BitmapFactory.decodeFile(user.getPathAvatar()));
+            File file = new File(user.getPathAvatar());
+            Log.d("test-file-avatar", String.valueOf(file.exists()));
+//            try {
+//                File f = new File(user.getPathAvatar());
+//                Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+//                ImageView img = (ImageView)getActivity().findViewById(R.id.menu_profile_img);
+//                img.setImageBitmap(b);
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            }
+
         }
         mExpandLl.setVisibility(View.VISIBLE);
         mReport.setOnClickListener(new View.OnClickListener() {
@@ -199,4 +222,9 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
         mSignOutTv.setSelected(false);
         mSignOutTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_signout_white, 0,0,0);
     }
+//    @Override
+//    public void onResume(){
+//        super.onResume();
+////        Intent refreshIntent = new Intent()
+//    }
 }

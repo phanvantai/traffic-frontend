@@ -13,6 +13,7 @@ import com.gemvietnam.base.ContainerActivity;
 import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuFragment;
 import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuPresenter;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
@@ -187,4 +188,12 @@ public class MainActivity extends ContainerActivity implements
         startService(stopIntent);
         super.onDestroy();
     }
+
+//    @Override
+//    protected void onResume(){
+//        Intent refreshIntent = new Intent(MainActivity.this, LeftMenuFragment.class);
+//        refreshIntent.setAction("start");
+//        startService(refreshIntent);
+//        super.onResume();
+//    }
 }

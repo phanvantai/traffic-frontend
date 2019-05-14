@@ -97,9 +97,7 @@ public class LoginActivity extends AppCompatActivity {
         if (Hawk.contains(LAST_USER)) {
             // nếu có thì kiểm tra phiên đăng nhập
             mLastUser = Hawk.get(LAST_USER);
-            Log.d("last-user", mLastUser.exportStringFormatJson());
             if (!mLastUser.isExpired()) {
-                Log.d("expired", "true");
                 // nếu còn thời gian thì vào thẳng MainAcitivity
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
@@ -220,7 +218,7 @@ public class LoginActivity extends AppCompatActivity {
                         Hawk.put(LAST_USER, mLastUser);
 //                    }
 
-                    progressDialog.dismiss();
+//                    progressDialog.dismiss();
                     // có thông tin last user rồi thì vào MainActivity thôi
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
@@ -282,7 +280,7 @@ public class LoginActivity extends AppCompatActivity {
             etEditMail.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+        if (password.isEmpty() || password.length() < 8) {
             etEditPassword.setError(this.getString(R.string.rule_password));
             valid = false;
         } else {

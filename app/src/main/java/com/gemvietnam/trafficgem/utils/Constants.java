@@ -29,7 +29,7 @@ public class Constants {
     public static final String VEHICLE = "vehicle";
     public static final String PHONE = "phone";
     public static final String ADDRESS = "address";
-    public static final String AVATAR = "avatar";
+    public static final String AVATAR = "image";
     public static final String TIME = "time";
     public static final String LAYER = "layer";
 

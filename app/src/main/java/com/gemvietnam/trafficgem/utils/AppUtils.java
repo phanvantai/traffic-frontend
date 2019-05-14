@@ -36,10 +36,12 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -503,5 +505,27 @@ public class AppUtils {
                 .centerCrop()
                 .resize(100, 100)
                 .into(imageView);
+    }
+
+    public static void writeFile(String data){
+        String fileName = "traffic.txt";
+        File extStore = Environment.getExternalStorageDirectory();
+        String path = extStore.getAbsolutePath()+"/"+fileName;
+
+        try {
+            File myFile = new File(path);
+            if(!myFile.exists()){
+                myFile.createNewFile();
+            }
+            FileOutputStream fOut = new FileOutputStream(myFile, true);
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+            myOutWriter.append(data);
+            myOutWriter.close();
+            fOut.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

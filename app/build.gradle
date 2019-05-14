@@ -1,9 +1,9 @@
+
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
     useLibrary 'org.apache.http.legacy'
-    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.gemvietnam.trafficgem"
         minSdkVersion 19

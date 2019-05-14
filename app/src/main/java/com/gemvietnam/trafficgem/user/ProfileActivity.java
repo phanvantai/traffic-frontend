@@ -2,6 +2,7 @@ package com.gemvietnam.trafficgem.user;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import com.gemvietnam.trafficgem.library.responseMessage.ChangePasswordResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateAvatarResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfileResponse;
+import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuFragment;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.orhanobut.hawk.Hawk;
@@ -29,10 +32,16 @@ import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.gemvietnam.trafficgem.R.id.civ_activity_profile_avatar;
+import static com.gemvietnam.trafficgem.R.id.image;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_AVATAR;
@@ -43,7 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
     public static final int SELECT_GALLERY_IMAGE = 12;
     @BindView(R.id.ll_activity_profile_update_user)
     LinearLayout llUpdate;
-    @BindView(R.id.civ_activity_profile_avatar)
+    @BindView(civ_activity_profile_avatar)
     CircleImageView civAvatar;
     @BindView(R.id.et_activity_profile_input_address)
     EditText etAddress;
@@ -68,7 +77,7 @@ public class ProfileActivity extends AppCompatActivity {
     @BindView(R.id.et_activity_profile_input_reNew_password)
     EditText etReNew;
 
-    User mLastUser;
+    private static volatile User mLastUser;
     String currentPhotoPath;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +86,16 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mLastUser = Hawk.get(LAST_USER);
         Log.d("test-avatar", mLastUser.getPathAvatar());
-        if(mLastUser.getPathAvatar() != ""){
-            AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
+        if(mLastUser.getPathAvatar() != "" && mLastUser.getPathAvatar() != null){
+//            AppUtils.loadImage(mLastUser.getPathAvatar(), civAvatar);
+            File imgFile = new File(mLastUser.getPathAvatar());
+            if(imgFile.exists()){
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+//                ImageView myImage = (ImageView) findViewById(R.id.civ_activity_profile_avatar);
+//                myImage.setImageBitmap(myBitmap);
+            }
         }
+
 
         etName.setText(mLastUser.getName());
         etPhone.setText(mLastUser.getPhone());
@@ -140,7 +156,6 @@ public class ProfileActivity extends AppCompatActivity {
                 cursor.close();
                 Log.d("test-path-image", currentPhotoPath);
                 civAvatar.setImageBitmap(BitmapFactory.decodeFile(currentPhotoPath));
-//                doUpdataAvatar();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -168,24 +183,33 @@ public class ProfileActivity extends AppCompatActivity {
                     mLastUser.setVehicle(vehicle);
                     if(currentPhotoPath != null){
                         DataExchange updateAvatar = new DataExchange();
+                        String fileName = currentPhotoPath.substring(currentPhotoPath.lastIndexOf("/")+1);
+                        Log.d("test-file-name-avatar", fileName);
                         String getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), currentPhotoPath);
-                        Log.d("test-update-avatar", getResponseUpdateAvatar);
                         UpdateAvatarResponse updateAvatarResponse = new UpdateAvatarResponse(demoUpdateResponse());
                         updateAvatarResponse.analysis();
+                        Log.d("test-avatar----", String.valueOf(updateAvatarResponse.getSuccess()));
                         if(updateAvatarResponse.getSuccess()){
                             mLastUser.setAvatar(currentPhotoPath);
                         }
                     }
                     Hawk.put(LAST_USER, mLastUser);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }   else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Profile Failed", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
 
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Profile Updated", Toast.LENGTH_LONG).show();
-                    }
-                });
                 finish();
             }
         }).start();
@@ -211,6 +235,7 @@ public class ProfileActivity extends AppCompatActivity {
                     final ChangePasswordResponse changePasswordResponse = new ChangePasswordResponse(getResposeChangePassword);
                     changePasswordResponse.analysis();
                     if(changePasswordResponse.getSuccess()){
+                        Hawk.put(Constants.Password, AppUtils.md5PasswordRegister(md5New));
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -250,7 +275,7 @@ public class ProfileActivity extends AppCompatActivity {
             valid = false;
         }
 
-        if (oldPass.isEmpty() || oldPass.length() < 4 || oldPass.length() > 10) {
+        if (oldPass.isEmpty() || oldPass.length() < 8) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -260,15 +285,25 @@ public class ProfileActivity extends AppCompatActivity {
             valid = false;
         }
 
-        if (newPass.isEmpty() || newPass.length() < 4 || newPass.length() > 10) {
-            etNew.setError(getApplicationContext().getString(R.string.rule_password));
+        if (newPass.isEmpty() || newPass.length() < 8 ) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    etNew.setError(getApplicationContext().getString(R.string.rule_password));
+                }
+            });
             valid = false;
 //        } else {
 //            etNew.setError(null);
         }
 
         if (!newPass.equals(reNew)) {
-            etReNew.setError(getApplicationContext().getString(R.string.rule_repassword));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    etReNew.setError(getApplicationContext().getString(R.string.rule_repassword));
+                }
+            });
             valid = false;
 //        } else {
 //            etReNew.setError(null);
