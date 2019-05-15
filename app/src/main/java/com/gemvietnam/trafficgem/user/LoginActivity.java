@@ -25,43 +25,18 @@ import com.gemvietnam.trafficgem.library.responseMessage.LoginResponse;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
-import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
-import static com.gemvietnam.trafficgem.utils.Constants.ADDRESS;
-import static com.gemvietnam.trafficgem.utils.Constants.AVATAR;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.LOGIN_TIME_FORMAT;
-import static com.gemvietnam.trafficgem.utils.Constants.MESSAGE;
-import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
-import static com.gemvietnam.trafficgem.utils.Constants.NAME;
-import static com.gemvietnam.trafficgem.utils.Constants.PHONE;
-import static com.gemvietnam.trafficgem.utils.Constants.SUCCESS;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_GET_PROFILE;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
-import static com.gemvietnam.trafficgem.utils.Constants.VEHICLE;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";

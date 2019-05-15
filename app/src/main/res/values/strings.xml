@@ -11,6 +11,7 @@
     <string name="report">Report</string>
     <string name="report_send">Report Traffic State</string>
     <string name="report_receive">Receive Traffic State</string>
+    <string name="get_report">Get Reports</string>
     <string name="sign_out">Sign Out</string>
     <string name="login">Login</string>
     <string name="email_user">Email</string>

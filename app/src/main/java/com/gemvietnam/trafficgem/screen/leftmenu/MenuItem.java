@@ -12,5 +12,6 @@ public enum MenuItem {
     TRAFFIC_STATE,
     VIEW_STATE,
     VIEW_EVENT,
+    GET_REPORT,
     SIGN_OUT
 }

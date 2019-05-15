@@ -311,6 +311,7 @@ import static com.gemvietnam.trafficgem.utils.Constants.URL_CURRENT;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_EDIT_PROFILE;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_FUTURE;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_GET_PROFILE;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_GET_REPORT;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_MARKER;
 import static com.gemvietnam.trafficgem.utils.Constants.URL_PASSWORD;
@@ -557,4 +558,25 @@ public class DataExchange implements IDataExchange {
         return responseFormatString;
     }
 
+    @Override
+    public String getReport(String token, String getInfo) {
+        RequestBody body = RequestBody.create(JSON, getInfo);
+        Request request = new Request.Builder()
+                .url(URL_GET_REPORT)
+                .addHeader("Content-Type", "application/json charset=utf-8;")
+                .addHeader(Constants.TOKEN, token)
+                .addHeader("cache-control", "no-cache")
+                .post(body)
+                .build();
+
+        Response response = null;
+        String responseString = "";
+        try {
+            response = client.newCall(request).execute();
+            responseString = response.body().string();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return responseString;
+    }
 }

@@ -3,7 +3,6 @@ package com.gemvietnam.trafficgem.service;
 import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -20,11 +19,8 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.JsonObject;
 import com.gemvietnam.trafficgem.library.Traffic;
 import com.gemvietnam.trafficgem.library.User;
-import com.gemvietnam.trafficgem.library.responseMessage.Response;
-import com.gemvietnam.trafficgem.library.responseMessage.SendMarkerResponse;
 import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.utils.AppUtils;
-import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -39,13 +35,12 @@ import java.util.Date;
 import static com.gemvietnam.trafficgem.utils.Constants.CHANEL_ID;
 //import static com.gemvietnam.trafficgem.utils.Constants.DATE_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
-import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.ONGOING_NOTIFICATION_ID;
 import static com.gemvietnam.trafficgem.utils.Constants.RECORD_TIME_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
 import static com.gemvietnam.trafficgem.utils.Constants.STOP_SERVICE;
 //import static com.gemvietnam.trafficgem.utils.Constants.TIME_FORMAT;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_MARKER;
+
 
 /**
  * Created by TaiPV on 25/03/2019

@@ -1,67 +1,104 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/activity_main"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/no_margin"
-                tools:context="com.gemvietnam.trafficgem.screen.main.MainActivity">
-
-  <!-- TODO: Update blank fragment layout -->
-  <fragment
-    android:id="@+id/map_fm"
-    android:name="com.gemvietnam.trafficgem.library.MySupportMapFragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gemvietnam.trafficgem.screen.main.MainActivity"/>
+    android:padding="@dimen/no_margin"
+    tools:context="com.gemvietnam.trafficgem.screen.main.MainActivity">
 
-  <GridView
-    android:id="@+id/activity_main_gridview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    android:alpha="0.5"
-    android:horizontalSpacing="@dimen/no_margin"
-    android:numColumns="10"
-    android:verticalSpacing="@dimen/no_margin"
-    android:visibility="gone"/>
+    <!-- TODO: Update blank fragment layout -->
+    <fragment android:id="@+id/map_fm"
+        android:name="com.gemvietnam.trafficgem.library.MySupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.gemvietnam.trafficgem.screen.main.MainActivity"/>
+
+    <GridView
+        android:id="@+id/activity_main_gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:alpha="0.5"
+        android:horizontalSpacing="@dimen/no_margin"
+        android:numColumns="10"
+        android:verticalSpacing="@dimen/no_margin"
+        android:visibility="gone"/>
 
 
-  <android.support.v7.widget.CardView
-    android:id="@+id/activity_main_location_search_cv"
-    style="@style/CardViewMap"
-    android:layout_alignParentTop="true"
-    android:layout_marginTop="@dimen/large_padding"
-    app:cardCornerRadius="5dp"
-    android:background="@color/white">
+    <android.support.v7.widget.CardView
+        android:id="@+id/activity_main_location_search_cv"
+        style="@style/CardViewMap"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/large_padding"
+        app:cardCornerRadius="5dp"
+        android:background="@color/white">
 
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-      <TextView
-        android:id="@+id/activity_main_location_search_tv"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/cardview_height"
-        android:layout_marginLeft="@dimen/default_margin"
-        android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:hint="@string/search"
-        android:textColor="@color/text_black"
-        android:textSize="@dimen/ts_12"/>
+            <TextView
+                android:id="@+id/activity_main_location_search_tv"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/cardview_height"
+                android:layout_marginLeft="@dimen/default_margin"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:hint="@string/search"
+                android:textColor="@color/text_black"
+                android:textSize="@dimen/ts_12"/>
 
-      <ImageView
-        android:id="@+id/activity_main_location_cancel_img"
-        android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/activity_main_location_cancel_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/default_margin"
+                android:src="@drawable/ic_cancel"/>
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout android:id="@+id/ll_get_report"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginRight="@dimen/default_margin"
-        android:src="@drawable/ic_cancel"/>
-    </LinearLayout>
+        android:background="@color/bg_menu"
+        android:orientation="horizontal">
 
-  </android.support.v7.widget.CardView>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Spinner android:id="@+id/spinner_range"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white" >
+
+            </Spinner>
+
+            <Spinner android:id="@+id/spinner_period"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/white" >
+
+            </Spinner>
+
+        </LinearLayout>
+
+        <ImageView android:id="@+id/get_report_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/default_margin"
+            android:src="@drawable/ic_enter"/>
+    </LinearLayout>
 
 </RelativeLayout>

@@ -3,7 +3,6 @@ package com.gemvietnam.trafficgem.user;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,24 +20,14 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.RegisterResponse;
-import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
-import com.gemvietnam.trafficgem.utils.CustomToken;
-import com.orhanobut.hawk.Hawk;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
-import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_REGISTER;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";

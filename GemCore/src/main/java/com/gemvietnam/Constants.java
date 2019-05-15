@@ -9,5 +9,6 @@ public interface Constants {
   public static final int NORMAL = 2;
   public static final int ADVANCE= 3;
   public static final int TRAFFIC = 4;
+  public static final int GET = 6;
   public static final int SIGNOUT = 5;
 }

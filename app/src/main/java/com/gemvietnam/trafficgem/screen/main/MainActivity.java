@@ -19,7 +19,6 @@ import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
 import com.gemvietnam.trafficgem.service.LocationTracker;
 import com.gemvietnam.trafficgem.user.LoginActivity;
 import com.gemvietnam.trafficgem.utils.AppUtils;
-import com.gemvietnam.trafficgem.utils.CustomToken;
 import com.gemvietnam.trafficgem.utils.ViewUtils;
 import com.gemvietnam.utils.ActivityUtils;
 import com.orhanobut.hawk.Hawk;
@@ -27,7 +26,6 @@ import com.orhanobut.hawk.Hawk;
 import butterknife.BindView;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
-import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
 import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
 import static com.gemvietnam.trafficgem.utils.Constants.STOP_SERVICE;
 

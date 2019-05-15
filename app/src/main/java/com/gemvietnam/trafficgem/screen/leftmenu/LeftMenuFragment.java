@@ -53,6 +53,8 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     TextView mAdvanceSearchTv;
     @BindView(R.id.menu_traffic_state_tv)
     TextView mTrafficStateTv;
+    @BindView(R.id.menu_get_report_tv)
+    TextView mGetReport;
     @BindView(R.id.tv_fragment_left_menu_report)
     TextView mReport;
     @BindView(R.id.tv_fragment_left_menu_view_traffic)
@@ -128,6 +130,7 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
         mNavigationItemMap.put(mTrafficStateTv, MenuItem.TRAFFIC_STATE);
         mNavigationItemMap.put(mViewTraffic, MenuItem.VIEW_STATE);
         mNavigationItemMap.put(mViewEvent, MenuItem.VIEW_EVENT);
+        mNavigationItemMap.put(mGetReport, MenuItem.GET_REPORT);
 
         mNavigationItemMap.put(mSignOutTv, MenuItem.SIGN_OUT);
 
@@ -151,6 +154,9 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
                             break;
                         case TRAFFIC_STATE:
                             iconId = R.drawable.ic_traffic_selected;
+                            break;
+                        case GET_REPORT:
+                            iconId = R.drawable.ic_location_selected;
                             break;
                         case SIGN_OUT:
                             iconId = R.drawable.ic_signout_white;
@@ -185,6 +191,9 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     private void unSelectAll() {
         mYourLocationTv.setSelected(false);
         mYourLocationTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_location_white, 0,0,0);
+
+        mGetReport.setSelected(false);
+        mGetReport.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_location_white, 0, 0,0);
 
         mDirectionTv.setSelected(false);
         mDirectionTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_direction_white, 0,0,0);

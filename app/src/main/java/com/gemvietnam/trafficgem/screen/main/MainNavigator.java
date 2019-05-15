@@ -65,6 +65,10 @@ public class MainNavigator {
                 presenter = new MapPresenter(mMainActivity).
                         setDrawerToggleListener(mMainActivity, Constants.TRAFFIC);
                 break;
+            case GET_REPORT:
+                presenter = new MapPresenter(mMainActivity)
+                        .setDrawerToggleListener(mMainActivity, Constants.GET);
+                break;
             case VIEW_STATE:
                 presenter = new MapPresenter(mMainActivity).
                         setDrawerToggleListener(mMainActivity, Constants.TRAFFIC);

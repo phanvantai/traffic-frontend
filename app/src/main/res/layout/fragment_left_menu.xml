@@ -148,6 +148,13 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/menu_get_report_tv"
+            style="@style/MenuText"
+            android:drawableLeft="@drawable/ic_location_white"
+            android:drawablePadding="@dimen/large_padding"
+            android:text="@string/get_report"/>
+
+        <TextView
             android:id="@+id/tv_fragment_left_menu_report"
             style="@style/MenuText"
             android:drawableLeft="@drawable/ic_traffic_white"

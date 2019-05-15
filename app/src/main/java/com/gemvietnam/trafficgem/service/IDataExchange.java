@@ -32,5 +32,5 @@ public interface IDataExchange {
 
     public String report(String token, String reportMessage);
 
-
+    public String getReport(String token, String getInfo);
 }
