@@ -208,9 +208,9 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
      */
     private void processGet() {
         class MessageReport {
-            double lat, lng;
-            int IDMsg;
-            MessageReport( double lat, double lng, int id) {
+            private double lat, lng;
+            private int IDMsg;
+            public MessageReport( double lat, double lng, int id) {
                 this.lat = lat;
                 this.lng = lng;
                 this.IDMsg = id;
@@ -259,14 +259,16 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
         //messageReports.add();
         try {
             JSONObject jsonObjectResponse = new JSONObject(response);
-            JSONArray jsonArray = jsonObjectResponse.getJSONArray("data");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject object = jsonArray.getJSONObject(i);
-                double lat = object.getDouble("lat");
-                double lng = object.getDouble("lng");
-                int id = object.getInt("IDMsg");
-                MessageReport messageReport = new MessageReport(lat, lng, id);
-                messageReports.add(messageReport);
+            boolean success = jsonObjectResponse.getBoolean("success");
+            if (success) {
+                JSONArray jsonArray = jsonObjectResponse.getJSONArray("data");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    double lat = object.getDouble("lat");
+                    double lng = object.getDouble("lng");
+                    int id = object.getInt("IDMsg");
+                    messageReports.add(new MessageReport(lat, lng, id));
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
