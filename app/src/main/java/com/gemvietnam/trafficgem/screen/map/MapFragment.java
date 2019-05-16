@@ -33,7 +33,6 @@ import com.gemvietnam.trafficgem.library.Point;
 import com.gemvietnam.Constants;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.CurrentTrafficResponse;
-import com.gemvietnam.trafficgem.library.responseMessage.GetReportResponse;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
 import com.gemvietnam.trafficgem.service.DataExchange;
@@ -50,7 +49,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,6 +59,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.orhanobut.hawk.Hawk;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -208,6 +207,27 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
      * thực hiện get report và show map
      */
     private void processGet() {
+        class MessageReport {
+            double lat, lng;
+            int IDMsg;
+            MessageReport( double lat, double lng, int id) {
+                this.lat = lat;
+                this.lng = lng;
+                this.IDMsg = id;
+            }
+
+            public double getLat() {
+                return lat;
+            }
+
+            public double getLng() {
+                return lng;
+            }
+
+            public int getIDMsg() {
+                return IDMsg;
+            }
+        }
 
         String range = sRange.getSelectedItem().toString();
         String period = sPeriod.getSelectedItem().toString();
@@ -229,38 +249,28 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
         User user = Hawk.get(LAST_USER);
         DataExchange dataExchange = new DataExchange();
         String response = dataExchange.getReport(user.getToken(), getInfo);
-        GetReportResponse getReportResponse = new GetReportResponse(response);
-
-        class MessageReport {
-            double lat, lng;
-            int IDmgs;
-            MessageReport( double lat, double lng, int id) {
-                this.lat = lat;
-                this.lng = lng;
-                this.IDmgs = id;
-            }
-
-            public double getLat() {
-                return lat;
-            }
-
-            public double getLng() {
-                return lng;
-            }
-
-            public int getIDmgs() {
-                return IDmgs;
-            }
-        }
-
+        //GetReportResponse getReportResponse = new GetReportResponse(response);
         // get report để lấy ra list location và id message
         //
         // đoạn này chưa get đc
         //
-
         // list reports trả về thêm tại đây, lấy từ getReportResponse
         List<MessageReport> messageReports = new ArrayList<>();
         //messageReports.add();
+        try {
+            JSONObject jsonObjectResponse = new JSONObject(response);
+            JSONArray jsonArray = jsonObjectResponse.getJSONArray("data");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject object = jsonArray.getJSONObject(i);
+                double lat = object.getDouble("lat");
+                double lng = object.getDouble("lng");
+                int id = object.getInt("IDMsg");
+                MessageReport messageReport = new MessageReport(lat, lng, id);
+                messageReports.add(messageReport);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         // thêm biến để xem viền của map (giống với traffic state)
         double north = location.getLatitude(), west = location.getLongitude(), east = location.getLongitude(), south = location.getLatitude();
@@ -282,7 +292,7 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(new LatLng(messageReport.getLat(), messageReport.getLng()));
             // tạm thời để màu khác nhau, nếu có icon thì thay. mình cũng không biết id tương ứng với cái gì
-            switch (messageReport.getIDmgs()) {
+            switch (messageReport.getIDMsg()) {
                 case 1:
                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                     break;
