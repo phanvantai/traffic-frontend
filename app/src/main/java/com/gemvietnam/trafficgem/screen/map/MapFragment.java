@@ -31,11 +31,15 @@ import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.MySupportMapFragment;
 import com.gemvietnam.trafficgem.library.Point;
 import com.gemvietnam.Constants;
+import com.gemvietnam.trafficgem.library.Report;
 import com.gemvietnam.trafficgem.library.User;
 import com.gemvietnam.trafficgem.library.responseMessage.CurrentTrafficResponse;
+import com.gemvietnam.trafficgem.library.responseMessage.GetReportResponse;
 import com.gemvietnam.trafficgem.screen.leftmenu.MenuItem;
 import com.gemvietnam.trafficgem.screen.leftmenu.OnMenuItemClickedListener;
+import com.gemvietnam.trafficgem.screen.main.MainActivity;
 import com.gemvietnam.trafficgem.service.DataExchange;
+import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -78,8 +82,16 @@ import butterknife.OnClick;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.LOCATION_SERVICE;
+import static com.gemvietnam.trafficgem.library.responseMessage.Constants.Message;
+import static com.gemvietnam.trafficgem.utils.Constants.IDMsg;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.LOGIN_TIME_FORMAT;
+import static com.gemvietnam.trafficgem.utils.Constants.Latitude;
+import static com.gemvietnam.trafficgem.utils.Constants.Longitude;
+import static com.gemvietnam.trafficgem.utils.Constants.Period_Time;
+import static com.gemvietnam.trafficgem.utils.Constants.Range;
+import static com.gemvietnam.trafficgem.utils.Constants.SUCCESS;
+import static com.gemvietnam.trafficgem.utils.Constants.Time_Stamp;
 
 /**
  * The Main Fragment
@@ -107,6 +119,7 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
 
 
     private GoogleMap mMap;
+    private static boolean checkDisplay = true;
     private ProgressDialog mprogress;
     private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
     private static final String TAG = "TAG: ";
@@ -119,9 +132,9 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     private Point[][] points;
     private String[][] colors;
     public static boolean mMapIsTouched = false;
-    private double delLat = 0.0089573;
-    private double delLon = 0.0088355;
-
+//    private double delLat = 0.0089573;
+//    private double delLon = 0.0088355;
+    private double delLat, delLon;
     public static MapFragment getInstance() {
         return new MapFragment();
     }
@@ -207,110 +220,74 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
      * thực hiện get report và show map
      */
     private void processGet() {
-        class MessageReport {
-            private double lat, lng;
-            private int IDMsg;
-            public MessageReport( double lat, double lng, int id) {
-                this.lat = lat;
-                this.lng = lng;
-                this.IDMsg = id;
-            }
-
-            public double getLat() {
-                return lat;
-            }
-
-            public double getLng() {
-                return lng;
-            }
-
-            public int getIDMsg() {
-                return IDMsg;
-            }
+        if(!AppUtils.networkOk(getViewContext())){
+            Toast.makeText(getViewContext(), "NO INTERNET !!!", Toast.LENGTH_LONG).show();
+            return;
         }
-
-        String range = sRange.getSelectedItem().toString();
-        String period = sPeriod.getSelectedItem().toString();
-        Location location = getLastKnownLocation();
-        double _lat = location.getLatitude();
-        double _long = location.getLongitude();
-        // create json string body ở đây đi, mình chả biết id là cái gì, period quy ra int ntn
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("period_time", period);
-            //jsonObject.put("idmgs", );
-            jsonObject.put("lat", location.getLatitude());
-            jsonObject.put("lng", location.getLongitude());
-            jsonObject.put("time_stamp", LOGIN_TIME_FORMAT.format(new Date()));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        String period_time = sPeriod.getSelectedItem().toString();
+        String timeValue = "10";
+        if(period_time.equals("10 minutes")){
+            timeValue = "10";
+        }   else if(period_time.equals("20 minutes")){
+            timeValue = "20";
+        }   else if(period_time.equals("30 minutes")){
+            timeValue = "30";
         }
-        String getInfo = jsonObject.toString();
         User user = Hawk.get(LAST_USER);
         DataExchange dataExchange = new DataExchange();
-        String response = dataExchange.getReport(user.getToken(), getInfo);
-        //GetReportResponse getReportResponse = new GetReportResponse(response);
-        // get report để lấy ra list location và id message
-        //
-        // đoạn này chưa get đc
-        //
-        // list reports trả về thêm tại đây, lấy từ getReportResponse
-        List<MessageReport> messageReports = new ArrayList<>();
-        //messageReports.add();
-        try {
-            JSONObject jsonObjectResponse = new JSONObject(response);
-            boolean success = jsonObjectResponse.getBoolean("success");
-            if (success) {
-                JSONArray jsonArray = jsonObjectResponse.getJSONArray("data");
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject object = jsonArray.getJSONObject(i);
-                    double lat = object.getDouble("lat");
-                    double lng = object.getDouble("lng");
-                    int id = object.getInt("IDMsg");
-                    messageReports.add(new MessageReport(lat, lng, id));
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        String response = dataExchange.getReport(user.getToken(), timeValue);
         // thêm biến để xem viền của map (giống với traffic state)
+        Location location = getLastKnownLocation();
+        if(location == null)    return;
         double north = location.getLatitude(), west = location.getLongitude(), east = location.getLongitude(), south = location.getLatitude();
-
-        // vòng lặp để thêm marker tương ứng với từng loại report vào map
-        for (MessageReport messageReport : messageReports) {
-            if (north < messageReport.getLat()) {
-                north = messageReport.getLat();
+        GetReportResponse getReportResponse = new GetReportResponse(response);
+        getReportResponse.analysis();
+        if(getReportResponse.getSuccess()) {
+            Report[] reports = getReportResponse.getReport();
+            int length = reports.length;
+            for(int i=0; i<length; i++) {
+                if (north < reports[i].getLatitude()) {
+                    north = reports[i].getLatitude();
+                }
+                if (south > reports[i].getLatitude()) {
+                    south = reports[i].getLatitude();
+                }
+                if (west > reports[i].getLongitude()) {
+                    west = reports[i].getLongitude();
+                }
+                if (east < reports[i].getLongitude()) {
+                    east = reports[i].getLongitude();
+                }
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(reports[i].getLatitude(), reports[i].getLongitude()));
+                // tạm thời để màu khác nhau, nếu có icon thì thay. mình cũng không biết id tương ứng với cái gì
+                switch (reports[i].getIDMsg()) {
+                    case 1:
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                        break;
+                    case 2:
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                        break;
+                    case 3:
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                        break;
+                    case 4:
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                        break;
+                    case 5:
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                        break;
+                    case 6:
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                        break;
+                    case 7:
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                        break;
+//                    default:
+//                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
+                }
+                mMap.addMarker(markerOptions);
             }
-            if (south > messageReport.getLat()) {
-                south = messageReport.getLat();
-            }
-            if (west > messageReport.getLng()) {
-                west = messageReport.getLng();
-            }
-            if (east < messageReport.getLng()) {
-                east = messageReport.getLng();
-            }
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(new LatLng(messageReport.getLat(), messageReport.getLng()));
-            // tạm thời để màu khác nhau, nếu có icon thì thay. mình cũng không biết id tương ứng với cái gì
-            switch (messageReport.getIDMsg()) {
-                case 1:
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                    break;
-                case 2:
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                    break;
-                case 3:
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-                    break;
-
-                    // tương tự nếu có nhiều loại id
-                //
-                default:
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            }
-            mMap.addMarker(markerOptions);
         }
 
         // show map thôi
@@ -398,6 +375,8 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
         for (int i = 0; i < trafficResponse.getHeight(); i++) {
             for (int j = 0; j < trafficResponse.getWidth(); j++) {
                 points[i][j] = new Point();
+                points[i][j].setDelLat(delLat);
+                points[i][j].setDelLon(delLon);
             }
         }
         points[0][0].setLat(trafficResponse.getNorth());
@@ -415,28 +394,6 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
         for (int i = 0; i < trafficResponse.getHeight(); i++)
             for (int j = 0; j < trafficResponse.getWidth(); j++)
                 points[i][j].setColor(transform(colors[i][j]));
-
-//    for (int i = 0; i < 23; i++) {
-//      for (int j = 0; j < 56; j++) {
-//        points[i][j] = new Point();
-//      }
-//    }
-//
-//    points[0][0].setLat(21.157200);
-//    points[0][0].setLon(105.456390);
-//    for (int i = 1; i < 23; i++) {
-//      points[i][0].setLat(points[i - 1][0].getLat() - delLat);
-//      points[i][0].setLon(points[i - 1][0].getLon());
-//    }
-//    for (int i = 0; i < 23; i++) {
-//      for (int j = 1; j < 56; j++) {
-//        points[i][j].setLat(points[i][j - 1].getLat());
-//        points[i][j].setLon(points[i][j - 1].getLon() + delLon);
-//      }
-//    }
-//    for (int i = 0; i < 23; i++)
-//      for (int j = 0; j < 56; j++)
-//        points[i][j].setColor(transform(colors[i][j]));
     }
 
     private int transform(String s) {
@@ -472,6 +429,10 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
     private void showTrafficState() {
         llGetReport.setVisibility(View.GONE);
         mMap.clear();
+        if(!AppUtils.networkOk(getViewContext())){
+            Toast.makeText(getViewContext(), "NO INTERNET !!!", Toast.LENGTH_LONG).show();
+            return;
+        }
         int layer = 1;
         User user = Hawk.get(LAST_USER);
         DataExchange trafficState = new DataExchange();
@@ -492,23 +453,12 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
         double south = trafficResponse.getSouth();
         double west = trafficResponse.getWest();
         double east = trafficResponse.getEast();
+        delLat = (east - west) / width;
+        delLon = (north - south) / height;
         points = new Point[height][width];
 //    colors = new String[height][width];
 //    colors = setupListColor();
         colors = trafficResponse.getColorArray();
-//    if (colors.length < 23){
-//      colors = demoCells();
-//    }
-
-        Log.d("Test-size-colors", String.valueOf(colors.length));
-//    Log.d("test-color",colors[0][0]);
-//    Log.d("test-color1",colors[22][55]);
-        // setup list color
-//    for (int i = 0; i < height; i++) {
-//      for (int j = 0; j < width; j++) {
-//        colors[i][j] = trafficResponse.getColorArray()[i][j];
-//      }
-//    }
         setupListPoint(trafficResponse);
         // setup List Cell;
         for (int i = 0; i < height; i++) {
@@ -687,15 +637,20 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
         switch (mPresenter.getKey()) {
             case Constants.LOCATION:
                 showLocation();
+                displayCurrentPosition();
                 break;
             case Constants.NORMAL:
+                displayCurrentPosition();
                 break;
             case Constants.ADVANCE:
+                displayCurrentPosition();
                 break;
             case Constants.TRAFFIC:
+                displayCurrentPosition();
                 showTrafficState();
                 break;
             case Constants.GET:
+                noDisplayCurrentPosition();
                 showReport();
                 break;
             case Constants.SIGNOUT:
@@ -710,8 +665,10 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
             public void onMyLocationChange(Location location) {
                 LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                 if (mMap != null) {
-//          mMap.clear();
-                    mMap.addMarker(new MarkerOptions().position(loc));
+                    if(checkDisplay){
+//                        mMap.clear();
+                        mMap.addMarker(new MarkerOptions().position(loc));
+                    }
                 }
             }
         };
@@ -771,7 +728,6 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
                 continue;
             }
             if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
                 bestLocation = l;
             }
         }
@@ -829,6 +785,14 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
             } else if (resultCode == RESULT_CANCELED) {
             }
         }
+    }
+
+    public static void displayCurrentPosition(){
+        checkDisplay = true;
+    }
+
+    public static void noDisplayCurrentPosition(){
+        checkDisplay = false;
     }
 
     private String readFromFile(Context context) {
@@ -912,5 +876,31 @@ public class MapFragment extends ViewFragment<MapContract.Presenter> implements 
             }
         }
         return cells;
+    }
+
+    public String demoGetReportResponse(){
+        JSONObject jsonObject = new JSONObject();
+        JSONArray data =  new JSONArray();
+        double lat = 21.0338596;
+        double lng = 105.7598883;
+        int id = 1;
+        try {
+            for(int i=0; i<10; i++){
+                JSONObject report = new JSONObject();
+                report.put(Latitude, lat);
+                report.put(Longitude, lng);
+                report.put("idmsg", id);
+                data.put(report);
+                lat += 0.02;
+                lng += 0.02;
+                id = id%7 + 1;
+            }
+            jsonObject.put(SUCCESS, true);
+            jsonObject.put("message", "success" );
+            jsonObject.put("data", data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }

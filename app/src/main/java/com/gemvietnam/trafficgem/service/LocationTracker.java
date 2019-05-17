@@ -153,12 +153,13 @@ public class LocationTracker extends Service {
                 mLastUser = Hawk.get(LAST_USER);
                 float distanceTo;
                 int count = 0;
+                long currentTime = System.currentTimeMillis();
+                long tempTime = currentTime - 5000;
                 JSONObject jsonObject = new JSONObject();
                 mObject = new JsonObject();
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
                 while (runThread) {
-
                     if(AppUtils.networkOk(getApplicationContext())){
                         mCurrentLocation = getLastLocation();
                         if (temp == null) {
@@ -171,7 +172,6 @@ public class LocationTracker extends Service {
                         if (mCurrentLocation != null) {
                             mRecord_Time = RECORD_TIME_FORMAT.format(new Date());
                             mSpeed = (3.6*distanceTo)/5d;
-                            if(!checkSpeed(mSpeed)) continue;
                             mVehicle = mLastUser.getVehicle();
                             mDirection = getDirection(temp, mCurrentLocation);
                             Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time, mVehicle, mSpeed, mDirection);
@@ -182,10 +182,10 @@ public class LocationTracker extends Service {
                             }
                             count++;
                             temp = mCurrentLocation;
-                            if (count >= 1) {
+                            if (count >= 60) {
                                 try {
+//                                    AppUtils.writeFile(mObject.exportStringFormatJson());
                                     DataExchange trafficData = new DataExchange();
-                                    Log.d("test-traffic-data", mObject.exportStringFormatJson());
                                     String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -197,7 +197,6 @@ public class LocationTracker extends Service {
                             }
                         }
                     }
-
                     SystemClock.sleep(5000);        // SLEEP 5s
                 }
             }
@@ -223,11 +222,6 @@ public class LocationTracker extends Service {
                     }
                 });
         return mCurrentLocation;
-    }
-    public boolean checkSpeed(double avg_Speed){
-        boolean check = true;
-        if(avg_Speed < 0.21d)   check = false;
-        return check;
     }
     public void StartThread(){
         this.runThread = true;

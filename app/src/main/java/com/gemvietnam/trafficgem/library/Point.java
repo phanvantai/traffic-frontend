@@ -12,6 +12,8 @@ import java.util.List;
 public class Point {
   private double lat;
   private double lon;
+  private double delLat;
+  private double delLon;
   private int color;
   private List<LatLng> peaks;
 
@@ -40,6 +42,14 @@ public class Point {
     this.lon = lon;
   }
 
+  public void setDelLat(double delLat) {this.delLat =  delLat;}
+
+  public double getDelLat(){ return delLat; }
+
+  public void setDelLon(double delLon) {this.delLon = delLon; }
+
+  public double getDelLon(){ return delLon;}
+
   public int getColor() {
     return color;
   }
@@ -50,8 +60,6 @@ public class Point {
 
   public List<LatLng> getPeaks(){
     peaks = new ArrayList<>();
-    double delLat = 0.0089573;
-    double delLon = 0.0088355;
     LatLng first = new LatLng(lat, lon);
     LatLng second = new LatLng(lat, lon + delLon);
     LatLng third = new LatLng(lat - delLat, lon);

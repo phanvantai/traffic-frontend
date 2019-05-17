@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.Report;
@@ -84,19 +85,25 @@ public class ReportActivity extends AppCompatActivity {
     }
     private void createMessage() {
         String content = sListReport.getSelectedItem().toString();
-        int id;
-        if (content.equals("Traffic accident")) {
+        int id = 1;
+        if(content.equals("Crowded Street")){
             id = 1;
-        } else if (content.equals("Rain")) {
+        }   else if(content.equals("Traffic Jam")){
             id = 2;
-        } else if (content.equals("Traffic Jam")) {
+        }   else if(content.equals("No Traffic Jam")){
             id = 3;
-        } else if (content.equals("No Traffic Jam")) {
+        }   else if(content.equals("Rain")){
             id = 4;
-        } else if (content.equals("Police")) {
+        }   else if(content.equals("Traffic accident")){
             id = 5;
-        } else {
+        }   else if(content.equals("Construct Road")){
             id = 6;
+        }   else if(content.equals("Police")){
+            id = 7;
+        }
+        if(!AppUtils.networkOk(getApplicationContext())){
+            Toast.makeText(getApplicationContext(), "NO INTERNET !!!", Toast.LENGTH_LONG).show();
+            return;
         }
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

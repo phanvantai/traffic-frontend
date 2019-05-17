@@ -27,8 +27,8 @@ public class Constants {
     public static final String Vehicle = "vehicle";
     public static final String Password = "password";
 
-    public static final String Latitude = "latitude";
-    public static final String Longitude = "longitude";
+    public static final String Latitude = "lat";
+    public static final String Longitude = "lng";
     public static final String Time_Stamp = "time_stamp";
     public static final String IDMsg = "IDMsg";
     public static final String Date = "date";

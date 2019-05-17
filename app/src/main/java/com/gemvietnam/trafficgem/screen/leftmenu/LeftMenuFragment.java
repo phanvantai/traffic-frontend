@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.gemvietnam.base.viper.ViewFragment;
 import com.gemvietnam.trafficgem.R;
 import com.gemvietnam.trafficgem.library.User;
+import com.gemvietnam.trafficgem.screen.map.MapFragment;
 import com.gemvietnam.trafficgem.user.ProfileActivity;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.ReportActivity;

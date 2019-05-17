@@ -1,5 +1,7 @@
 package com.gemvietnam.trafficgem.library.responseMessage;
 
+import android.util.Log;
+
 import com.gemvietnam.trafficgem.library.Report;
 
 import org.json.JSONArray;
@@ -12,7 +14,6 @@ public class GetReportResponse extends Response {
     private boolean success;
     private JSONObject jsonObject;
     private JSONArray jsonData;
-    private Report report = null;
     public GetReportResponse(String responseMessage){
         this.responseMessage = responseMessage;
     }
@@ -29,12 +30,7 @@ public class GetReportResponse extends Response {
             this.message = (String) jsonObject.get(Constants.Message);
             this.success = (boolean) jsonObject.get(Constants.Success);
             if(success){
-                report = new Report();
                 this.jsonData = (JSONArray) jsonObject.get(Constants.Data);
-                report.setIDMsg((int) jsonObject.get(Constants.IDMsg));
-                report.setLatitude((double) jsonObject.get(Constants.Latitude));
-                report.setLongitude((double) jsonObject.get(Constants.Longitude));
-                //report.setDate((String) jsonObject.get(Constants.Time_Stamp));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -50,7 +46,23 @@ public class GetReportResponse extends Response {
         return success;
     }
 
-    public Report getNotification(){
-        return report;
+    public Report[] getReport(){
+        int length = jsonData.length();
+        Report[] reports = new Report[length];
+        for(int i=0; i<length; i++){
+            reports[i] = new Report();
+            JSONObject reportJson = new JSONObject();
+            try {
+                reportJson = jsonData.getJSONObject(i);
+                Log.d("reportjson", reportJson.toString());
+                reports[i].setIDMsg((int)reportJson.get("idmsg"));
+                reports[i].setLatitude((double)(reportJson.get(Constants.Latitude)));
+                reports[i].setLongitude((double)(reportJson.get(Constants.Longitude)));
+//                reports[i].setDate((String)jsonData.getJSONObject(i).get(Constants.Time_Stamp));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return reports;
     }
 }

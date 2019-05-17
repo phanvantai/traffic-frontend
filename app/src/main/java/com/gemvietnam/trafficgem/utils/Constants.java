@@ -41,6 +41,8 @@ public class Constants {
     public static final String Latitude = "lat";
     public static final String Longitude = "lng";
     public static final String SALT_BCRYPT = "traffic";
+    public static final String Period_Time = "time";
+    public static final String Range = "range";
 
     public static final long SESSION_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days
 

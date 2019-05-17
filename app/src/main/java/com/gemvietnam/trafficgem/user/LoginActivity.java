@@ -30,13 +30,37 @@ import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
+import static com.gemvietnam.trafficgem.utils.Constants.ADDRESS;
+import static com.gemvietnam.trafficgem.utils.Constants.AVATAR;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.LOGIN_TIME_FORMAT;
+import static com.gemvietnam.trafficgem.utils.Constants.MESSAGE;
+import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
+import static com.gemvietnam.trafficgem.utils.Constants.NAME;
+import static com.gemvietnam.trafficgem.utils.Constants.PHONE;
+import static com.gemvietnam.trafficgem.utils.Constants.SUCCESS;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_GET_PROFILE;
+import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
+import static com.gemvietnam.trafficgem.utils.Constants.VEHICLE;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -72,9 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         if (Hawk.contains(LAST_USER)) {
             // nếu có thì kiểm tra phiên đăng nhập
             mLastUser = Hawk.get(LAST_USER);
-            Log.d("last-user", mLastUser.exportStringFormatJson());
             if (!mLastUser.isExpired()) {
-                Log.d("expired", "true");
                 // nếu còn thời gian thì vào thẳng MainAcitivity
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
@@ -88,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 // kiểm tra xem có mạng hay không đã
                 if (!AppUtils.networkOk(getApplicationContext())) {
                     AppUtils.showAlertNetwork(LoginActivity.this);
+//                    AppUtils.showAlertNetwork(LoginA);
                 } else {
                     doLogin();
                 }
@@ -170,32 +193,32 @@ public class LoginActivity extends AppCompatActivity {
                 Hawk.put(Constants.Password, AppUtils.md5PasswordRegister(password));
                 DataExchange login = new DataExchange();
                 String responseLoginFormatString = login.sendCredential(credential.exportStringFormatJson());
-                Log.d("test-response-login", responseLoginFormatString);
+//                Log.d("test-response-login", responseLoginFormatString);
                 final LoginResponse loginResponse = new LoginResponse(responseLoginFormatString);
                 loginResponse.analysis();
                 if (loginResponse.getSuccess()) {
                     // nếu đăng nhập thành công
-                    Log.d("test-tokne", loginResponse.getToken());
+//                    Log.d("test-tokne", loginResponse.getToken());
                     // check user xem có trong Hawk chưa,
                     // nếu có rồi thì set last user, chưa thì lấy get user profile
 //                    if (Hawk.contains(email)) {
 //                        Log.d("test-message", "contains");
 //                        Hawk.put(LAST_USER, Hawk.get(email));
 //                    } else {
-                        DataExchange getUserProfile = new DataExchange();
-                        String userProfileResponse = getUserProfile.getUserProfile(loginResponse.getToken());
-                        Log.d("test-user-profile", userProfileResponse);
-                        GetProfileResponse userProfile = new GetProfileResponse(userProfileResponse);
-                        userProfile.analysis();
-                        mLastUser = userProfile.getMobileUser();
-                        mLastUser.setLastLogin(System.currentTimeMillis());
-                        mLastUser.setToken(loginResponse.getToken());
-                        Log.d("test-user--", mLastUser.exportStringFormatJson());
-                        Hawk.put(email, mLastUser);
-                        Hawk.put(LAST_USER, mLastUser);
+                    DataExchange getUserProfile = new DataExchange();
+                    String userProfileResponse = getUserProfile.getUserProfile(loginResponse.getToken());
+//                    Log.d("test-user-profile", userProfileResponse);
+                    GetProfileResponse userProfile = new GetProfileResponse(userProfileResponse);
+                    userProfile.analysis();
+                    mLastUser = userProfile.getMobileUser();
+                    mLastUser.setLastLogin(System.currentTimeMillis());
+                    mLastUser.setToken(loginResponse.getToken());
+//                    Log.d("test-user--", mLastUser.exportStringFormatJson());
+                    Hawk.put(email, mLastUser);
+                    Hawk.put(LAST_USER, mLastUser);
 //                    }
 
-                    progressDialog.dismiss();
+//                    progressDialog.dismiss();
                     // có thông tin last user rồi thì vào MainActivity thôi
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
@@ -257,7 +280,7 @@ public class LoginActivity extends AppCompatActivity {
             etEditMail.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
+        if (password.isEmpty() || password.length() < 8) {
             etEditPassword.setError(this.getString(R.string.rule_password));
             valid = false;
         } else {

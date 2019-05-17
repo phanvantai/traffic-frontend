@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 public class Report {
     private int IDMsg;
-    private Location location;
+    private Location location = new Location("");
     //    private String picture;
     private String time_stamp;
 
@@ -47,8 +47,8 @@ public class Report {
         try {
             entry.put(Constants.IDMsg, IDMsg);
             entry.put(Constants.Time_Stamp, time_stamp);
-            entry.put(Constants.Latitude, (double) Math.round(location.getLatitude()*100)/100);
-            entry.put(Constants.Longitude, (double) Math.round(location.getLongitude()*100)/100);
+            entry.put(Constants.Latitude, (double) location.getLatitude());
+            entry.put(Constants.Longitude, (double) location.getLongitude());
 //            entry.put("picture", picture);
         } catch (JSONException e){
             e.printStackTrace();

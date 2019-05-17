@@ -157,12 +157,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                 User user = new User(email, name, vehicle, phone, address);
                 user.setPassword(md5Password);
-
+                if(!AppUtils.networkOk(getApplicationContext())){
+                    AppUtils.showAlertNetwork(RegisterActivity.this);
+                    return;
+                }
                 DataExchange resigster = new DataExchange();
                 String getResponse = resigster.sendRegistrationInfo(user.exportStringFormatJson());
 //                String getResponse = AppUtils.executePostHttp(URL_REGISTER, user.exportStringFormatJson());
-                Log.d("test-request-register", user.exportStringFormatJson());
-                Log.d("test-response-register", getResponse);
                 RegisterResponse registerResponse = new RegisterResponse(getResponse);
                 registerResponse.analysis();
 
@@ -187,7 +188,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void onRegisterFailed() {
         Toast.makeText(getBaseContext(), "Register failed", Toast.LENGTH_LONG).show();
-
         bRegister.setEnabled(true);
     }
 

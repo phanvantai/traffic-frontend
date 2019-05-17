@@ -38,12 +38,13 @@
     </string-array>
 
     <string-array name="report_arrays">
-        <item>Traffic accident</item>
-        <item>Rain</item>
+        <item>Crowded Street</item>
         <item>Traffic Jam</item>
         <item>No Traffic Jam</item>
+        <item>Rain</item>
+        <item>Traffic accident</item>
+        <item>Construct Road</item>
         <item>Police</item>
-        <item>Construct road</item>
     </string-array>
 
     <string name="title_activity_profile">ProfileActivity</string>
