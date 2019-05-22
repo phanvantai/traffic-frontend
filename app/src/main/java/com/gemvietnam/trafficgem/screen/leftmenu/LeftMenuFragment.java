@@ -1,9 +1,12 @@
 package com.gemvietnam.trafficgem.screen.leftmenu;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +22,8 @@ import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.gemvietnam.trafficgem.utils.ReportActivity;
 import com.orhanobut.hawk.Hawk;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import butterknife.BindView;
@@ -44,10 +49,6 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
     TextView mYourLocationTv;
     @BindView(R.id.menu_direction_tv)
     TextView mDirectionTv;
-//    @BindView(R.id.menu_minus_img)
-//    ImageView mMinusImg;
-//    @BindView(R.id.menu_plus_img)
-//    ImageView mPlusImg;
     @BindView(R.id.menu_normal_search_tv)
     TextView mNormalSearchTv;
     @BindView(R.id.menu_advance_search_tv)
@@ -94,9 +95,10 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-        if (!"null".equals(user.getPathAvatar())) {
-            AppUtils.loadImage(URL_VIEW_AVATAR + user.getPathAvatar(), mProfileImg);
-        }
+//        if(user.getPathAvatar() != "null" && user.getPathAvatar() != ""){
+//            ImageView imageView = (ImageView)getActivity().findViewById(R.id.menu_profile_img);
+//            imageView.setImageBitmap(BitmapFactory.decodeFile(user.getPathAvatar()));
+//        }
         mExpandLl.setVisibility(View.VISIBLE);
         mReport.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,5 +210,12 @@ public class LeftMenuFragment extends ViewFragment<LeftMenuContract.Presenter> i
 
         mSignOutTv.setSelected(false);
         mSignOutTv.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_signout_white, 0,0,0);
+    }
+    @Override
+    public void onResume(){
+        User user = Hawk.get(LAST_USER);
+        mEmailTv.setText(user.getEmail());
+        mNameTv.setText(user.getName());
+        super.onResume();
     }
 }

@@ -107,7 +107,7 @@ public class AppUtils {
     public static void createDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(context.getString(R.string.sorry_about_somthing));
-        builder.setTitle("TrafficGEM");
+        builder.setTitle("Traffic Detection Engine");
         builder.setCancelable(true);
 //        builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 //            @Override
@@ -471,7 +471,7 @@ public class AppUtils {
      */
     public static void showAlertNetwork(final Context activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("TrafficGEM");
+        builder.setTitle("Traffic Detection Engine");
         builder.setMessage("There is no Internet connection. Do you want to set up now?");
         builder.setPositiveButton("WiFi",
                 new DialogInterface.OnClickListener() {
@@ -506,6 +506,7 @@ public class AppUtils {
                 .resize(100, 100)
                 .into(imageView);
     }
+
     public static void writeFile(String data){
         String fileName = "traffic.txt";
         File extStore = Environment.getExternalStorageDirectory();

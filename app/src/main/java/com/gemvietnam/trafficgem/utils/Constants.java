@@ -47,7 +47,7 @@ public class Constants {
     public static final long SESSION_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days
 
     public static final String CHANEL_ID = "chanel_traffic";
-    public static final String CHANEL_NAME = "traffic_gem";
+    public static final String CHANEL_NAME = "traffic_detection_engine";
     public static final String START_SERVICE = "start";
     public static final String STOP_SERVICE = "stop";
     public static final int ONGOING_NOTIFICATION_ID = 211;

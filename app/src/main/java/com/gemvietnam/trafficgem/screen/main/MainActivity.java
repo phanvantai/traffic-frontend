@@ -8,6 +8,7 @@ import android.os.StrictMode;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.gemvietnam.base.ContainerActivity;
 import com.gemvietnam.base.viper.ViewFragment;
@@ -24,6 +25,7 @@ import com.gemvietnam.utils.ActivityUtils;
 import com.orhanobut.hawk.Hawk;
 
 import butterknife.BindView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
@@ -37,7 +39,6 @@ public class MainActivity extends ContainerActivity implements
         OnMenuItemClickedListener,
         DrawerLayout.DrawerListener,
         DrawerToggleListener {
-
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
     @BindView(R.id.left_drawer)

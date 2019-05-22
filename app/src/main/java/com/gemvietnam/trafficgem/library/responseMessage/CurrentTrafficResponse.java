@@ -25,6 +25,14 @@ public class CurrentTrafficResponse extends Response{
         return null;
     }
 
+//    public void analysis(){
+//        try {
+//            this.jsonObject = new JSONObject(responseMessage);
+//            this.success = (boolean) jsonObject.get(Constants.Success);
+//            this.message = (String) jsonObject.get()
+//        }
+//    }
+
     public void analysis(){
         try {
             this.jsonObject = new JSONObject(responseMessage);

@@ -181,7 +181,6 @@ public class LocationTracker extends Service {
                                 e.printStackTrace();
                             }
                             count++;
-                            temp = mCurrentLocation;
                             if (count >= 60) {
                                 try {
 //                                    AppUtils.writeFile(mObject.exportStringFormatJson());
@@ -196,6 +195,7 @@ public class LocationTracker extends Service {
                                 mObject.init();
                             }
                         }
+                        temp = getLastLocation();
                     }
                     SystemClock.sleep(5000);        // SLEEP 5s
                 }
@@ -279,7 +279,7 @@ public class LocationTracker extends Service {
 
         if (Build.VERSION.SDK_INT >= 26) {
             Notification notification = new Notification.Builder(context, CHANEL_ID)
-                    .setContentTitle("TrafficGEM")
+                    .setContentTitle("Traffic Detection Engine")
                     .setContentText("Collecting location data..")
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(pendingIntent)
