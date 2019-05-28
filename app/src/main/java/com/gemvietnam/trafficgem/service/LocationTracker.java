@@ -33,13 +33,11 @@ import org.json.JSONObject;
 import java.util.Date;
 
 import static com.gemvietnam.trafficgem.utils.Constants.CHANEL_ID;
-//import static com.gemvietnam.trafficgem.utils.Constants.DATE_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.ONGOING_NOTIFICATION_ID;
 import static com.gemvietnam.trafficgem.utils.Constants.RECORD_TIME_FORMAT;
 import static com.gemvietnam.trafficgem.utils.Constants.START_SERVICE;
 import static com.gemvietnam.trafficgem.utils.Constants.STOP_SERVICE;
-//import static com.gemvietnam.trafficgem.utils.Constants.TIME_FORMAT;
 
 
 /**
@@ -151,45 +149,49 @@ public class LocationTracker extends Service {
             public void run() {
                 Location temp = null;
                 mLastUser = Hawk.get(LAST_USER);
-                float distanceTo;
-                int count = 0;
-                long currentTime = System.currentTimeMillis();
-                long tempTime = currentTime - 5000;
+                double distanceTo;
+                int countNumberData = 0;
                 JSONObject jsonObject = new JSONObject();
-                mObject = new JsonObject();
+                mObject = new JsonObject();     // Object contain traffic data
                 mObject.setJsonObject(jsonObject);
                 mObject.init();
-                while (runThread) {
-                    if(AppUtils.networkOk(getApplicationContext())){
-                        mCurrentLocation = getLastLocation();
+
+                while (runThread) {         // runThread: flag control on/off thread
+                    if(AppUtils.networkOk(getApplicationContext())){        // check on/off network
+                        mCurrentLocation = getLastLocation();   // get current location
                         if (temp == null) {
                             distanceTo = 0;
                             temp = mCurrentLocation;    // avoid errors direction
                         } else {
+                            // determine the distante between two position separated 5s
                             distanceTo = mCurrentLocation.distanceTo(temp);
                         }
 
                         if (mCurrentLocation != null) {
-                            mRecord_Time = RECORD_TIME_FORMAT.format(new Date());
-                            mSpeed = (3.6*distanceTo)/5d;
-                            mVehicle = mLastUser.getVehicle();
-                            mDirection = getDirection(temp, mCurrentLocation);
-                            Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time, mVehicle, mSpeed, mDirection);
+                            mRecord_Time = RECORD_TIME_FORMAT.format(new Date());   // get current time
+                            mSpeed = (3.6*distanceTo)/5d;       // determine speed
+                            mVehicle = mLastUser.getVehicle();  // get vehicle
+                            mDirection = getDirection(temp, mCurrentLocation);  // determine direction
+                                // create traffic object
+                            Traffic traffic = new Traffic(mCurrentLocation, mRecord_Time,
+                                                            mVehicle, mSpeed, mDirection);
                             try {
                                 mObject.pushDataTraffic(traffic);       // synthetic traffic data
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            count++;
-                            if (count >= 60) {
+                            countNumberData++;
+                            if (countNumberData >= 60) {    // check amount of data = 60
                                 try {
-//                                    AppUtils.writeFile(mObject.exportStringFormatJson());
+                                    // perform send traffic data.
                                     DataExchange trafficData = new DataExchange();
-                                    String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(), mObject.exportStringFormatJson());
+                                    String responseTrafficData = trafficData.sendDataTraffic(mLastUser.getToken(),
+                                            mObject.exportStringFormatJson());
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                count = 0;
+                                    // reset Object container traffic data
+                                countNumberData = 0;
                                 mObject = new JsonObject();
                                 mObject.setJsonObject(jsonObject);
                                 mObject.init();

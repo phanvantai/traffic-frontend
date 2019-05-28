@@ -101,12 +101,14 @@ public class ReportActivity extends AppCompatActivity {
         }   else if(content.equals("Police")){
             id = 7;
         }
-        if(!AppUtils.networkOk(getApplicationContext())){
+        if(!AppUtils.networkOk(getApplicationContext())){       // check internet
             Toast.makeText(getApplicationContext(), "NO INTERNET !!!", Toast.LENGTH_LONG).show();
             return;
         }
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -116,16 +118,14 @@ public class ReportActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+            // get current location
         Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//        Date date = new Date();
-        String date = RECORD_TIME_FORMAT.format(new Date());
-        Report report = new Report(id, date, location);
-        Log.d("test-report----", report.exportStringFormatJson());
+        String date = RECORD_TIME_FORMAT.format(new Date());    // get current time
+        Report report = new Report(id, date, location);         // create  report Object
         mLastUser = Hawk.get(LAST_USER);
+            // perform send report
         DataExchange sendReport = new DataExchange();
         String response = sendReport.report(mLastUser.getToken(),report.exportStringFormatJson());
-        Log.d("test-report", response);
-        Log.d("test-send-report", report.exportStringFormatJson());
         finish();
     }
 

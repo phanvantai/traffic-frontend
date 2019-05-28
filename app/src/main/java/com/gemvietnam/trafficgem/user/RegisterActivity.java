@@ -132,9 +132,6 @@ public class RegisterActivity extends AppCompatActivity {
             onRegisterFailed();
             return;
         }
-
-        //bRegister.setEnabled(false);
-
         // create progress dialog
         final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this,
                 R.style.AppTheme_Dark_Dialog);
@@ -147,23 +144,24 @@ public class RegisterActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                    // get user information when users enter
                 String name = etName.getText().toString();
                 String phone = etPhone.getText().toString();
                 String address = etAddress.getText().toString();
                 String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
-                String md5Password = AppUtils.md5PasswordRegister(password);
+                String md5Password = AppUtils.md5PasswordRegister(password);    // encode password
 
                 User user = new User(email, name, vehicle, phone, address);
                 user.setPassword(md5Password);
-                if(!AppUtils.networkOk(getApplicationContext())){
+                if(!AppUtils.networkOk(getApplicationContext())){       // check network
                     AppUtils.showAlertNetwork(RegisterActivity.this);
                     return;
                 }
+                    // perform send registration information
                 DataExchange resigster = new DataExchange();
                 String getResponse = resigster.sendRegistrationInfo(user.exportStringFormatJson());
-//                String getResponse = AppUtils.executePostHttp(URL_REGISTER, user.exportStringFormatJson());
                 RegisterResponse registerResponse = new RegisterResponse(getResponse);
                 registerResponse.analysis();
 

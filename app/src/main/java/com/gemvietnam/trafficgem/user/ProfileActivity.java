@@ -24,7 +24,6 @@ import com.gemvietnam.trafficgem.library.responseMessage.ChangePasswordResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.Constants;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateAvatarResponse;
 import com.gemvietnam.trafficgem.library.responseMessage.UpdateProfileResponse;
-import com.gemvietnam.trafficgem.screen.leftmenu.LeftMenuFragment;
 import com.gemvietnam.trafficgem.service.DataExchange;
 import com.gemvietnam.trafficgem.utils.AppUtils;
 import com.orhanobut.hawk.Hawk;
@@ -33,20 +32,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.gemvietnam.trafficgem.R.id.civ_activity_profile_avatar;
-import static com.gemvietnam.trafficgem.R.id.image;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
-import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_AVATAR;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_PASSWORD;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_EDIT_PROFILE;
 
 public class ProfileActivity extends AppCompatActivity {
     public static final int SELECT_GALLERY_IMAGE = 12;
@@ -173,22 +165,26 @@ public class ProfileActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
+                    // get user information edited
                 String name = etName.getText().toString();
                 String phone = etPhone.getText().toString();
                 String address = etAddress.getText().toString();
                 String vehicle = sVehicle.getSelectedItem().toString();
+                    // create updateProfile Object
                 UpdateProfile updateProfile = new UpdateProfile(name, phone, address, vehicle);
+                    // send user information edited
                 DataExchange dataExchange = new DataExchange();
                 String getResponse = dataExchange.updateProfile(mLastUser.getToken(), updateProfile.exportStringFormatJson());
                 UpdateProfileResponse updateProfileResponse = new UpdateProfileResponse(getResponse);
                 updateProfileResponse.analysis();
                 if(updateProfileResponse.getSuccess()){
+                        // save user information updated
                     mLastUser.setName(name);
                     mLastUser.setPhone(phone);
                     mLastUser.setAddress(address);
                     mLastUser.setVehicle(vehicle);
                     if(currentPhotoPath != null){
+                            // get avatar
                         DataExchange updateAvatar = new DataExchange();
                         String fileName = currentPhotoPath.substring(currentPhotoPath.lastIndexOf("/")+1);
                         String getResponseUpdateAvatar = updateAvatar.sendPicture(mLastUser.getToken(), currentPhotoPath);
@@ -199,7 +195,6 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     }
                     Hawk.put(LAST_USER, mLastUser);
-
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -224,17 +219,18 @@ public class ProfileActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                    // get old password when user enter
                 String oldPass = etOld.getText().toString();
-                String md5Old = AppUtils.md5PasswordRegister(oldPass);
-
+                String md5Old = AppUtils.md5PasswordRegister(oldPass);  // encode pass
+                    // get new password when user enter
                 String newPass = etNew.getText().toString();
-                String md5New = AppUtils.md5PasswordRegister(newPass);
+                String md5New = AppUtils.md5PasswordRegister(newPass);  // encode pass
                 String reNew = etReNew.getText().toString();
 
-                if (validate()) {
+                if (validate()) {   // check pass
+                        // perform send request update password
                     DataExchange dataExchange = new DataExchange();
-                    String getResposeChangePassword = "";
-                    getResposeChangePassword = dataExchange.changePassword(mLastUser.getToken(), md5Old, md5New);
+                    String getResposeChangePassword = dataExchange.changePassword(mLastUser.getToken(), md5Old, md5New);
                     final ChangePasswordResponse changePasswordResponse = new ChangePasswordResponse(getResposeChangePassword);
                     changePasswordResponse.analysis();
                     if(changePasswordResponse.getSuccess()){
@@ -254,9 +250,6 @@ public class ProfileActivity extends AppCompatActivity {
                         });
                     }
                     finish();
-                    //llUpdate.setVisibility(View.VISIBLE);
-                    //llChange.setVisibility(View.GONE);
-                    //bChangPassword.setVisibility(View.VISIBLE);
                 }
             }
         }).start();

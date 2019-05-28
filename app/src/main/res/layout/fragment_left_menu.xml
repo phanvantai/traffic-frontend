@@ -33,7 +33,7 @@
                 style="@style/MenuText"
                 android:layout_margin="@dimen/no_margin"
                 android:gravity="center_horizontal"
-                android:text="Quận Nguyễn"/>
+                android:text="Name"/>
 
             <TextView
                 android:id="@+id/profile_email_tv"
@@ -41,7 +41,7 @@
                 android:layout_margin="@dimen/no_margin"
                 android:gravity="center_horizontal"
                 android:textSize="@dimen/ts_14"
-                android:text="quannv@gemvietnam.com"
+                android:text="Email"
                 android:textStyle="normal"/>
         </LinearLayout>
 
@@ -63,7 +63,7 @@
             android:drawableLeft="@drawable/ic_direction_white"
             android:drawablePadding="@dimen/large_padding"
             android:text="@string/waypoints"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <!--<LinearLayout
             android:id="@+id/menu_quan_ly_so_lieu_ll"

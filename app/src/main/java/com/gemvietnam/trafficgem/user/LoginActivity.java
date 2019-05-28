@@ -30,37 +30,13 @@ import com.orhanobut.hawk.Hawk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
-import static com.gemvietnam.trafficgem.utils.Constants.ADDRESS;
-import static com.gemvietnam.trafficgem.utils.Constants.AVATAR;
 import static com.gemvietnam.trafficgem.utils.Constants.LAST_USER;
 import static com.gemvietnam.trafficgem.utils.Constants.LOGIN_TIME_FORMAT;
-import static com.gemvietnam.trafficgem.utils.Constants.MESSAGE;
-import static com.gemvietnam.trafficgem.utils.Constants.MY_TOKEN;
-import static com.gemvietnam.trafficgem.utils.Constants.NAME;
-import static com.gemvietnam.trafficgem.utils.Constants.PHONE;
-import static com.gemvietnam.trafficgem.utils.Constants.SUCCESS;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_GET_PROFILE;
-import static com.gemvietnam.trafficgem.utils.Constants.URL_LOGIN;
-import static com.gemvietnam.trafficgem.utils.Constants.VEHICLE;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -167,10 +143,6 @@ public class LoginActivity extends AppCompatActivity {
             onLoginFailed();
             return;
         }
-
-        // when doLogin, can't press button doLogin
-        //bLogin.setEnabled(false);
-
         // create progress dialog to make color =))
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
@@ -183,43 +155,32 @@ public class LoginActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // thông tin đăng nhập gửi cho server
-                String email = etEditMail.getText().toString();
-                String password = etEditPassword.getText().toString();
+                // get credential when user enters
+                String email = etEditMail.getText().toString();     // get email
+                String password = etEditPassword.getText().toString();  // get password
                 String loginTime = LOGIN_TIME_FORMAT.format(new Date());
-                String md5Password = AppUtils.md5PasswordLogin(password, loginTime);
-
+                String md5Password = AppUtils.md5PasswordLogin(password, loginTime);    // encode password
+                    // create credential object
                 Credential credential = new Credential(email, md5Password, loginTime);
-                Hawk.put(Constants.Password, AppUtils.md5PasswordRegister(password));
+                    // perform send credential
                 DataExchange login = new DataExchange();
                 String responseLoginFormatString = login.sendCredential(credential.exportStringFormatJson());
-//                Log.d("test-response-login", responseLoginFormatString);
                 final LoginResponse loginResponse = new LoginResponse(responseLoginFormatString);
                 loginResponse.analysis();
                 if (loginResponse.getSuccess()) {
-                    // nếu đăng nhập thành công
-//                    Log.d("test-tokne", loginResponse.getToken());
-                    // check user xem có trong Hawk chưa,
-                    // nếu có rồi thì set last user, chưa thì lấy get user profile
-//                    if (Hawk.contains(email)) {
-//                        Log.d("test-message", "contains");
-//                        Hawk.put(LAST_USER, Hawk.get(email));
-//                    } else {
+                    Hawk.put(Constants.Password, AppUtils.md5PasswordRegister(password));   // save password
+                        // perform get user' profile
                     DataExchange getUserProfile = new DataExchange();
-                    String userProfileResponse = getUserProfile.getUserProfile(loginResponse.getToken());
-//                    Log.d("test-user-profile", userProfileResponse);
+                    String userProfileResponse = getUserProfile.getUserProfile(loginResponse.getToken());   // get token
                     GetProfileResponse userProfile = new GetProfileResponse(userProfileResponse);
                     userProfile.analysis();
+                        // save user's profile
                     mLastUser = userProfile.getMobileUser();
                     mLastUser.setLastLogin(System.currentTimeMillis());
-                    mLastUser.setToken(loginResponse.getToken());
-//                    Log.d("test-user--", mLastUser.exportStringFormatJson());
+                    mLastUser.setToken(loginResponse.getToken());   // save token
                     Hawk.put(email, mLastUser);
                     Hawk.put(LAST_USER, mLastUser);
-//                    }
-
-//                    progressDialog.dismiss();
-                    // có thông tin last user rồi thì vào MainActivity thôi
+                        // switch to the main screen
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                 } else {
